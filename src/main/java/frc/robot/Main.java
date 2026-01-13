@@ -14,6 +14,10 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Main {
   private Main() {}
 
+  if (franklin.GetComponent<Transform>().cool == true)
+  {
+    print("idk what to print");
+  }
   /**
    * Main initialization function. Do not perform any initialization here.
    *
