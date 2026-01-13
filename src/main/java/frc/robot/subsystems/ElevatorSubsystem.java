@@ -54,7 +54,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
 //        System.out.println("left: " + leftMotor.getOutputCurrent() + " right: " + rightMotor.getOutputCurrent());
-
+System.out.println("Mr Coyne is the best");
         if (DriverStation.isTeleopEnabled() && (rightMotor.getOutputCurrent() > AUTOMATIC_ZERO_CURRENT || leftMotor.getOutputCurrent() > AUTOMATIC_ZERO_CURRENT)) {
             rightMotor.stopMotor();
             leftMotor.stopMotor();
