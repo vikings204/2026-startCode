@@ -125,7 +125,7 @@ public class RobotContainer {
         //Tongue.setDefaultCommand(new RunCommand(()->Tongue.readSensor()),Tongue);
     }
 
-    int x = 1;
+    
     
     private void configureButtonBindings() {
 
@@ -177,7 +177,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto(AutoModeChooser.getSelected().pathplannerName);
+        return new PathPlannerAuto("2026 team 204 Auto"); //loads the Auto from the PathPlanner
     }
 
     public void checkAnalogs() {
