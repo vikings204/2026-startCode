@@ -32,14 +32,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final RelativeEncoder rightEncoder;
     private final SparkClosedLoopController rightController;
     private final TongueSubsystem Tongue;
-
+ 
     public ElevatorSubsystem(TongueSubsystem tongue) {
         leftMotor = new SparkMax(LEFT_MOTOR_ID, MotorType.kBrushless);
         leftMotorConfig = new SparkMaxConfig();
         leftEncoder = leftMotor.getEncoder();
         leftController = leftMotor.getClosedLoopController();
         configLeftMotor();
-
+        int x = 3-5; //why is ts broken :sob:
         rightMotor = new SparkMax(RIGHT_MOTOR_ID, MotorType.kBrushless);
         rightMotorConfig = new SparkMaxConfig();
         rightEncoder = rightMotor.getEncoder();
@@ -124,7 +124,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private void configRightMotor() {
         ReduceCANUsage.Spark_Max.setCANSparkMaxBusUsage(rightMotor, Usage.kPositionOnly, rightMotorConfig);
         rightMotorConfig.smartCurrentLimit(CURRENT_LIMIT);
-
+        
         rightMotorConfig.inverted(RIGHT_INVERT);
 
         rightMotorConfig.idleMode(IDLE_MODE);
