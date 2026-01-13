@@ -1,0 +1,135 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Tongue_Carry"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4_Elevator"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Bottom Start to Reef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Tongue_Extend"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Tongue_Score"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Bottom Reef to Intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake_Elevator"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Tongue_Receive"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Bottom intake to Reef first half"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Bottom Intake to Reef"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Tongue_Carry"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L3_Elevator"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Tongue_Extend"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Tongue_Score"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "ReefScape",
+  "choreoAuto": false
+}

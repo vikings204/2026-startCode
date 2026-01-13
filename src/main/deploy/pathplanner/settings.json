@@ -1,0 +1,37 @@
+{
+  "robotWidth": 0.87,
+  "robotLength": 0.87,
+  "holonomicMode": true,
+  "pathFolders": [
+    "Reefscape",
+    "New New Folder"
+  ],
+  "autoFolders": [
+    "ReefScape"
+  ],
+  "defaultMaxVel": 3.0,
+  "defaultMaxAccel": 3.0,
+  "defaultMaxAngVel": 540.0,
+  "defaultMaxAngAccel": 720.0,
+  "defaultNominalVoltage": 12.0,
+  "robotMass": 50.0,
+  "robotMOI": 6.307,
+  "robotTrackwidth": 0.546,
+  "driveWheelRadius": 0.05,
+  "driveGearing": 8.14,
+  "maxDriveSpeed": 5.45,
+  "driveMotorType": "NEO",
+  "driveCurrentLimit": 40.0,
+  "wheelCOF": 1.2,
+  "flModuleX": 0.295,
+  "flModuleY": 0.295,
+  "frModuleX": 0.295,
+  "frModuleY": -0.295,
+  "blModuleX": -0.295,
+  "blModuleY": 0.295,
+  "brModuleX": -0.295,
+  "brModuleY": -0.295,
+  "bumperOffsetX": 0.0,
+  "bumperOffsetY": 0.0,
+  "robotFeatures": []
+}

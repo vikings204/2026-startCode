@@ -1,0 +1,55 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Tongue_Carry"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L1_Elevator"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4_Elevator"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Top_Auto"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Tongue_Score"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "ReefScape",
+  "choreoAuto": false
+}
