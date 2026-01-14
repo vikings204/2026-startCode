@@ -13,6 +13,7 @@ This year's code is comming along pretty decently, and we have a nice solid team
 ### ✰xorbotz
 ### ✰ZSushi 
 >###  ✰✮✰And more...(add them...someone...)
+\
+##**__Stuff__ our robot can do**
+>- something soon<sup>TM</sup>
 
->**__Stuff__ our robot can do**
-- soon<sup>TM</sup>
