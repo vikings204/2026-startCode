@@ -6,6 +6,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.events.OneShotTriggerEvent;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -39,7 +41,7 @@ public class RobotContainer {
     public final TongueSubsystem Tongue = new TongueSubsystem();
     public final ElevatorSubsystem Elevator = new ElevatorSubsystem(Tongue);
     public final ClimberSubsystem Climber = new ClimberSubsystem();
-  //  public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions);
+    public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions);
 
     private final GenericEntry finalSpeedModifierEntry = Shuffleboard.getTab("config").add("final speed modifier", 1.0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0, "max", 1)).getEntry();
 
@@ -68,10 +70,10 @@ public class RobotContainer {
         // Shuffleboard.getTab("main").add("shooter", Shooter);
         Shuffleboard.getTab("main").add("zero swerve", new RunCommand(Swerve::zeroGyro)).withWidget(BuiltInWidgets.kCommand);
         Shuffleboard.getTab("main").add("zero elevator", new RunCommand(Elevator::zeroEncoders, Elevator)).withWidget(BuiltInWidgets.kCommand);
-/* TURNING OFF THE AUTOBUILDER FOR NOW
+ //TURNING OFF THE AUTOBUILDER FOR NOW
         AutoBuilder.configure(
-               // PoseEstimation::getCurrentPose, // Robot pose supplier
-               // PoseEstimation::setCurrentPose,
+                PoseEstimation::getCurrentPose, // Robot pose supplier
+                PoseEstimation::setCurrentPose,
                 Swerve::getSpeeds,
                 Swerve::driveRobotRelative,// Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
                 Constants.Auto.PATH_FOLLOWER_CONFIG, // The path follower configuration
@@ -87,9 +89,9 @@ public class RobotContainer {
                 Swerve // Reference to this subsystem to set requirements
         );
         PathfindingCommand.warmupCommand().schedule();
-*/
 
-        NamedCommands.registerCommand("L4_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.L4), Elevator));
+
+        
         NamedCommands.registerCommand("Auto_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.Auto), Elevator));
         NamedCommands.registerCommand("L1_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.L1), Elevator));
         NamedCommands.registerCommand("L2_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.L2), Elevator));
@@ -102,10 +104,14 @@ public class RobotContainer {
         NamedCommands.registerCommand("zeroGyro", new InstantCommand(Swerve::zeroGyro, Swerve));
         NamedCommands.registerCommand("Tongue_Auto", new InstantCommand(Tongue::setPosAuto, Tongue));
 
+    
+
         configureDefaultCommands();
         configureButtonBindings();
     }
 
+
+    
     private void configureDefaultCommands() {
         Swerve.setDefaultCommand(
                 new TeleopSwerveCommand(
@@ -177,7 +183,18 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto("2026 team 204 Auto"); //loads the Auto from the PathPlanner
+        try{
+        // Load the path you want to follow using its name in the GUI
+        PathPlannerPath path = PathPlannerPath.fromPathFile("Eastern Robotic Vikings Team 204, 2026 Auto");
+
+        // Create a path following command using AutoBuilder. This will also trigger event markers.
+        return AutoBuilder.followPath(path);
+        } catch (Exception e) {
+            DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+            return Commands.none();
+        }
+
+        //return new PathPlannerAuto("Eastern Robotic Vikings Team 204, 2026 Auto"); //loads the Auto from the PathPlanner
     }
 
     public void checkAnalogs() {

@@ -9,14 +9,22 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.Swerve.Mod0;
+import frc.robot.Constants.Swerve.Mod1;
+import frc.robot.Constants.Swerve.Mod2;
+import frc.robot.Constants.Swerve.Mod3;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.DriveFeedforwards;
@@ -32,6 +40,7 @@ import edu.wpi.first.math.util.Units;
 import java.util.Map;
 
 import static frc.robot.Constants.Swerve.*;
+import static frc.robot.Robot.alliance;
 
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -47,6 +56,15 @@ public class SwerveSubsystem extends SubsystemBase {
 //    );
 
     public SwerveSubsystem() {
+        // Load the RobotConfig from the GUI settings. You should probably
+        // store this in your Constants file
+        RobotConfig config;
+        try{
+            config = RobotConfig.fromGUISettings();
+        } catch (Exception e) {
+        // Handle exception as needed
+            e.printStackTrace();
+        }
         var toApply = new Pigeon2Configuration();
         gyro.getConfigurator().apply(toApply);
 
@@ -165,7 +183,11 @@ public class SwerveSubsystem extends SubsystemBase {
     public void periodic() {
         //TESTPOSER.update(new Rotation2d(), getPositions());
         //System.out.println("x=" + TESTPOSER.getEstimatedPosition().getX()*(4/2.8) + "  y=" + TESTPOSER.getEstimatedPosition().getY()*(4/2.8));
+
+
+    
     }
+    
     public Command driveToPose(){//Pose2d pose) {
     Translation2d t = new Translation2d(1.0,0.0);
     Pose2d test = new Pose2d(t, new Rotation2d(0.0));
