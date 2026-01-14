@@ -17,4 +17,4 @@ This year's code is comming along pretty decently, and we have a nice solid team
 ##**__Stuff__ our robot can do**
 >- something soon<sup>TM</sup>
 
-![Offical First:REBUILT by Haas image](https://github.com/vikings204/2026-startCode/blob/rishibranch2026/miscellaneous/REBUILTFRC.png)
+<img src="https://github.com/vikings204/2026-startCode/blob/rishibranch2026/miscellaneous/REBUILTFRC.png" width="50%" alt="Offical First:REBUILT by Haas image" />
