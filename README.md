@@ -1,17 +1,18 @@
-#**Team 204 FIRST Robotics:REBUILT Repo**
-##Eastern Regional High School's 2026 FRC Github Repository
+# **Team 204's FIRST Robotics: _REBUILT_ Repo**
+
+## Eastern Regional High School's 2026 FRC Github Repository
 
 This year's code is comming along pretty decently, and we have a nice solid team to work with!
 
 ## **Our Contributors**
 
-# ✰Hexxovy
-# ✰nevadex
-# ✰sachinnaidu2710
-# ✰TJbots15
-# ✰xorbotz
-# ✰ZSushi 
-# ✰✮✰And more...(add them later!)
+### ✰Hexxovy
+### ✰nevadex
+### ✰sachinnaidu2710
+### ✰TJbots15
+### ✰xorbotz
+### ✰ZSushi 
+>###  ✰✮✰And more...(add them...someone...)
 
-#**Stuff our robot can do**
+>**__Stuff__ our robot can do**
 - soon<sup>TM</sup>
