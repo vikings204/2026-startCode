@@ -47,12 +47,13 @@ public class Robot extends TimedRobot {
         TopTwoNote_Red("R top two note"),
         MidToMid("middle to middle"),*/
         //Top_Auto("Top_Auto"),
-        Top_Auto_Comp("Top_Auto_Comp"),
+        //Top_Auto_Comp("Top_Auto_Comp"),
         //Botttom_Auto("Bottom_Auto"),
-        Botttom_Auto_Comp("Bottom_Auto_Comp"),
-        Mid_Auto_Comp("Mid_Auto_Comp"),
+        //Botttom_Auto_Comp("Bottom_Auto_Comp"),
+        //Mid_Auto_Comp("Mid_Auto_Comp"),
         //Mid_Auto("Mid_Auto"),
-        Mid_Ram("Mid_Ram");
+        //Mid_Ram("Mid_Ram"),
+        Square_Path("Square_Path");
 
         public final String pathplannerName;
         AutoMode(String str) {
@@ -99,8 +100,8 @@ public class Robot extends TimedRobot {
             ControlModeChooser.setDefaultOption("Single Controller (Driver:usb1 Operator:usb1)", ControlMode.SINGLE);
             ControlModeChooser.addOption("Competition (Driver:usb1 Operator:usb2)", ControlMode.COMPETITION);
         } else if (Constants.Controller.DEFAULT_CONTROL_MODE == ControlMode.COMPETITION) {
-            ControlModeChooser.addOption("Single Controller (Driver:usb1 Operator:usb1)", ControlMode.SINGLE);
             ControlModeChooser.setDefaultOption("Competition (Driver:usb1 Operator:usb2)", ControlMode.COMPETITION);
+             ControlModeChooser.addOption("Single Controller (Driver:usb1 Operator:usb1)", ControlMode.SINGLE);
         }
         Shuffleboard.getTab("main").add("control mode", ControlModeChooser).withWidget(BuiltInWidgets.kSplitButtonChooser).withSize(2, 1);
 

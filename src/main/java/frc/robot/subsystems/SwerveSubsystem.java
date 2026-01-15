@@ -22,6 +22,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
+import com.pathplanner.lib.util.DriveFeedforwards;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -94,9 +95,9 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     /* Used by SwerveControllerCommand in Auto */
-    public void setModuleStates(SwerveModuleState[] desiredStates) {
+    public void setModuleStates(SwerveModuleState[] desiredStates, DriveFeedforwards feedForwards) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, MAX_SPEED);
-
+        
         for (SwerveModule mod : modules) {
             mod.setDesiredState(desiredStates[mod.moduleNumber], false); // false
         }
@@ -105,12 +106,13 @@ public class SwerveSubsystem extends SubsystemBase {
     public ChassisSpeeds getSpeeds() {
         return SWERVE_KINEMATICS.toChassisSpeeds(getStates());
     }
+    
 
-    public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds) {
+    public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds, DriveFeedforwards feedForwards ) {
         ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
 
         SwerveModuleState[] targetStates = SWERVE_KINEMATICS.toSwerveModuleStates(targetSpeeds);
-        setModuleStates(targetStates);
+        setModuleStates(targetStates,feedForwards);
     }
 
     public SwerveModuleState[] getStates() {

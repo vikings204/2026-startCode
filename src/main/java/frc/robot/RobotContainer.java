@@ -6,13 +6,19 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.events.OneShotTriggerEvent;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.DriveFeedforwards;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -39,7 +45,7 @@ public class RobotContainer {
     public final TongueSubsystem Tongue = new TongueSubsystem();
     public final ElevatorSubsystem Elevator = new ElevatorSubsystem(Tongue);
     public final ClimberSubsystem Climber = new ClimberSubsystem();
-  //  public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions);
+    public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions);
 
     private final GenericEntry finalSpeedModifierEntry = Shuffleboard.getTab("config").add("final speed modifier", 1.0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0, "max", 1)).getEntry();
 
@@ -53,6 +59,7 @@ public class RobotContainer {
     private final ColorAlignCommand ColorAlignRight = new ColorAlignCommand(false, Swerve, Tongue, LED);
     private final ColorAlignCommand ColorAlignLeft = new ColorAlignCommand(true, Swerve, Tongue, LED);
 
+    private final SendableChooser<Command> autoModeChooser;
     public RobotContainer() {
         ControlModeChooser.onChange((ControlMode mode) -> {
             if (mode == ControlMode.SINGLE) {
@@ -68,13 +75,13 @@ public class RobotContainer {
         // Shuffleboard.getTab("main").add("shooter", Shooter);
         Shuffleboard.getTab("main").add("zero swerve", new RunCommand(Swerve::zeroGyro)).withWidget(BuiltInWidgets.kCommand);
         Shuffleboard.getTab("main").add("zero elevator", new RunCommand(Elevator::zeroEncoders, Elevator)).withWidget(BuiltInWidgets.kCommand);
-/* TURNING OFF THE AUTOBUILDER FOR NOW
+
         AutoBuilder.configure(
-               // PoseEstimation::getCurrentPose, // Robot pose supplier
-               // PoseEstimation::setCurrentPose,
+                PoseEstimation::getCurrentPose, // Robot pose supplier
+                PoseEstimation::setCurrentPose,
                 Swerve::getSpeeds,
-                Swerve::driveRobotRelative,// Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-                Constants.Auto.PATH_FOLLOWER_CONFIG, // The path follower configuration
+                (speeds,feedforwards) -> Swerve.driveRobotRelative(speeds),//byass need for PathFeedfowards with lamda, hacky solution idk if its good// Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+                Constants.Auto.PATH_FOLLOWER_CONFIG, // The path follower configuration 
                 Constants.Auto.config, // The robot configuration
                 //() -> Robot.alliance == DriverStation.Alliance.Red,
                 () -> {
@@ -86,9 +93,18 @@ public class RobotContainer {
                 },
                 Swerve // Reference to this subsystem to set requirements
         );
-        PathfindingCommand.warmupCommand().schedule();
-*/
+        boolean isCompetition = true;
 
+        autoModeChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
+            (stream) -> isCompetition
+            ? stream.filter(auto -> auto.getName().startsWith("comp"))
+            : stream
+        );
+        SmartDashboard.putData("Auto Chooser", autoModeChooser);        
+
+
+        PathfindingCommand.warmupCommand().schedule();
+        
         NamedCommands.registerCommand("L4_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.L4), Elevator));
         NamedCommands.registerCommand("Auto_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.Auto), Elevator));
         NamedCommands.registerCommand("L1_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.L1), Elevator));
@@ -104,6 +120,20 @@ public class RobotContainer {
 
         configureDefaultCommands();
         configureButtonBindings();
+        
+    }
+    public Command getAutonomousCommand() {
+         try{
+        // Load the path you want to follow using its name in the GUI
+        PathPlannerPath path = PathPlannerPath.fromPathFile("Square Path");
+
+        // Create a path following command using AutoBuilder. This will also trigger event markers.
+        return AutoBuilder.followPath(path);
+        } catch (Exception e) {
+            DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+            return Commands.none();
+        }//copied from pathplanner docs
+
     }
 
     private void configureDefaultCommands() {
@@ -175,9 +205,8 @@ public class RobotContainer {
         new JoystickButton(DRIVER, 4).whileTrue(ColorAlignRight);
     }
 
-    public Command getAutonomousCommand() {
-        return new PathPlannerAuto(AutoModeChooser.getSelected().pathplannerName);
-    }
+    
+    
 
     public void checkAnalogs() {
         if (OPERATOR.getRightTriggerAxis() > .5) {
@@ -198,6 +227,7 @@ public class RobotContainer {
 
         if (OPERATOR.getRightY() > .5) {
             CommandScheduler.getInstance().schedule(new RunCommand(() -> Climber.NegativeShootArm(true), Climber));
+            }
         }
     }
-}
+
