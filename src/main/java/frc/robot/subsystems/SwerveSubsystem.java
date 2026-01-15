@@ -95,7 +95,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     /* Used by SwerveControllerCommand in Auto */
-    public void setModuleStates(SwerveModuleState[] desiredStates, DriveFeedforwards feedForwards) {
+    public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, MAX_SPEED);
         
         for (SwerveModule mod : modules) {
@@ -108,11 +108,11 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     
 
-    public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds, DriveFeedforwards feedForwards ) {
+    public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds) {
         ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
 
         SwerveModuleState[] targetStates = SWERVE_KINEMATICS.toSwerveModuleStates(targetSpeeds);
-        setModuleStates(targetStates,feedForwards);
+        setModuleStates(targetStates);
     }
 
     public SwerveModuleState[] getStates() {

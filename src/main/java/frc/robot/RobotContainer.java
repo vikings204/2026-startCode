@@ -93,7 +93,8 @@ public class RobotContainer {
                 },
                 Swerve // Reference to this subsystem to set requirements
         );
-        boolean isCompetition = true;
+        
+        boolean isCompetition = false;
 
         autoModeChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
             (stream) -> isCompetition
