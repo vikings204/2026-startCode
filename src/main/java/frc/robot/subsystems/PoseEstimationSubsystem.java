@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import org.photonvision.PhotonPoseEstimator;
 
 import java.util.function.Supplier;
 
@@ -49,8 +50,9 @@ public class PoseEstimationSubsystem extends SubsystemBase {
     private final Supplier<SwerveModulePosition[]> modulePositionSupplier;
     private final SwerveDrivePoseEstimator poseEstimator;
     private final Field2d field = new Field2d();
-    private final PhotonRunnable photonEstimator = new PhotonRunnable();
-    private final Notifier photonNotifier = new Notifier(photonEstimator);
+    //private final PhotonRunnable photonEstimator = new PhotonRunnable();
+
+    //private final Notifier photonNotifier = new Notifier(photonEstimator);
 
     private OriginPosition originPosition = kBlueAllianceWallRightSide;
     private boolean sawTag = false;
@@ -71,11 +73,11 @@ public class PoseEstimationSubsystem extends SubsystemBase {
                 stateStdDevs,
                 visionMeasurementStdDevs);
 
-        if (VISION_ENABLED) {
+        /*if (VISION_ENABLED) {
             // Start PhotonVision thread
             photonNotifier.setName("PhotonRunnable");
             photonNotifier.startPeriodic(0.02);
-        }
+        }*/
 
         Shuffleboard.getTab("field").add("pose est field", field).withWidget(BuiltInWidgets.kField).withSize(8, 5);
         //Shuffleboard.getTab("main").addNumber("pose X", poseEstimator.getEstimatedPosition()::getX);
@@ -120,7 +122,7 @@ public class PoseEstimationSubsystem extends SubsystemBase {
         // Update pose estimator with drivetrain sensors
         poseEstimator.update(rotationSupplier.get(), modulePositionSupplier.get());
 
-        if (VISION_ENABLED) {
+       /*  if (VISION_ENABLED) {
             var visionPose = photonEstimator.grabLatestEstimatedPose();
             if (visionPose != null) {
                 // New pose from vision
@@ -134,7 +136,7 @@ public class PoseEstimationSubsystem extends SubsystemBase {
                 }
                 poseEstimator.addVisionMeasurement(pose2d, visionPose.timestampSeconds);
             }
-        }
+        }*/
 
         // Set the pose on the dashboard
         var dashboardPose = poseEstimator.getEstimatedPosition();
