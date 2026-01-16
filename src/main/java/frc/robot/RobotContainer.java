@@ -20,7 +20,6 @@ import frc.robot.Constants.Controller;
 import frc.robot.Constants.Elevator.Positions;
 import frc.robot.Robot.ControlMode;
 import frc.robot.commands.AlignCommand;
-import frc.robot.commands.ColorAlignCommand;
 import frc.robot.commands.StupidAlignCommand;
 import frc.robot.commands.TeleopSwerveCommand;
 import frc.robot.subsystems.*;
@@ -41,8 +40,6 @@ public class RobotContainer {
     public final ClimberSubsystem Climber = new ClimberSubsystem();
     public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions);
 
-    private final GenericEntry finalSpeedModifierEntry = Shuffleboard.getTab("config").add("final speed modifier", 1.0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0, "max", 1)).getEntry();
-
     Gamepad DRIVER = new Gamepad(Controller.DRIVER_PORT);
     Gamepad OPERATOR = new Gamepad(Controller.OPERATOR_PORT);
     private final JoystickButton slowSpeed = new JoystickButton(DRIVER, 4);
@@ -50,8 +47,6 @@ public class RobotContainer {
 
     private final StupidAlignCommand StupidAlignRight = new StupidAlignCommand(false, Swerve, LED);
     private final StupidAlignCommand StupidAlignLeft = new StupidAlignCommand(true, Swerve, LED);
-    private final ColorAlignCommand ColorAlignRight = new ColorAlignCommand(false, Swerve, Tongue, LED);
-    private final ColorAlignCommand ColorAlignLeft = new ColorAlignCommand(true, Swerve, Tongue, LED);
 
     public RobotContainer() {
         ControlModeChooser.onChange((ControlMode mode) -> {
@@ -86,7 +81,7 @@ public class RobotContainer {
                 },
                 Swerve // Reference to this subsystem to set requirements
         );
-        PathfindingCommand.warmupCommand().schedule();
+        CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
 
         NamedCommands.registerCommand("L4_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.L4), Elevator));
@@ -114,9 +109,8 @@ public class RobotContainer {
                         () -> 1 * DRIVER.getLeftY(),
                         () -> -1 * DRIVER.getRightX(),
                         () -> false,
-                        slowSpeed,//slowMode,// DRIVER.getLeftStickButton(), // slow mode
-                        highSpeed,//!slowMode,//DRIVER.getRightStickButton())); // fast mode
-                        () ->finalSpeedModifierEntry.getDouble(1.0)));
+                        slowSpeed,
+                        highSpeed));
 
         //Elevator.setDefaultCommand(
         //        new RunCommand(
@@ -171,8 +165,6 @@ public class RobotContainer {
 //        new JoystickButton(DRIVER, 1).whileTrue(new AlignCommand(false, Swerve));
         new JoystickButton(DRIVER, 1).whileTrue(StupidAlignLeft); // A is left
         new JoystickButton(DRIVER, 2).whileTrue(StupidAlignRight); // B is right
-        new JoystickButton(DRIVER, 3).whileTrue(ColorAlignLeft);
-        new JoystickButton(DRIVER, 4).whileTrue(ColorAlignRight);
     }
 
     public Command getAutonomousCommand() {

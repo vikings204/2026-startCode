@@ -25,7 +25,6 @@ public class TeleopSwerveCommand extends Command {
     private final SlewRateLimiter strafeLimiter = new SlewRateLimiter(3.0);     // See above
     private final SlewRateLimiter rotationLimiter = new SlewRateLimiter(3.0);   //Not really used with the brushed motors going to a position but could be.  We don't use the trapazoid pid profile suggested only because it hasn't been implemented yet
 
-    private final DoubleSupplier finalSpeedModifierSup;
 
     public TeleopSwerveCommand(
             SwerveSubsystem s_Swerve,
@@ -34,8 +33,7 @@ public class TeleopSwerveCommand extends Command {
             DoubleSupplier rotationSup,
             BooleanSupplier robotCentricSup,
             BooleanSupplier slowSpeedSup,
-            BooleanSupplier highSpeedSup,
-            DoubleSupplier finalSpeedModifierSup) {
+            BooleanSupplier highSpeedSup) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);  //Adds the swerve subsystem as a req of the command and will not schedule any other commands that require the swerve sub
 
@@ -46,8 +44,6 @@ public class TeleopSwerveCommand extends Command {
         this.robotCentricSup = robotCentricSup;
         this.slowSpeedSup = slowSpeedSup;
         this.highSpeedSup = highSpeedSup;
-
-        this.finalSpeedModifierSup = finalSpeedModifierSup;
     }
 
     @Override
@@ -81,8 +77,8 @@ double rotationVal = rotationLimiter.calculate(speedMultiplier
          * tell it how much to rotate
          */
         s_Swerve.drive(
-                new Translation2d(translationVal, strafeVal).times(Constants.Swerve.MAX_SPEED * 1/*finalSpeedModifierSup.getAsDouble()*/),
-                rotationVal * Constants.Swerve.MAX_ANGULAR_VELOCITY * finalSpeedModifierSup.getAsDouble(),
+                new Translation2d(translationVal, strafeVal).times(Constants.Swerve.MAX_SPEED),
+                rotationVal * Constants.Swerve.MAX_ANGULAR_VELOCITY,
                 !robotCentricSup.getAsBoolean(),
                 true);
     }

@@ -11,20 +11,15 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Robot;
-import org.photonvision.PhotonPoseEstimator;
 
 import java.util.function.Supplier;
 
 import static edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition.kBlueAllianceWallRightSide;
 import static edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition.kRedAllianceWallRightSide;
 import static frc.robot.Constants.Vision.FLIPPING_POSE;
-import static frc.robot.Constants.Vision.VISION_ENABLED;
 
 public class PoseEstimationSubsystem extends SubsystemBase {
 
@@ -50,14 +45,11 @@ public class PoseEstimationSubsystem extends SubsystemBase {
     private final Supplier<SwerveModulePosition[]> modulePositionSupplier;
     private final SwerveDrivePoseEstimator poseEstimator;
     private final Field2d field = new Field2d();
-    //private final PhotonRunnable photonEstimator = new PhotonRunnable();
-
-    //private final Notifier photonNotifier = new Notifier(photonEstimator);
 
     private OriginPosition originPosition = kBlueAllianceWallRightSide;
     private boolean sawTag = false;
 
-    private double[] stupidPose = new double[]{0, 0, 0};
+    private double[] arrayForDashboard = new double[]{0, 0, 0};
 
     public PoseEstimationSubsystem(
             Supplier<Rotation2d> rotationSupplier, Supplier<SwerveModulePosition[]> modulePositionSupplier) {
@@ -73,19 +65,13 @@ public class PoseEstimationSubsystem extends SubsystemBase {
                 stateStdDevs,
                 visionMeasurementStdDevs);
 
-        /*if (VISION_ENABLED) {
-            // Start PhotonVision thread
-            photonNotifier.setName("PhotonRunnable");
-            photonNotifier.startPeriodic(0.02);
-        }*/
-
         Shuffleboard.getTab("field").add("pose est field", field).withWidget(BuiltInWidgets.kField).withSize(8, 5);
         //Shuffleboard.getTab("main").addNumber("pose X", poseEstimator.getEstimatedPosition()::getX);
         //Shuffleboard.getTab("main").addNumber("pose Y", poseEstimator.getEstimatedPosition()::getY);
         //Shuffleboard.getTab("main").addNumber("gyro angle", poseEstimator.getEstimatedPosition().getRotation()::getDegrees);
-        Shuffleboard.getTab("main").addNumber("pose X", () -> stupidPose[0]);
-        Shuffleboard.getTab("main").addNumber("pose Y", () -> stupidPose[1]);
-        Shuffleboard.getTab("main").addNumber("pose theta", () -> stupidPose[2]);
+        Shuffleboard.getTab("main").addNumber("pose X", () -> arrayForDashboard[0]);
+        Shuffleboard.getTab("main").addNumber("pose Y", () -> arrayForDashboard[1]);
+        Shuffleboard.getTab("main").addNumber("pose theta", () -> arrayForDashboard[2]);
     }
 
     /**
@@ -148,7 +134,7 @@ public class PoseEstimationSubsystem extends SubsystemBase {
 
         //System.out.println(poseEstimator.getEstimatedPosition().getRotation().getDegrees());
         //stupidPose = new double[]{dashboardPose.getX(), dashboardPose.getY(), dashboardPose.getRotation().getDegrees()};
-        stupidPose = new double[]{dashboardPose.getX(), dashboardPose.getY(), dashboardPose.getRotation().getDegrees()};
+        arrayForDashboard = new double[]{dashboardPose.getX(), dashboardPose.getY(), dashboardPose.getRotation().getDegrees()};
         //System.out.println(dashboardPose.getX() + "     " + dashboardPose.getY());
     }
 
