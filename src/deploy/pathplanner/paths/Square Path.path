@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0727046263345197,
-        "y": 5.998552787663108
+        "x": 1.8042092921940336,
+        "y": 6.2671190753638895
       },
       "isLocked": false,
       "linkedName": null
@@ -20,11 +20,11 @@
         "y": 6.0
       },
       "prevControl": {
-        "x": 2.256299879803578,
-        "y": 6.0061637194654
+        "x": 2.2499619237890975,
+        "y": 5.995636898390679
       },
       "nextControl": {
-        "x": 0.9777878014062742,
+        "x": 0.977787801406274,
         "y": 5.975416963788394
       },
       "isLocked": false,
@@ -36,12 +36,12 @@
         "y": 6.0
       },
       "prevControl": {
-        "x": 0.9926326615415828,
-        "y": 5.75010857893069
+        "x": 0.9333026306736879,
+        "y": 5.7590612921821185
       },
       "nextControl": {
-        "x": 1.0301281400650435,
-        "y": 7.021910935342907
+        "x": 1.272753545445877,
+        "y": 6.985299532144366
       },
       "isLocked": false,
       "linkedName": null
@@ -52,12 +52,12 @@
         "y": 7.0
       },
       "prevControl": {
-        "x": 0.7170462633451962,
-        "y": 7.009916963226572
+        "x": 0.7500055065324261,
+        "y": 7.001659287766026
       },
       "nextControl": {
-        "x": 1.885292007453071,
-        "y": 6.968972283644373
+        "x": 1.8858160587899153,
+        "y": 6.994120575501835
       },
       "isLocked": false,
       "linkedName": null
@@ -68,8 +68,8 @@
         "y": 7.0
       },
       "prevControl": {
-        "x": 2.2498093163702766,
-        "y": 6.990237548739425
+        "x": 1.75,
+        "y": 7.0
       },
       "nextControl": null,
       "isLocked": false,
@@ -77,21 +77,7 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 4.0,
-      "constraints": {
-        "maxVelocity": 1.0,
-        "maxAcceleration": 3.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    }
-  ],
+  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
