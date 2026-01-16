@@ -124,18 +124,9 @@ public class RobotContainer {
         
     }
     public Command getAutonomousCommand() {
-         try{
-        // Load the path you want to follow using its name in the GUI
-        PathPlannerPath path = PathPlannerPath.fromPathFile("Square Path");
-
-        // Create a path following command using AutoBuilder. This will also trigger event markers.
-        return AutoBuilder.followPath(path);
-        } catch (Exception e) {
-            DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-            return Commands.none();
-        }//copied from pathplanner docs
-
+        return new PathPlannerAuto(AutoModeChooser.getSelected().pathplannerName);
     }
+
 
     private void configureDefaultCommands() {
         Swerve.setDefaultCommand(
