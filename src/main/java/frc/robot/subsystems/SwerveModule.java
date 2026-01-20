@@ -23,6 +23,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -254,6 +255,13 @@ public class SwerveModule {
                     feedforward.calculate(desiredState.speedMetersPerSecond));
         }
     }
+    public void setDriveVoltage(Voltage desiredVoltage){
+            driveMotor.setVoltage(desiredVoltage);
+    }
+    public void setAngleVoltage(Voltage desiredVoltage){
+            angleMotor.setVoltage(desiredVoltage);
+    }
+
 
     private void setAngle(SwerveModuleState desiredState) {
         // Prevent rotating module if speed is less then 1%. Prevents jittering.

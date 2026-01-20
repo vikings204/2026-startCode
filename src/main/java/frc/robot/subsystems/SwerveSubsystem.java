@@ -12,7 +12,12 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Constants.Swerve.Mod0;
+import frc.robot.Constants.Swerve.Mod1;
+import frc.robot.Constants.Swerve.Mod2;
+import frc.robot.Constants.Swerve.Mod3;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -37,7 +42,10 @@ import static frc.robot.Constants.Swerve.*;
 
 public class SwerveSubsystem extends SubsystemBase {
     public Pigeon2 gyro = new Pigeon2(PIGEON2_ID, "rio");
-    public final SwerveModule[] modules; // Array of the 4 swerve modules
+    public final SwerveModule[] modules;
+    public final SysIdRoutine SysIdDriveRoutine;
+    public final SysIdRoutine SysIdAngleRoutine;
+  // Array of the 4 swerve modules
 //    private final SwerveDrivePoseEstimator TESTPOSER = new SwerveDrivePoseEstimator(
 //            Constants.Swerve.SWERVE_KINEMATICS,
 //            new Rotation2d(),
@@ -46,7 +54,7 @@ public class SwerveSubsystem extends SubsystemBase {
 //            },
 //            new Pose2d()
 //    );
-
+     
     public SwerveSubsystem() {
         var toApply = new Pigeon2Configuration();
         gyro.getConfigurator().apply(toApply);
@@ -70,8 +78,28 @@ public class SwerveSubsystem extends SubsystemBase {
             Rotation2d yaw = getYaw();
             return yaw.getDegrees();
         });
+            SysIdDriveRoutine = new SysIdRoutine(
+            new SysIdRoutine.Config(),
+            new SysIdRoutine.Mechanism(
+                voltage->{
+                modules[0].setDriveVoltage(voltage);
+                modules[1].setDriveVoltage(voltage);
+                modules[2].setDriveVoltage(voltage);
+                modules[3].setDriveVoltage(voltage);
+            },null, this)
+        );
+         SysIdAngleRoutine = new SysIdRoutine(
+            new SysIdRoutine.Config(),
+            new SysIdRoutine.Mechanism(
+                voltage->{
+                modules[0].setAngleVoltage(voltage);
+                modules[1].setAngleVoltage(voltage);
+                modules[2].setAngleVoltage(voltage);
+                modules[3].setAngleVoltage(voltage);
+            },null, this)
+        );
     }
-
+    
     public void setSpeed(){
         if (Constants.Swerve.SPEED_MULTIPLIER <.5){
             Constants.Swerve.SPEED_MULTIPLIER = .85;
@@ -183,6 +211,18 @@ public class SwerveSubsystem extends SubsystemBase {
         edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
     );
   }
+  public Command sysIdMotorQuasistatic(SysIdRoutine.Direction direction) {
+    return SysIdDriveRoutine.quasistatic(direction);
+  }
+  public Command sysIdMotorDynamic(SysIdRoutine.Direction direction) {
+    return SysIdDriveRoutine.dynamic(direction);
+  }
 
+  public Command sysIdAngleQuasistatic(SysIdRoutine.Direction direction) {
+    return SysIdDriveRoutine.quasistatic(direction);
+  }
+  public Command sysIdAngleDynamic(SysIdRoutine.Direction direction) {
+    return SysIdDriveRoutine.dynamic(direction);
+  }
 
 }

@@ -118,7 +118,11 @@ public class RobotContainer {
         NamedCommands.registerCommand("Intake_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
         NamedCommands.registerCommand("zeroGyro", new InstantCommand(Swerve::zeroGyro, Swerve));
         NamedCommands.registerCommand("Tongue_Auto", new InstantCommand(Tongue::setPosAuto, Tongue));
-
+        
+        NamedCommands.registerCommand("Quasistatic_Drive_Forward", new InstantCommand(()-> Swerve.sysIdMotorQuasistatic(/*Fill this in */),Swerve));
+        NamedCommands.registerCommand("Quasistatic_Drive_Backward", new InstantCommand(()-> Swerve.sysIdMotorQuasistatic(/*Fill this in */),Swerve));
+        NamedCommands.registerCommand("Dynamic_Drive_Forward", new InstantCommand(()-> Swerve.sysIdAngleDyanmic(/*Fill this in */),Swerve));
+        NamedCommands.registerCommand("Quasistatic_Drive_Forward", new InstantCommand(()-> Swerve.sysIdAngleDynamic(/*Fill this in */),Swerve));
         configureDefaultCommands();
         configureButtonBindings();
         
