@@ -52,6 +52,8 @@ public class Robot extends TimedRobot {
         Botttom_Auto_Comp("Bottom_Auto_Comp"),
         Mid_Auto_Comp("Mid_Auto_Comp"),
         //Mid_Auto("Mid_Auto"),
+        Tanisha("TANISHA"),
+        TwoSides("2sided"),
         Mid_Ram("Mid_Ram");
         
 
