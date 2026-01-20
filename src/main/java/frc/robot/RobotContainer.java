@@ -177,7 +177,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto("TanishaTest".getSelected().pathplannerName);
+        return new PathPlannerAuto(AutoModeChooser.getSelected().pathplannerName);
     }
 
     public void checkAnalogs() {

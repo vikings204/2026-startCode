@@ -52,7 +52,7 @@ public class Robot extends TimedRobot {
         Botttom_Auto_Comp("Bottom_Auto_Comp"),
         Mid_Auto_Comp("Mid_Auto_Comp"),
         //Mid_Auto("Mid_Auto"),
-        Mid_Ram("Mid_Ram"),
+        Mid_Ram("Mid_Ram");
         
 
         public final String pathplannerName;
