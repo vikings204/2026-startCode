@@ -104,7 +104,6 @@ public class RobotContainer {
         NamedCommands.registerCommand("zeroGyro", new InstantCommand(Swerve::zeroGyro, Swerve));
         NamedCommands.registerCommand("Tongue_Auto", new InstantCommand(Tongue::setPosAuto, Tongue));
 
-    
 
         configureDefaultCommands();
         configureButtonBindings();
@@ -185,16 +184,14 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         try{
         // Load the path you want to follow using its name in the GUI
-        PathPlannerPath path = PathPlannerPath.fromPathFile("TJAuto15");
+            PathPlannerPath path = PathPlannerPath.fromPathFile("TJAuto15");
 
         // Create a path following command using AutoBuilder. This will also trigger event markers.
-        return AutoBuilder.followPath(path);
+            return AutoBuilder.followPath(path);
         } catch (Exception e) {
             DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
             return Commands.none();
-        }
-
-        //return new PathPlannerAuto("Eastern Robotic Vikings Team 204, 2026 Auto"); //loads the Auto from the PathPlanner
+        } 
     }
 
     public void checkAnalogs() {
