@@ -40,6 +40,7 @@ public class RobotContainer {
     public final ElevatorSubsystem Elevator = new ElevatorSubsystem(Tongue);
     public final ClimberSubsystem Climber = new ClimberSubsystem();
     public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions);
+    public final ShooterSubsystem Shooter = new ShooterSubsystem();
 
     private final GenericEntry finalSpeedModifierEntry = Shuffleboard.getTab("config").add("final speed modifier", 1.0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0, "max", 1)).getEntry();
 
@@ -135,6 +136,10 @@ public class RobotContainer {
                 .onTrue(new RunCommand(Tongue::setPosL4, Tongue));
         new JoystickButton(DRIVER, 6)
                 .onTrue(new RunCommand(Tongue::setPosL4, Tongue));
+        new JoystickButton(DRIVER, 7)
+                .whileTrue(new InstantCommand(() -> Shooter.flywheelAmp(true), Shooter));
+                //.onFalse(new InstantCommand(() -> Shooter.flywheelAmp(false), Shooter));
+
         new JoystickButton(DRIVER, 8).onTrue(new InstantCommand(Swerve::setSpeed));
 
 
