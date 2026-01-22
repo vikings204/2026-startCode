@@ -36,23 +36,17 @@ public class Robot extends TimedRobot {
         SINGLE, COMPETITION
     }
     public enum AutoMode {
-        /*MidToTop("middle to top"),
-        MidToBot("middle to bottom"),
-        TopToTop("top to top"),
-        BotToBot("bottom to bottom"),
-        TopToEsc("top to escape"),
-        BotToEsc("bottom to escape"),
-        TopToEsc_Red("R top to escape"),
-        BotToEsc_Red("R bottom to escape"),
-        TopTwoNote_Red("R top two note"),
-        MidToMid("middle to middle"),*/
-        //Top_Auto("Top_Auto"),
         Top_Auto_Comp("Top_Auto_Comp"),
         //Botttom_Auto("Bottom_Auto"),
         Botttom_Auto_Comp("Bottom_Auto_Comp"),
         Mid_Auto_Comp("Mid_Auto_Comp"),
         //Mid_Auto("Mid_Auto"),
+        Tanisha("TANISHA"),
+        TwoSides("2sided"),
+        TestStuff("TestStuff"),
+        TestStuff2("TestStuff2"),
         Mid_Ram("Mid_Ram");
+        
 
         public final String pathplannerName;
         AutoMode(String str) {
