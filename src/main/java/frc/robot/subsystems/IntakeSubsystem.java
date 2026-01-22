@@ -22,7 +22,7 @@ import frc.robot.util.ReduceCANUsage;
 import frc.robot.util.ReduceCANUsage.Spark_Max.Usage;
 
 
-public class ElevatorSubsystem extends SubsystemBase {
+public class IntakeSubsystem extends SubsystemBase {
     private final SparkMax leftMotor;
     private final SparkMaxConfig leftMotorConfig;
     private final RelativeEncoder leftEncoder;
@@ -34,7 +34,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final SparkClosedLoopController rightController;
     private final TongueSubsystem Tongue;
 
-    public ElevatorSubsystem(TongueSubsystem tongue) {
+    public IntakeSubsystem(TongueSubsystem tongue) {
         leftMotor = new SparkMax(LEFT_MOTOR_ID, MotorType.kBrushless);
         leftMotorConfig = new SparkMaxConfig();
         leftEncoder = leftMotor.getEncoder();

@@ -37,7 +37,7 @@ public class RobotContainer {
     public final SwerveSubsystem Swerve = new SwerveSubsystem();
     public final LEDSubsystem LED = new LEDSubsystem();
     public final TongueSubsystem Tongue = new TongueSubsystem();
-    public final ElevatorSubsystem Elevator = new ElevatorSubsystem(Tongue);
+    public final IntakeSubsystem Elevator = new IntakeSubsystem(Tongue);
     public final ClimberSubsystem Climber = new ClimberSubsystem();
     public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions);
 
