@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Controller;
 import frc.robot.Constants.Elevator.Positions;
 import frc.robot.Robot.ControlMode;
@@ -119,10 +120,10 @@ public class RobotContainer {
         NamedCommands.registerCommand("zeroGyro", new InstantCommand(Swerve::zeroGyro, Swerve));
         NamedCommands.registerCommand("Tongue_Auto", new InstantCommand(Tongue::setPosAuto, Tongue));
         
-        NamedCommands.registerCommand("Quasistatic_Drive_Forward", new InstantCommand(()-> Swerve.sysIdMotorQuasistatic(/*Fill this in */),Swerve));
-        NamedCommands.registerCommand("Quasistatic_Drive_Backward", new InstantCommand(()-> Swerve.sysIdMotorQuasistatic(/*Fill this in */),Swerve));
-        NamedCommands.registerCommand("Dynamic_Drive_Forward", new InstantCommand(()-> Swerve.sysIdAngleDyanmic(/*Fill this in */),Swerve));
-        NamedCommands.registerCommand("Quasistatic_Drive_Forward", new InstantCommand(()-> Swerve.sysIdAngleDynamic(/*Fill this in */),Swerve));
+        NamedCommands.registerCommand("Quasistatic_Drive_Forward", new InstantCommand(()-> Swerve.sysIdMotorQuasistatic(SysIdRoutine.Direction.kForward),Swerve));
+        NamedCommands.registerCommand("Quasistatic_Drive_Backward", new InstantCommand(()-> Swerve.sysIdMotorQuasistatic(SysIdRoutine.Direction.kReverse),Swerve));
+        NamedCommands.registerCommand("Dynitamic_Drive_Forward", new InstantCommand(()-> Swerve.sysIdAngleDynamic(SysIdRoutine.Direction.kForward),Swerve));
+        NamedCommands.registerCommand("Dynamic(idk fix ts)", new InstantCommand(()-> Swerve.sysIdAngleDynamic(SysIdRoutine.Direction.kReverse),Swerve));
         configureDefaultCommands();
         configureButtonBindings();
         
