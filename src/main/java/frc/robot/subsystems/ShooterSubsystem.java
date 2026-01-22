@@ -80,7 +80,8 @@ public class ShooterSubsystem extends SubsystemBase {
 //             shooterMotor_1.set(AMP_SPEED);
             shooterMotor_1.set(1);
         } else {
-            shooterMotor_1.set(0);
+            System.out.println("lol");
+            shooterMotor_1.set(0.000);
         }
     }
 
