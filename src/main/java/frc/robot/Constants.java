@@ -174,10 +174,6 @@ public final class Constants {
         public static final int AUTOMATIC_ZERO_CURRENT = 15;
         
         public enum Positions {
-            L4(-3.88),
-            L3(-2.60),
-            L2(-1.017),
-            L1(-1.017),
             INTAKE(-0.946),
             Auto(-3.5),
             ZERO(-0.25);

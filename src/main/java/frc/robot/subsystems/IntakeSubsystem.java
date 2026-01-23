@@ -69,14 +69,6 @@ public class IntakeSubsystem extends SubsystemBase {
     public void setPosition(Positions targetposition) {
         leftController.setReference(targetposition.position, ControlType.kPosition);
         rightController.setReference(targetposition.position, ControlType.kPosition);
-
-        if (targetposition == Positions.L2 || targetposition == Positions.L3) {
-            Tongue.retract();
-        } else if (targetposition == Positions.L1 || targetposition == Positions.L4 || targetposition==Positions.Auto) {
-            Tongue.extend();
-        } else {
-            Tongue.retract();
-        }
     }
 
     public void jogPositive(boolean b) {
