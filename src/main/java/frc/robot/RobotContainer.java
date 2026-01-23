@@ -122,8 +122,14 @@ public class RobotContainer {
         
         NamedCommands.registerCommand("Quasistatic_Drive_Forward", new InstantCommand(()-> Swerve.sysIdMotorQuasistatic(SysIdRoutine.Direction.kForward),Swerve));
         NamedCommands.registerCommand("Quasistatic_Drive_Backward", new InstantCommand(()-> Swerve.sysIdMotorQuasistatic(SysIdRoutine.Direction.kReverse),Swerve));
-        NamedCommands.registerCommand("Dynitamic_Drive_Forward", new InstantCommand(()-> Swerve.sysIdAngleDynamic(SysIdRoutine.Direction.kForward),Swerve));
-        NamedCommands.registerCommand("Dynamic(idk fix ts)", new InstantCommand(()-> Swerve.sysIdAngleDynamic(SysIdRoutine.Direction.kReverse),Swerve));
+        NamedCommands.registerCommand("Dynamic_Drive_Forward", new InstantCommand(()-> Swerve.sysIdMotorDynamic(SysIdRoutine.Direction.kForward),Swerve));
+        NamedCommands.registerCommand("Dynamic_Drive_Backward", new InstantCommand(()-> Swerve.sysIdMotorDynamic(SysIdRoutine.Direction.kReverse),Swerve));
+        
+        NamedCommands.registerCommand("Quasistatic_Angle_Forward", new InstantCommand(()-> Swerve.sysIdAngleQuasistatic(SysIdRoutine.Direction.kForward),Swerve));
+        NamedCommands.registerCommand("Quasistatic_Angle_Backward", new InstantCommand(()-> Swerve.sysIdAngleQuasistatic(SysIdRoutine.Direction.kReverse),Swerve));
+        NamedCommands.registerCommand("Dyanamic_Angle_Forward", new InstantCommand(()-> Swerve.sysIdAngleDynamic(SysIdRoutine.Direction.kForward),Swerve));
+        NamedCommands.registerCommand("Dyanamic_Angle_Backward", new InstantCommand(()-> Swerve.sysIdAngleDynamic(SysIdRoutine.Direction.kReverse),Swerve));
+
         configureDefaultCommands();
         configureButtonBindings();
         

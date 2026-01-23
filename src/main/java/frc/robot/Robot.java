@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.util.Optional;
 
 import com.ctre.phoenix6.swerve.SwerveModule;
+import com.ctre.phoenix6.SignalLogger;
 
 import frc.robot.util.CTREConfigs;
 
@@ -112,6 +113,8 @@ public class Robot extends TimedRobot {
         Shuffleboard.getTab("main").add("Auto Select", AutoModeChooser).withSize(3, 1);
         checkDriverStationUpdate();
         Shuffleboard.getTab("main").addString("alliance", () -> allianceString);
+        
+        SignalLogger.start();
     }
     /**
      * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics

@@ -34,6 +34,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import com.ctre.phoenix6.SignalLogger;
 
 import java.util.Map;
 
@@ -43,9 +44,11 @@ import static frc.robot.Constants.Swerve.*;
 public class SwerveSubsystem extends SubsystemBase {
     public Pigeon2 gyro = new Pigeon2(PIGEON2_ID, "rio");
     public final SwerveModule[] modules;
+      // Array of the 4 swerve modules
     public final SysIdRoutine SysIdDriveRoutine;
     public final SysIdRoutine SysIdAngleRoutine;
-  // Array of the 4 swerve modules
+
+
 //    private final SwerveDrivePoseEstimator TESTPOSER = new SwerveDrivePoseEstimator(
 //            Constants.Swerve.SWERVE_KINEMATICS,
 //            new Rotation2d(),
@@ -222,7 +225,7 @@ public class SwerveSubsystem extends SubsystemBase {
     return SysIdDriveRoutine.quasistatic(direction);
   }
   public Command sysIdAngleDynamic(SysIdRoutine.Direction direction) {
-    return SysIdDriveRoutine.dynamic(direction);
+    return SysIdAngleRoutine.dynamic(direction);
   }
 
 }
