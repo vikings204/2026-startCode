@@ -1,12 +1,17 @@
 package frc.robot.subsystems;
 
+import java.util.HashMap;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 
 public class LEDSubsystem extends SubsystemBase {
     private final Spark blinkin;
@@ -15,9 +20,28 @@ public class LEDSubsystem extends SubsystemBase {
     private final SendableChooser<Boolean> ledChooser = new SendableChooser<>();
     private final PowerDistribution pd;
 
+    private static HashMap<Alliance, BlinkinPattern[]> m_allianceColors = new HashMap<Alliance, BlinkinPattern[]>();
+    private static final BlinkinPattern[] RED_ALLIANCE_PATTERNS = {
+        BlinkinPattern.RED,
+        BlinkinPattern.BREATH_RED,
+        BlinkinPattern.LIGHT_CHASE_RED,
+        BlinkinPattern.SHOT_RED,
+        BlinkinPattern.STROBE_RED
+    };
+    private static final BlinkinPattern[] BLUE_ALLIANCE_PATTERNS = {
+        BlinkinPattern.BLUE,
+        BlinkinPattern.BREATH_BLUE,
+        BlinkinPattern.LIGHT_CHASE_BLUE,
+        BlinkinPattern.SHOT_BLUE,
+        BlinkinPattern.STROBE_BLUE
+    };
+
     public LEDSubsystem() {
         blinkin = new Spark(0);
         pd = new PowerDistribution(1, ModuleType.kRev);
+
+        m_allianceColors.put(Alliance.Red, RED_ALLIANCE_PATTERNS);
+        m_allianceColors.put(Alliance.Blue, BLUE_ALLIANCE_PATTERNS);
 
         Presets = new presetSettings();
         Presets.Default();
@@ -27,6 +51,7 @@ public class LEDSubsystem extends SubsystemBase {
         Shuffleboard.getTab("config").add("LED status", ledChooser).withWidget(BuiltInWidgets.kSplitButtonChooser).withSize(2, 1);
         ledChooser.onChange(pd::setSwitchableChannel);
     }
+    
 
     // https://www.chiefdelphi.com/t/rev-blinkin-example-code/452871/4
     @SuppressWarnings("unused")
@@ -151,7 +176,9 @@ public class LEDSubsystem extends SubsystemBase {
         BlinkinPattern(double value) {
             this.value = value;
         }
-    }
+    };
+    
+
 
     public void setPattern(BlinkinPattern pat) {
         if (currentPattern != pat) {
@@ -159,6 +186,7 @@ public class LEDSubsystem extends SubsystemBase {
             blinkin.set(pat.value);
         }
     }
+    
 
     public class presetSettings {
         public void Default() {
