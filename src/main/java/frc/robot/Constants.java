@@ -176,7 +176,7 @@ public final class Constants {
         public enum Positions {
             INTAKE(-0.946),
             Auto(-3.5),
-            ZERO(-0.25);
+            ZERO(0);
 
             public final double position;
             Positions(double p) {
