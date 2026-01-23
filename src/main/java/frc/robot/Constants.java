@@ -190,7 +190,7 @@ public final class Constants {
         public static final int CURRENT_LIMIT = 40;
         public static final boolean INVERT = false;
         public static final double PID_P = 10.0;
-        public static final int MOTOR_ID = 43;
+        public static final int MOTOR_ID = 143;
 
         /* Neutral Modes */
         public static final IdleMode IDLE_MODE = IdleMode.kBrake;

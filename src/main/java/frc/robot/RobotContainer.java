@@ -157,9 +157,9 @@ public class RobotContainer {
                 .whileTrue(new RunCommand(() -> Elevator.jogNegative(true), Elevator));*/
 
         new JoystickButton(OPERATOR, 3)
-                .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
-        new JoystickButton(OPERATOR, 4)
                 .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.ZERO), Elevator));
+        new JoystickButton(OPERATOR, 4)
+                .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
 
       //  new JoystickButton(DRIVER, 1).
        //         whileTrue(Swerve.driveToPose());

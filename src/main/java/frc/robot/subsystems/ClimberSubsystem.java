@@ -69,7 +69,7 @@ public class ClimberSubsystem extends SubsystemBase {
         motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         //angleMotor.burnFlash();
-        Timer.delay(2);
+        Timer.delay(.5);
         encoder.setPosition(0);
     }
 }
