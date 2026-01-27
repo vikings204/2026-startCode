@@ -45,7 +45,7 @@ public final class Constants {
         public static final double TRACK_WIDTH = inchesToMeters(23); // same as wheelbase because it is a square
         public static final double WHEEL_BASE = inchesToMeters(23);
         public static final double WHEEL_DIAMETER_REAL = inchesToMeters(4);
-        public static final double WHEEL_DIAMETER = inchesToMeters(2.93);
+        public static final double WHEEL_DIAMETER = inchesToMeters(3.43);
         public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
 
         public static final double DRIVE_GEAR_RATIO = 8.14;
@@ -174,13 +174,9 @@ public final class Constants {
         public static final int AUTOMATIC_ZERO_CURRENT = 15;
         
         public enum Positions {
-            L4(-3.88),
-            L3(-2.60),
-            L2(-1.017),
-            L1(-1.017),
             INTAKE(-0.946),
             Auto(-3.5),
-            ZERO(-0.25);
+            ZERO(0);
 
             public final double position;
             Positions(double p) {
@@ -194,7 +190,7 @@ public final class Constants {
         public static final int CURRENT_LIMIT = 40;
         public static final boolean INVERT = false;
         public static final double PID_P = 10.0;
-        public static final int MOTOR_ID = 43;
+        public static final int MOTOR_ID = 143;
 
         /* Neutral Modes */
         public static final IdleMode IDLE_MODE = IdleMode.kBrake;

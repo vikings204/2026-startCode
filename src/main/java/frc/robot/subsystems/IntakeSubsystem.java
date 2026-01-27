@@ -22,7 +22,7 @@ import frc.robot.util.ReduceCANUsage;
 import frc.robot.util.ReduceCANUsage.Spark_Max.Usage;
 
 
-public class ElevatorSubsystem extends SubsystemBase {
+public class IntakeSubsystem extends SubsystemBase {
     private final SparkMax leftMotor;
     private final SparkMaxConfig leftMotorConfig;
     private final RelativeEncoder leftEncoder;
@@ -34,7 +34,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final SparkClosedLoopController rightController;
     private final TongueSubsystem Tongue;
 
-    public ElevatorSubsystem(TongueSubsystem tongue) {
+    public IntakeSubsystem(TongueSubsystem tongue) {
         leftMotor = new SparkMax(LEFT_MOTOR_ID, MotorType.kBrushless);
         leftMotorConfig = new SparkMaxConfig();
         leftEncoder = leftMotor.getEncoder();
@@ -69,14 +69,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void setPosition(Positions targetposition) {
         leftController.setReference(targetposition.position, ControlType.kPosition);
         rightController.setReference(targetposition.position, ControlType.kPosition);
-
-        if (targetposition == Positions.L2 || targetposition == Positions.L3) {
-            Tongue.retract();
-        } else if (targetposition == Positions.L1 || targetposition == Positions.L4 || targetposition==Positions.Auto) {
-            Tongue.extend();
-        } else {
-            Tongue.retract();
-        }
     }
 
     public void jogPositive(boolean b) {

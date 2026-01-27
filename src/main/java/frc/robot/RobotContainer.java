@@ -44,7 +44,7 @@ public class RobotContainer {
     public final SwerveSubsystem Swerve = new SwerveSubsystem();
     public final LEDSubsystem LED = new LEDSubsystem();
     public final TongueSubsystem Tongue = new TongueSubsystem();
-    public final ElevatorSubsystem Elevator = new ElevatorSubsystem(Tongue);
+    public final IntakeSubsystem Elevator = new IntakeSubsystem(Tongue);
     public final ClimberSubsystem Climber = new ClimberSubsystem();
     public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions);
 
@@ -106,16 +106,15 @@ public class RobotContainer {
 
 
         PathfindingCommand.warmupCommand().schedule();
-        
-        NamedCommands.registerCommand("L4_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.L4), Elevator));
-        NamedCommands.registerCommand("Auto_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.Auto), Elevator));
-        NamedCommands.registerCommand("L1_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.L1), Elevator));
-        NamedCommands.registerCommand("L2_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.L2), Elevator));
-        NamedCommands.registerCommand("L3_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.L3), Elevator));
-        NamedCommands.registerCommand("Tongue_Extend", new InstantCommand(Tongue::extend, Tongue));
-        NamedCommands.registerCommand("Tongue_Score", new InstantCommand(Tongue::setPosScore, Tongue));
-        NamedCommands.registerCommand("Tongue_Carry", new InstantCommand(Tongue::setPosCarrying, Tongue));
-        NamedCommands.registerCommand("Tongue_Receive", new InstantCommand(Tongue::setPosReceive, Tongue));
+
+
+        NamedCommands.registerCommand("ZERO", new InstantCommand(() -> Elevator.setPosition(Positions.ZERO), Elevator));
+        NamedCommands.registerCommand("INTAKE", new InstantCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
+
+       // NamedCommands.registerCommand("Tongue_Extend", new InstantCommand(Tongue::extend, Tongue));
+       // NamedCommands.registerCommand("Tongue_Score", new InstantCommand(Tongue::setPosScore, Tongue));
+       // NamedCommands.registerCommand("Tongue_Carry", new InstantCommand(Tongue::setPosCarrying, Tongue));
+      //  NamedCommands.registerCommand("Tongue_Receive", new InstantCommand(Tongue::setPosReceive, Tongue));
         NamedCommands.registerCommand("Intake_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
         NamedCommands.registerCommand("zeroGyro", new InstantCommand(Swerve::zeroGyro, Swerve));
         NamedCommands.registerCommand("Tongue_Auto", new InstantCommand(Tongue::setPosAuto, Tongue));
@@ -177,17 +176,9 @@ public class RobotContainer {
                 .whileTrue(new RunCommand(() -> Elevator.jogNegative(true), Elevator));*/
 
         new JoystickButton(OPERATOR, 3)
-                .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.L1), Elevator));
+                .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.ZERO), Elevator));
         new JoystickButton(OPERATOR, 4)
-                .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.L2), Elevator));
-        new JoystickButton(OPERATOR, 6)
-                .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.L3), Elevator));
-        new JoystickButton(OPERATOR, 5)
-                .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.L4), Elevator));
-        new JoystickButton(OPERATOR, 1)
-                .whileTrue(new RunCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
-        new JoystickButton(OPERATOR, 2)
-                .whileTrue(new RunCommand(Tongue::setPosScore, Tongue));
+                .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
 
       //  new JoystickButton(DRIVER, 1).
        //         whileTrue(Swerve.driveToPose());
