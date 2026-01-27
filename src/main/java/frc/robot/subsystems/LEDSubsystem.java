@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
+
+
 public class LEDSubsystem extends SubsystemBase {
     private final Spark blinkin;
     private BlinkinPattern currentPattern;
@@ -178,16 +180,58 @@ public class LEDSubsystem extends SubsystemBase {
         }
     };
     
-
-
     public void setPattern(BlinkinPattern pat) {
         if (currentPattern != pat) {
             currentPattern = pat;
             blinkin.set(pat.value);
         }
     }
+
+    //set alliance LED color solid pattern
+    @SuppressWarnings("unlikely-arg-type")
+    public void setAllianceColorSolid(){
+        setPattern(m_allianceColors.get(DriverStation.getAlliance())[0]);
+    }
+
+    //set alliance LED color breath pattern
+    @SuppressWarnings("unlikely-arg-type")
+    public void setAllianceColorBreath(){
+        setPattern(m_allianceColors.get(DriverStation.getAlliance())[1]);
+    }
+
+    //color chase pattern
+    @SuppressWarnings("unlikely-arg-type")
+    public void setAllianceColorChase(){
+        setPattern(m_allianceColors.get(DriverStation.getAlliance())[2]);
+    }
+
+//shot
+    @SuppressWarnings("unlikely-arg-type")
+    public void setAllianceColorShot() {
+        setPattern(m_allianceColors.get(DriverStation.getAlliance())[3]);
+    }
+
+    //strobe
+    @SuppressWarnings("unlikely-arg-type")
+    public void setAllianceColorStrobe() {
+        setPattern(m_allianceColors.get(DriverStation.getAlliance())[4]);
+    }
+
+    public void setTeamColor(){
+        setPattern(BlinkinPattern.DARK_BLUE);
+    }
     
 
+    
+    /*public static LEDSubsystem getInstance(){
+        if (m)
+    }*/
+
+    public BlinkinPattern getCurrentPattern(){
+        return currentPattern;
+    }
+
+//sets the LED Pattern
     public class presetSettings {
         public void Default() {
             //setPattern(BlinkinPattern.DARK_RED);
@@ -199,5 +243,10 @@ public class LEDSubsystem extends SubsystemBase {
         public void Shooting() {
             setPattern(BlinkinPattern.SHOT_RED);
         }
+    }
+
+    //turns off the LEDs
+    public void off(){
+        setPattern(BlinkinPattern.BLACK);
     }
 }
