@@ -70,6 +70,7 @@ public class RobotContainer {
         Shuffleboard.getTab("main").add("zero swerve", new RunCommand(Swerve::zeroGyro)).withWidget(BuiltInWidgets.kCommand);
         Shuffleboard.getTab("main").add("zero elevator", new RunCommand(Elevator::zeroEncoders, Elevator)).withWidget(BuiltInWidgets.kCommand);
 
+ //TURNING OFF THE AUTOBUILDER FOR NOW
         AutoBuilder.configure(
                 PoseEstimation::getCurrentPose, // Robot pose supplier
                 PoseEstimation::setCurrentPose,
@@ -102,8 +103,6 @@ public class RobotContainer {
         NamedCommands.registerCommand("Intake_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
         NamedCommands.registerCommand("zeroGyro", new InstantCommand(Swerve::zeroGyro, Swerve));
         NamedCommands.registerCommand("Tongue_Auto", new InstantCommand(Tongue::setPosAuto, Tongue));
-        NamedCommands.registerCommand("Motor on", new InstantCommand(() -> Shooter.flywheelSpeaker(true), Shooter));
-
         configureDefaultCommands();
         configureButtonBindings();
     }

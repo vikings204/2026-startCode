@@ -45,7 +45,7 @@ public final class Constants {
         public static final double TRACK_WIDTH = inchesToMeters(23); // same as wheelbase because it is a square
         public static final double WHEEL_BASE = inchesToMeters(23);
         public static final double WHEEL_DIAMETER_REAL = inchesToMeters(4);
-        public static final double WHEEL_DIAMETER = inchesToMeters(2.8);
+        public static final double WHEEL_DIAMETER = inchesToMeters(2.93);
         public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
 
         public static final double DRIVE_GEAR_RATIO = 8.14;
@@ -92,7 +92,7 @@ public final class Constants {
             public static final int DRIVE_MOTOR_ID = 11;
             public static final int ANGLE_MOTOR_ID = 21;
             public static final int CAN_CODER_ID = 31;
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.75);
+            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.660);
         }
 
         /* Front Right Module - Module 1 */
@@ -101,7 +101,7 @@ public final class Constants {
             public static final int ANGLE_MOTOR_ID = 22;
             public static final int CAN_CODER_ID = 32;
 
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.888);
+            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.876);
         }
 
         /* Back Left Module - Module 2 */
@@ -110,7 +110,7 @@ public final class Constants {
             public static final int ANGLE_MOTOR_ID = 20;
             public static final int CAN_CODER_ID = 30;
 
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.887);
+            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.853);
         }
 
         /* Back Right Module - Module 3 */
