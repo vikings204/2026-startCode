@@ -6,16 +6,23 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.events.OneShotTriggerEvent;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.DriveFeedforwards;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Controller;
 import frc.robot.Constants.Elevator.Positions;
 import frc.robot.Robot.ControlMode;
@@ -40,7 +47,6 @@ public class RobotContainer {
     public final ElevatorSubsystem Elevator = new ElevatorSubsystem(Tongue);
     public final ClimberSubsystem Climber = new ClimberSubsystem();
     public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions);
-    public final ShooterSubsystem Shooter = new ShooterSubsystem();
 
     private final GenericEntry finalSpeedModifierEntry = Shuffleboard.getTab("config").add("final speed modifier", 1.0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0, "max", 1)).getEntry();
 
@@ -54,6 +60,7 @@ public class RobotContainer {
     private final ColorAlignCommand ColorAlignRight = new ColorAlignCommand(false, Swerve, Tongue, LED);
     private final ColorAlignCommand ColorAlignLeft = new ColorAlignCommand(true, Swerve, Tongue, LED);
 
+    private final SendableChooser<Command> autoModeChooser;
     public RobotContainer() {
         ControlModeChooser.onChange((ControlMode mode) -> {
             if (mode == ControlMode.SINGLE) {
@@ -70,13 +77,12 @@ public class RobotContainer {
         Shuffleboard.getTab("main").add("zero swerve", new RunCommand(Swerve::zeroGyro)).withWidget(BuiltInWidgets.kCommand);
         Shuffleboard.getTab("main").add("zero elevator", new RunCommand(Elevator::zeroEncoders, Elevator)).withWidget(BuiltInWidgets.kCommand);
 
- //TURNING OFF THE AUTOBUILDER FOR NOW
         AutoBuilder.configure(
                 PoseEstimation::getCurrentPose, // Robot pose supplier
                 PoseEstimation::setCurrentPose,
                 Swerve::getSpeeds,
-                Swerve::driveRobotRelative,// Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-                Constants.Auto.PATH_FOLLOWER_CONFIG, // The path follower configuration
+                (speeds,feedforwards) -> Swerve.driveRobotRelative(speeds),//byass need for PathFeedfowards with lamda, hacky solution idk if its good// Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+                Constants.Auto.PATH_FOLLOWER_CONFIG, // The path follower configuration 
                 Constants.Auto.config, // The robot configuration
                 //() -> Robot.alliance == DriverStation.Alliance.Red,
                 () -> {
@@ -88,9 +94,19 @@ public class RobotContainer {
                 },
                 Swerve // Reference to this subsystem to set requirements
         );
+        
+        boolean isCompetition = false;
+
+        autoModeChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
+            (stream) -> isCompetition
+            ? stream.filter(auto -> auto.getName().startsWith("comp"))
+            : stream
+        );
+        SmartDashboard.putData("Auto Chooser", autoModeChooser);        
+
+
         PathfindingCommand.warmupCommand().schedule();
-
-
+        
         NamedCommands.registerCommand("L4_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.L4), Elevator));
         NamedCommands.registerCommand("Auto_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.Auto), Elevator));
         NamedCommands.registerCommand("L1_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.L1), Elevator));
@@ -103,8 +119,14 @@ public class RobotContainer {
         NamedCommands.registerCommand("Intake_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
         NamedCommands.registerCommand("zeroGyro", new InstantCommand(Swerve::zeroGyro, Swerve));
         NamedCommands.registerCommand("Tongue_Auto", new InstantCommand(Tongue::setPosAuto, Tongue));
+        
+       
         configureDefaultCommands();
         configureButtonBindings();
+        
+    }
+    public Command getAutonomousCommand() {
+         return new PathPlannerAuto(AutoModeChooser.getSelected().pathplannerName);
     }
 
     private void configureDefaultCommands() {
@@ -136,10 +158,6 @@ public class RobotContainer {
                 .onTrue(new RunCommand(Tongue::setPosL4, Tongue));
         new JoystickButton(DRIVER, 6)
                 .onTrue(new RunCommand(Tongue::setPosL4, Tongue));
-        new JoystickButton(DRIVER, 7)
-                .whileTrue(new InstantCommand(() -> Shooter.flywheelAmp(true), Shooter));
-                //.onFalse(new InstantCommand(() -> Shooter.flywheelAmp(false), Shooter));
-
         new JoystickButton(DRIVER, 8).onTrue(new InstantCommand(Swerve::setSpeed));
 
 
@@ -180,9 +198,8 @@ public class RobotContainer {
         new JoystickButton(DRIVER, 4).whileTrue(ColorAlignRight);
     }
 
-    public Command getAutonomousCommand() {
-        return new PathPlannerAuto(AutoModeChooser.getSelected().pathplannerName);
-    }
+    
+    
 
     public void checkAnalogs() {
         if (OPERATOR.getRightTriggerAxis() > .5) {
@@ -203,6 +220,7 @@ public class RobotContainer {
 
         if (OPERATOR.getRightY() > .5) {
             CommandScheduler.getInstance().schedule(new RunCommand(() -> Climber.NegativeShootArm(true), Climber));
+            }
         }
     }
-}
+
