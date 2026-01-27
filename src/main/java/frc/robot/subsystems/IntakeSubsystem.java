@@ -67,9 +67,10 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void setPosition(Positions targetposition) {
-        //leftController.setSetpoint(targetposition.position, ControlType.kPosition);
-        //rightController.setSetpoint(targetposition.position, ControlType.kPosition);
+        leftController.setReference(targetposition.position, ControlType.kPosition);
+        rightController.setReference(targetposition.position, ControlType.kPosition);
         System.out.println(leftController.getMAXMotionSetpointPosition());
+        System.out.println(rightController.getMAXMotionSetpointPosition());
     }
 
     public void jogPositive(boolean b) {
