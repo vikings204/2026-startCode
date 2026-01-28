@@ -71,7 +71,11 @@ public class RobotContainer {
         // Shuffleboard.getTab("main").add("shooter", Shooter);
         Shuffleboard.getTab("main").add("zero swerve", new RunCommand(Swerve::zeroGyro)).withWidget(BuiltInWidgets.kCommand);
         Shuffleboard.getTab("main").add("zero elevator", new RunCommand(Elevator::zeroEncoders, Elevator)).withWidget(BuiltInWidgets.kCommand);
+<<<<<<< HEAD
  //TURNING OFF THE AUTOBUILDER FOR NOW
+=======
+
+>>>>>>> origin/main
         AutoBuilder.configure(
                 PoseEstimation::getCurrentPose, // Robot pose supplier
                 PoseEstimation::setCurrentPose,
@@ -90,6 +94,10 @@ public class RobotContainer {
                 Swerve // Reference to this subsystem to set requirements
         );
         PathfindingCommand.warmupCommand().schedule();
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
 
 
         NamedCommands.registerCommand("Auto_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.Auto), Elevator));

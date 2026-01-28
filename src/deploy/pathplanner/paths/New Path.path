@@ -16,38 +16,6 @@
     },
     {
       "anchor": {
-        "x": 0.0,
-        "y": 3.0
-      },
-      "prevControl": {
-        "x": 1.5308084989341915e-17,
-        "y": 2.75
-      },
-      "nextControl": {
-        "x": 1.5308084989341915e-17,
-        "y": 3.25
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 2.0,
-        "y": 3.0
-      },
-      "prevControl": {
-        "x": 1.9752012854225822,
-        "y": 2.7512329930330233
-      },
-      "nextControl": {
-        "x": 2.0247987145774182,
-        "y": 3.2487670069669763
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
         "x": 2.0,
         "y": 0.0
       },
@@ -64,12 +32,44 @@
     },
     {
       "anchor": {
+        "x": 2.0,
+        "y": 2.0
+      },
+      "prevControl": {
+        "x": 2.25,
+        "y": 2.0
+      },
+      "nextControl": {
+        "x": 1.7500000000000002,
+        "y": 2.0
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.0,
+        "y": 2.0
+      },
+      "prevControl": {
+        "x": 4.592425496802573e-17,
+        "y": 2.25
+      },
+      "nextControl": {
+        "x": -4.592425496802568e-17,
+        "y": 1.7500000000000004
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
         "x": 0.0,
         "y": 0.0
       },
       "prevControl": {
         "x": -0.25,
-        "y": 3.061616997868383e-17
+        "y": 0.0
       },
       "nextControl": null,
       "isLocked": false,
@@ -78,15 +78,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1,
-      "rotationDegrees": 90.11
-    },
-    {
-      "waypointRelativePos": 2,
-      "rotationDegrees": 90.0
-    },
-    {
-      "waypointRelativePos": 4,
+      "waypointRelativePos": 0.5,
       "rotationDegrees": 0.0
     }
   ],
@@ -94,10 +86,10 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.0,
+    "maxVelocity": 1.0,
     "maxAcceleration": 1.0,
-    "maxAngularVelocity": 180.0,
-    "maxAngularAcceleration": 360.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 540.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
@@ -106,7 +98,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "testing",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
