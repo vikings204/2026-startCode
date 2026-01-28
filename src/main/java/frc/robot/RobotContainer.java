@@ -5,6 +5,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.events.OneShotTriggerEvent;
 import com.pathplanner.lib.path.PathPlannerPath;
 
@@ -102,6 +103,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("Intake_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
         NamedCommands.registerCommand("zeroGyro", new InstantCommand(Swerve::zeroGyro, Swerve));
         NamedCommands.registerCommand("Tongue_Auto", new InstantCommand(Tongue::setPosAuto, Tongue));
+
+        new EventTrigger("shooting").whileTrue(Commands.print("shooting ball"));
+        new EventTrigger("not shooting").whileTrue(Commands.print("not shooting ball"));
 
 
         configureDefaultCommands();

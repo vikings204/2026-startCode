@@ -222,11 +222,6 @@ public class LEDSubsystem extends SubsystemBase {
     }
     
 
-    
-    /*public static LEDSubsystem getInstance(){
-        if (m)
-    }*/
-
     public BlinkinPattern getCurrentPattern(){
         return currentPattern;
     }
