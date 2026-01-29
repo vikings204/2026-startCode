@@ -20,8 +20,6 @@ public class ShooterSubsystem extends SubsystemBase {
     private final SparkMaxConfig shooterMotor_1_Config;
     private boolean flywheelState = false;
     private boolean ignoreSensor = false;
-    private double shooterSpeed1 = 0.5;
-    private double shooterSpeed2 = 0.25;
     private final SendableChooser<Boolean> ignoreSensorChooser = new SendableChooser<>();
    // private final LEDSubsystem led;
     private boolean noteDetected;
@@ -65,10 +63,12 @@ public class ShooterSubsystem extends SubsystemBase {
         
     }
 
-    public void flywheelSpeaker(boolean shoot) {
+    public void flywheelSpeaker(boolean shoot, double speed) {
+        
         flywheelState = shoot;
+
         if (shoot) {
-            shooterMotor_1.set(1);
+            shooterMotor_1.set(speed);
 
         } else {
             shooterMotor_1.set(0);
