@@ -1,6 +1,7 @@
 package frc.robot;
 
 
+import com.fasterxml.jackson.databind.util.Named;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -42,6 +43,7 @@ public class RobotContainer {
     public final TongueSubsystem Tongue = new TongueSubsystem();
     public final ElevatorSubsystem Elevator = new ElevatorSubsystem(Tongue);
     public final ClimberSubsystem Climber = new ClimberSubsystem();
+    public final ShooterSubsystem Shooter = new ShooterSubsystem();
     public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions);
 
     private final GenericEntry finalSpeedModifierEntry = Shuffleboard.getTab("config").add("final speed modifier", 1.0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0, "max", 1)).getEntry();
@@ -71,11 +73,7 @@ public class RobotContainer {
         // Shuffleboard.getTab("main").add("shooter", Shooter);
         Shuffleboard.getTab("main").add("zero swerve", new RunCommand(Swerve::zeroGyro)).withWidget(BuiltInWidgets.kCommand);
         Shuffleboard.getTab("main").add("zero elevator", new RunCommand(Elevator::zeroEncoders, Elevator)).withWidget(BuiltInWidgets.kCommand);
-<<<<<<< HEAD
  //TURNING OFF THE AUTOBUILDER FOR NOW
-=======
-
->>>>>>> origin/main
         AutoBuilder.configure(
                 PoseEstimation::getCurrentPose, // Robot pose supplier
                 PoseEstimation::setCurrentPose,
@@ -94,10 +92,6 @@ public class RobotContainer {
                 Swerve // Reference to this subsystem to set requirements
         );
         PathfindingCommand.warmupCommand().schedule();
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/main
 
 
         NamedCommands.registerCommand("Auto_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.Auto), Elevator));
@@ -111,9 +105,15 @@ public class RobotContainer {
         NamedCommands.registerCommand("Intake_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
         NamedCommands.registerCommand("zeroGyro", new InstantCommand(Swerve::zeroGyro, Swerve));
         NamedCommands.registerCommand("Tongue_Auto", new InstantCommand(Tongue::setPosAuto, Tongue));
+        NamedCommands.registerCommand("Shooter_Speaker", new InstantCommand(() -> Shooter.flywheelSpeaker(true, 1.0), Shooter));
+        NamedCommands.registerCommand("Shooter_Off", new InstantCommand(() -> Shooter.flywheelSpeaker(false, 0.0), Shooter));
+
 
         new EventTrigger("shooting").whileTrue(Commands.print("shooting ball"));
         new EventTrigger("not shooting").whileTrue(Commands.print("not shooting ball"));
+
+        new EventTrigger("climberReady").whileTrue(Commands.print("climber ready"));
+        new EventTrigger("climberNotReady").whileTrue(Commands.print("climber not ready"));
 
 
         configureDefaultCommands();
@@ -193,7 +193,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        try{
+        /*try{
         // Load the path you want to follow using its name in the GUI
             PathPlannerPath path = PathPlannerPath.fromPathFile("TJAuto15");
 
@@ -202,7 +202,11 @@ public class RobotContainer {
         } catch (Exception e) {
             DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
             return Commands.none();
-        } 
+        } */
+       // This method loads the auto when it is called, however, it is recommended
+        // to first load your paths/autos when code starts, then return the
+        // pre-loaded auto/path
+        return new PathPlannerAuto("SQUARE");
     }
 
     public void checkAnalogs() {
@@ -219,6 +223,7 @@ public class RobotContainer {
         if (OPERATOR.getRightY() < -.5) {
             CommandScheduler.getInstance().schedule(new RunCommand(() -> Climber.ShootArm(true), Climber));
         } else {
+
             CommandScheduler.getInstance().schedule(new RunCommand(() -> Climber.ShootArm(false), Climber));
         }
 
