@@ -162,6 +162,10 @@ public class RobotContainer {
         new JoystickButton(OPERATOR, 8)
                 .whileTrue(new InstantCommand(() -> Elevator.jogNegative(true), Elevator))
                 .onFalse(new InstantCommand(() -> Elevator.jogNegative(false), Elevator));
+        
+        new JoystickButton(OPERATOR, 3)
+        .whileTrue(new InstantCommand(() -> Shooter.flywheelAmp(true), Shooter));
+
 
 
    /*      new JoystickButton(OPERATOR, 7)
@@ -170,24 +174,33 @@ public class RobotContainer {
         new JoystickButton(OPERATOR, 8)
                 .whileTrue(new RunCommand(() -> Elevator.jogNegative(true), Elevator));*/
 
+                
+
         new JoystickButton(OPERATOR, 3)
-                .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.L1), Elevator));
+                .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.ZERO), Elevator));
         new JoystickButton(OPERATOR, 4)
-                .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.L2), Elevator));
-        new JoystickButton(OPERATOR, 6)
+                .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
+        /*new JoystickButton(OPERATOR, 6)
                 .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.L3), Elevator));
         new JoystickButton(OPERATOR, 5)
                 .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.L4), Elevator));
         new JoystickButton(OPERATOR, 1)
                 .whileTrue(new RunCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
         new JoystickButton(OPERATOR, 2)
-                .whileTrue(new RunCommand(Tongue::setPosScore, Tongue));
+                .whileTrue(new RunCommand(Tongue::setPosScore, Tongue));*/
 
+
+        new JoystickButton(DRIVER, 1) // A left
+            .whileTrue(new InstantCommand(() -> Shooter.flywheelAmp(true), Shooter))
+            .onFalse(new InstantCommand(() -> Shooter.flywheelAmp(false), Shooter));
+        new JoystickButton(DRIVER, 2) // B right
+            .whileTrue(new InstantCommand(() -> Shooter.receive(true), Shooter))
+            .onFalse(new InstantCommand(() -> Shooter.receive(false), Shooter));
       //  new JoystickButton(DRIVER, 1).
        //         whileTrue(Swerve.driveToPose());
 //        new JoystickButton(DRIVER, 1).whileTrue(new AlignCommand(false, Swerve));
-        new JoystickButton(DRIVER, 1).whileTrue(StupidAlignLeft); // A is left
-        new JoystickButton(DRIVER, 2).whileTrue(StupidAlignRight); // B is right
+        //new JoystickButton(DRIVER, 1).whileTrue(StupidAlignLeft); // A is left
+        //new JoystickButton(DRIVER, 2).whileTrue(StupidAlignRight); // B is right
         new JoystickButton(DRIVER, 3).whileTrue(ColorAlignLeft);
         new JoystickButton(DRIVER, 4).whileTrue(ColorAlignRight);
     }
