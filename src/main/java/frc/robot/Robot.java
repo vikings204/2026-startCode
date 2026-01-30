@@ -43,6 +43,12 @@ public class Robot extends TimedRobot {
         //Mid_Auto("Mid_Auto"),
         Tanisha("TANISHA"),
         TwoSides("2sided"),
+        Oto1("0to1"),
+        Oto2("0to2"),
+        Oto3("0to3"),
+        up0to1("up0to1"),
+        up0to2("up0to2"),
+        up0to3("up0to3"),
         TestStuff("TestStuff"),
         TestStuff2("TestStuff2"),
         Mid_Ram("Mid_Ram");
