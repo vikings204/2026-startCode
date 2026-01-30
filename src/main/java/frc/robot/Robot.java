@@ -31,6 +31,9 @@ public class Robot extends TimedRobot {
     private RobotContainer robotContainer;
 
 
+    public Robot(){
+        CameraServer.startAutomaticCapture();
+    }
 
     public enum ControlMode {
         SINGLE, COMPETITION

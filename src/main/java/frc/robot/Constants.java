@@ -11,6 +11,8 @@ import frc.robot.Robot.ControlMode;
 
 import static edu.wpi.first.math.util.Units.inchesToMeters;
 
+import org.photonvision.PhotonPoseEstimator;
+
 @SuppressWarnings("unused")
 public final class Constants {
     public static final class Controller {
@@ -145,7 +147,7 @@ public final class Constants {
         public static final boolean VISION_ENABLED = false;
         public static final String CAMERA_NAME = "webcam";
 
-        //public static final PhotonPoseEstimator.PoseStrategy POSE_STRATEGY = PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
+        public static final PhotonPoseEstimator.PoseStrategy POSE_STRATEGY = PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
         public static final double APRILTAG_AMBIGUITY_THRESHOLD = 0.2;
         public static final Transform3d CAMERA_TO_ROBOT = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0));
         public static final double FIELD_LENGTH_METERS_X = 16.54175;
