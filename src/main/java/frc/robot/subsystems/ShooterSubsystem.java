@@ -86,12 +86,14 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void receive(boolean shoot) {
-        if (shoot && !noteDetected) {
-            shooterMotor_1.set(-.5);
+        if (shoot) {
+            shooterMotor_1.set(-1);
         } else {
             shooterMotor_1.set(0);
         }
     }
+
+
 
     public void intake(boolean shoot, boolean reverse) {
         if (ignoreSensor) {

@@ -45,6 +45,7 @@ public class RobotContainer {
     public final LEDSubsystem LED = new LEDSubsystem();
     public final TongueSubsystem Tongue = new TongueSubsystem();
     public final IntakeSubsystem Elevator = new IntakeSubsystem(Tongue);
+    public final ShooterSubsystem Shooter = new ShooterSubsystem();
     public final ClimberSubsystem Climber = new ClimberSubsystem();
     public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions);
 
@@ -183,8 +184,15 @@ public class RobotContainer {
       //  new JoystickButton(DRIVER, 1).
        //         whileTrue(Swerve.driveToPose());
 //        new JoystickButton(DRIVER, 1).whileTrue(new AlignCommand(false, Swerve));
-        new JoystickButton(DRIVER, 1).whileTrue(StupidAlignLeft); // A is left
-        new JoystickButton(DRIVER, 2).whileTrue(StupidAlignRight); // B is right
+
+        new JoystickButton(DRIVER, 1) // A is left
+         .whileTrue(new InstantCommand(() -> Shooter.flywheelAmp(true), Shooter))
+        .onFalse(new InstantCommand(() -> Shooter.flywheelAmp(false), Shooter));
+
+        new JoystickButton(DRIVER, 2) // B is right
+            .whileTrue(new InstantCommand(() -> Shooter.receive(true), Shooter))
+            .onFalse(new InstantCommand(() -> Shooter.receive(false), Shooter));
+
         new JoystickButton(DRIVER, 3).whileTrue(ColorAlignLeft);
         new JoystickButton(DRIVER, 4).whileTrue(ColorAlignRight);
     }
