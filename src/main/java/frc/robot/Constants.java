@@ -174,8 +174,8 @@ public final class Constants {
         public static final int AUTOMATIC_ZERO_CURRENT = 15;
         
         public enum Positions {
-            INTAKE(-0.946),
-            Auto(-3.5),
+            INTAKE(0.96),
+            Auto(0.96),
             ZERO(0);
 
             public final double position;
