@@ -5,10 +5,10 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.ColorSensorV3;
+//import com.revrobotics.ColorSensorV3;
 
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.I2C;
+//import edu.wpi.first.networktables.GenericEntry;
+//import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;

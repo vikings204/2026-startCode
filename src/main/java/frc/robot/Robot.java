@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 import java.util.Optional;
 
-import com.ctre.phoenix6.swerve.SwerveModule;
+//import com.ctre.phoenix6.swerve.SwerveModule;
 
 import frc.robot.util.CTREConfigs;
 
@@ -62,7 +62,7 @@ public class Robot extends TimedRobot {
             this.pathplannerName = str;
         }
 
-        private String decode(char[] chars) {
+        /*private String decode(char[] chars) {
 //            double x = observations;
             String str = "" + chars[0] + chars[1] + chars[2];
             if (str.equals("Mid")) {
@@ -74,7 +74,7 @@ public class Robot extends TimedRobot {
             } else {
                 return str;
             }
-        }
+        }*/
         public String optionName() {
             return this.toString();
             //char[] chars = this.toString().toCharArray();

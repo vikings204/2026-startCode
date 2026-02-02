@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 
-import static frc.robot.Constants.Elevator.*;
+import static frc.robot.Constants.Intake.*;
 
 
 import com.revrobotics.RelativeEncoder;
@@ -16,13 +16,13 @@ import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.Elevator.Positions;
+import frc.robot.Constants.Intake.Positions;
 import frc.robot.Constants;
 import frc.robot.util.ReduceCANUsage;
 import frc.robot.util.ReduceCANUsage.Spark_Max.Usage;
 
 
-public class ElevatorSubsystem extends SubsystemBase {
+public class IntakeSubsystem extends SubsystemBase {
     private final SparkMax leftMotor;
     private final SparkMaxConfig leftMotorConfig;
     private final RelativeEncoder leftEncoder;
@@ -32,9 +32,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final SparkMaxConfig rightMotorConfig;
     private final RelativeEncoder rightEncoder;
     private final SparkClosedLoopController rightController;
-    private final TongueSubsystem Tongue;
 
-    public ElevatorSubsystem(TongueSubsystem tongue) {
+    public IntakeSubsystem() {
         leftMotor = new SparkMax(LEFT_MOTOR_ID, MotorType.kBrushless);
         leftMotorConfig = new SparkMaxConfig();
         leftEncoder = leftMotor.getEncoder();
@@ -48,7 +47,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         configRightMotor();
 
         zeroEncoders();
-        this.Tongue = tongue;
     }
 
     @Override
@@ -67,16 +65,16 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void setPosition(Positions targetposition) {
-        leftController.setReference(targetposition.position, ControlType.kPosition);
-        rightController.setReference(targetposition.position, ControlType.kPosition);
+        leftController.setSetpoint(targetposition.position, ControlType.kPosition);
+        rightController.setSetpoint(targetposition.position, ControlType.kPosition);
 
-        if (targetposition == Positions.L2 || targetposition == Positions.L3) {
+        /*if (targetposition == Positions.L2 || targetposition == Positions.L3) {
             Tongue.retract();
         } else if (targetposition == Positions.L1 || targetposition == Positions.L4 || targetposition==Positions.Auto) {
             Tongue.extend();
         } else {
             Tongue.retract();
-        }
+        } commented and not deleted this cuz idk if we need this without the tongue */
     }
 
     public void jogPositive(boolean b) {
@@ -107,10 +105,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         leftMotorConfig.inverted(LEFT_INVERT);
         leftMotorConfig.idleMode(IDLE_MODE);
         //angleConfig.encoder.positionConversionFactor(1/ANGLE_POSITION_CONVERSION_FACTOR);
-        leftMotorConfig.encoder.positionConversionFactor(1.0 / Constants.Elevator.POSITION_CONVERSION_FACTOR);
+        leftMotorConfig.encoder.positionConversionFactor(1.0 / Constants.Intake.POSITION_CONVERSION_FACTOR);
         leftMotorConfig.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                .pid(Constants.Elevator.PID_P, 0, 0)
+                .pid(Constants.Intake.PID_P, 0, 0)
                 .outputRange(-1, 1)
                 .positionWrappingEnabled(false)
                 .positionWrappingInputRange(0, 1)
@@ -119,7 +117,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         leftMotorConfig.closedLoop.apply(leftMotorConfig.closedLoop);
         leftMotorConfig.apply(leftMotorConfig);
         leftMotorConfig.voltageCompensation(VOLTAGE_COMPENSATION);
-        leftMotor.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        //leftMotor.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     private void configRightMotor() {
@@ -135,7 +133,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         rightMotorConfig.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                .pid(Constants.Elevator.PID_P, 0, 0)
+                .pid(Constants.Intake.PID_P, 0, 0)
                 .outputRange(-1, 1)
                 .positionWrappingEnabled(false)
                 .positionWrappingInputRange(0, 1)
@@ -148,7 +146,3 @@ public class ElevatorSubsystem extends SubsystemBase {
         rightMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 }
-
-
-
-

@@ -163,7 +163,7 @@ public final class Constants {
         public static final Translation2d SPEAKER_BLUE = new Translation2d(2, 4.6);
     }
 
-    public static final class Elevator {
+    public static final class Intake {
         public static final double PID_P = .25;
         public static final int LEFT_MOTOR_ID = 7;
         public static final int RIGHT_MOTOR_ID = 8;
@@ -204,5 +204,3 @@ public final class Constants {
     
 }
   
-
-
