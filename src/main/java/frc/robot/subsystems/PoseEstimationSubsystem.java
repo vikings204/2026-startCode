@@ -51,7 +51,7 @@ public class PoseEstimationSubsystem extends SubsystemBase {
         var ntTable = ntInstance.getTable("datatable");
         pxSub = ntTable.getDoubleTopic("px").subscribe(0.0);
         pySub = ntTable.getDoubleTopic("py").subscribe(0.0);
-        tsSub = ntTable.getDoubleTopic("ts").subscribe(0.0);
+        tsSub = ntTable.getDoubleTopic("timestamp").subscribe(0.0);
         delaySub = ntTable.getDoubleTopic("delay").subscribe(0.0);
         tagsSub = ntTable.getDoubleTopic("tags").subscribe(0.0);
 
