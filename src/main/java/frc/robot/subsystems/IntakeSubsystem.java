@@ -53,7 +53,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-//        System.out.println("left: " + leftMotor.getOutputCurrent() + " right: " + rightMotor.getOutputCurrent());
+        System.out.println("left: " + leftEncoder.getPosition() + " right: " + rightEncoder.getPosition());
+        
 
         if (DriverStation.isTeleopEnabled() && (rightMotor.getOutputCurrent() > AUTOMATIC_ZERO_CURRENT || leftMotor.getOutputCurrent() > AUTOMATIC_ZERO_CURRENT)) {
             rightMotor.stopMotor();
@@ -69,6 +70,8 @@ public class IntakeSubsystem extends SubsystemBase {
     public void setPosition(Positions targetposition) {
         leftController.setReference(targetposition.position, ControlType.kPosition);
         rightController.setReference(targetposition.position, ControlType.kPosition);
+        System.out.println(leftController.getMAXMotionSetpointPosition());
+        System.out.println(rightController.getMAXMotionSetpointPosition());
     }
 
     public void jogPositive(boolean b) {

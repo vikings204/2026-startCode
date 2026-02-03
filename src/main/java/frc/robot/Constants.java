@@ -45,7 +45,7 @@ public final class Constants {
         public static final double TRACK_WIDTH = inchesToMeters(23); // same as wheelbase because it is a square
         public static final double WHEEL_BASE = inchesToMeters(23);
         public static final double WHEEL_DIAMETER_REAL = inchesToMeters(4);
-        public static final double WHEEL_DIAMETER = inchesToMeters(3.49);
+        public static final double WHEEL_DIAMETER = inchesToMeters(3.81);
         public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
 
         public static final double DRIVE_GEAR_RATIO = 8.14;
@@ -174,8 +174,8 @@ public final class Constants {
         public static final int AUTOMATIC_ZERO_CURRENT = 15;
         
         public enum Positions {
-            INTAKE(-0.946),
-            Auto(-3.5),
+            INTAKE(0.96),
+            Auto(0.96),
             ZERO(0);
 
             public final double position;
