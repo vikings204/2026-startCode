@@ -4,8 +4,11 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N3;
 import frc.robot.Robot.ControlMode;
 //import org.photonvision.PhotonPoseEstimator;
 
@@ -142,23 +145,20 @@ public final class Constants {
     }
 
     public static final class Vision {
-        public static final boolean VISION_ENABLED = false;
-        public static final String CAMERA_NAME = "webcam";
-
-        //public static final PhotonPoseEstimator.PoseStrategy POSE_STRATEGY = PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
-        public static final double APRILTAG_AMBIGUITY_THRESHOLD = 0.2;
+        public static final boolean VISION_ENABLED = true;
         public static final Transform3d CAMERA_TO_ROBOT = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0));
-        public static final double FIELD_LENGTH_METERS_X = 16.54175;
-        public static final double FIELD_WIDTH_METERS_Y = 8.0137;
-        public static final Pose2d FLIPPING_POSE = new Pose2d(
-                new Translation2d(FIELD_LENGTH_METERS_X, FIELD_WIDTH_METERS_Y),
-                new Rotation2d(Math.PI)
-        );
 
-        public static final double TARGET_OFFSET = inchesToMeters(50);//inchesToMeters(4);
-        public static final Translation2d SPEAKER_RED = new Translation2d(inchesToMeters(652.73) - TARGET_OFFSET, inchesToMeters(218.42));
-        //public static final Translation2d SPEAKER_BLUE = new Translation2d(TARGET_OFFSET, inchesToMeters(218.42));
-        public static final Translation2d SPEAKER_BLUE = new Translation2d(2, 4.6);
+        /**
+         * Standard deviations of model states. Increase these numbers to trust your model's state estimates less. This
+         * matrix is in the form [x, y, theta]ᵀ, with units in meters and radians, then meters.
+         */
+        public static final Vector<N3> STATE_STANDARD_DEVIATIONS = VecBuilder.fill(0.1, 0.1, 0.1);
+
+        /**
+         * Standard deviations of the vision measurements. Increase these numbers to trust global measurements from vision
+         * less. This matrix is in the form [x, y, theta]ᵀ, with units in meters and radians.
+         */
+        public static final Vector<N3> VISION_STANDARD_DEVIATIONS = VecBuilder.fill(0.9, 0.9, 1.5);
     }
 
     public static final class Elevator {
