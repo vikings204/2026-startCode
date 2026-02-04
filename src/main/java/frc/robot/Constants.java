@@ -165,6 +165,7 @@ public final class Constants {
         public static final double PID_P = .25;
         public static final int LEFT_MOTOR_ID = 7;
         public static final int RIGHT_MOTOR_ID = 8;
+        public static final int IntakeSpinMotor_ID = 9;
         public static final double VOLTAGE_COMPENSATION = 12.0;
         public static final int CURRENT_LIMIT = 40;
         public static final IdleMode IDLE_MODE = IdleMode.kBrake;

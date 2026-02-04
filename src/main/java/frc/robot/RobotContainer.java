@@ -111,7 +111,10 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("ZERO", new InstantCommand(() -> Elevator.setPosition(Positions.ZERO), Elevator));
         NamedCommands.registerCommand("INTAKE", new InstantCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
-
+        NamedCommands.registerCommand("Shoot", new InstantCommand(() -> Shooter.shootMotor(true, 1), Shooter));
+        NamedCommands.registerCommand("IntakeMotorON", new InstantCommand(() -> Elevator.IntakeMotor(true), Elevator));
+        NamedCommands.registerCommand("IntakeMotorOFF", new InstantCommand(() -> Elevator.IntakeMotor(false), Elevator));
+        
        // NamedCommands.registerCommand("Tongue_Extend", new InstantCommand(Tongue::extend, Tongue));
        // NamedCommands.registerCommand("Tongue_Score", new InstantCommand(Tongue::setPosScore, Tongue));
        // NamedCommands.registerCommand("Tongue_Carry", new InstantCommand(Tongue::setPosCarrying, Tongue));
@@ -119,11 +122,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("Intake_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
         NamedCommands.registerCommand("zeroGyro", new InstantCommand(Swerve::zeroGyro, Swerve));
         NamedCommands.registerCommand("Tongue_Auto", new InstantCommand(Tongue::setPosAuto, Tongue));
-        
-       
+     
         configureDefaultCommands();
-        configureButtonBindings();
-        
+        configureButtonBindings();   
     }
     public Command getAutonomousCommand() {
          return new PathPlannerAuto(AutoModeChooser.getSelected().pathplannerName);
@@ -185,21 +186,24 @@ public class RobotContainer {
        //         whileTrue(Swerve.driveToPose());
 //        new JoystickButton(DRIVER, 1).whileTrue(new AlignCommand(false, Swerve));
 
-        new JoystickButton(DRIVER, 1) // A is left
-         .whileTrue(new InstantCommand(() -> Shooter.flywheelAmp(true), Shooter))
-        .onFalse(new InstantCommand(() -> Shooter.flywheelAmp(false), Shooter));
-
-        new JoystickButton(DRIVER, 2) // B is right
-            .whileTrue(new InstantCommand(() -> Shooter.receive(true), Shooter))
-            .onFalse(new InstantCommand(() -> Shooter.receive(false), Shooter));
-
-        new JoystickButton(DRIVER, 3).whileTrue(ColorAlignLeft);
-        new JoystickButton(DRIVER, 4).whileTrue(ColorAlignRight);
+  new JoystickButton(DRIVER, 0)
+        //.whileTrue(StupidAlignLeft); // A is left
+         .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, .25), Shooter))
+        .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));
+        new JoystickButton(DRIVER, 1)
+        //.whileTrue(StupidAlignRight); // B is right
+         .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, .5), Shooter))
+        .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));
+        new JoystickButton(DRIVER, 2)
+        //.whileTrue(ColorAlignLeft);
+         .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, .75), Shooter))
+        .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));
+        new JoystickButton(DRIVER, 3)
+        //.whileTrue(ColorAlignRight);
+        .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, 1), Shooter))
+        .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));
     }
-
     
-    
-
     public void checkAnalogs() {
         if (OPERATOR.getRightTriggerAxis() > .5) {
             CommandScheduler.getInstance().schedule(new RunCommand(Tongue::setPosReceive, Tongue));

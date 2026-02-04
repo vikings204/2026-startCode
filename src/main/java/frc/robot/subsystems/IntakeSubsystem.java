@@ -27,12 +27,14 @@ public class IntakeSubsystem extends SubsystemBase {
     private final SparkMaxConfig leftMotorConfig;
     private final RelativeEncoder leftEncoder;
     private final SparkClosedLoopController leftController;
-
+    private boolean IntakeState = false;
     private final SparkMax rightMotor;
     private final SparkMaxConfig rightMotorConfig;
     private final RelativeEncoder rightEncoder;
     private final SparkClosedLoopController rightController;
     private final TongueSubsystem Tongue;
+    private final SparkMax IntakeSpinMotor;
+    private final SparkMaxConfig IntakeSpinMotor_config;
 
     public IntakeSubsystem(TongueSubsystem tongue) {
         leftMotor = new SparkMax(LEFT_MOTOR_ID, MotorType.kBrushless);
@@ -40,12 +42,14 @@ public class IntakeSubsystem extends SubsystemBase {
         leftEncoder = leftMotor.getEncoder();
         leftController = leftMotor.getClosedLoopController();
         configLeftMotor();
-
         rightMotor = new SparkMax(RIGHT_MOTOR_ID, MotorType.kBrushless);
         rightMotorConfig = new SparkMaxConfig();
         rightEncoder = rightMotor.getEncoder();
         rightController = rightMotor.getClosedLoopController();
         configRightMotor();
+
+        IntakeSpinMotor = new SparkMax(IntakeSpinMotor_ID, MotorType.kBrushless);
+        IntakeSpinMotor_config = new SparkMaxConfig();
 
         zeroEncoders();
         this.Tongue = tongue;
@@ -72,6 +76,16 @@ public class IntakeSubsystem extends SubsystemBase {
         rightController.setReference(targetposition.position, ControlType.kPosition);
         System.out.println(leftController.getMAXMotionSetpointPosition());
         System.out.println(rightController.getMAXMotionSetpointPosition());
+    }
+
+        public void IntakeMotor(boolean pickup) {
+        IntakeState = pickup;
+        if (pickup) {
+            IntakeSpinMotor.set(1);
+    
+        } else {
+            IntakeSpinMotor.set(0);
+        }
     }
 
     public void jogPositive(boolean b) {
