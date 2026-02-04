@@ -30,20 +30,21 @@ public class ClimberSubsystem extends SubsystemBase {
 
     public void ShootArm(boolean b) {
         if (b) {
-            controller.setReference(encoder.getPosition() + .1, ControlType.kPosition);
+            controller.setSetpoint(encoder.getPosition() + .1, ControlType.kPosition);
         } else {
-            controller.setReference(encoder.getPosition(), ControlType.kPosition);
+            controller.setSetpoint(encoder.getPosition(), ControlType.kPosition);
         }
     }
 
     public void NegativeShootArm(boolean b) {
         if (b) {
-            controller.setReference(encoder.getPosition() - .1, ControlType.kPosition);
+            controller.setSetpoint(encoder.getPosition() - .1, ControlType.kPosition);
         } else {
-            controller.setReference(encoder.getPosition(), ControlType.kPosition);
+            controller.setSetpoint(encoder.getPosition(), ControlType.kPosition);
         }
     }
 
+    @SuppressWarnings("removal")
     private void configMotor() {
         motorConfig
                 .idleMode(IDLE_MODE)

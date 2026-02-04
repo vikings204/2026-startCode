@@ -2,18 +2,18 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+//import edu.wpi.first.math.geometry.Pose2d;
+//import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.DriverStation;
+//import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.Robot;
+//import frc.robot.Robot;
 //import frc.robot.subsystems.PoseEstimationSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -21,7 +21,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import java.util.Map;
 
 import static edu.wpi.first.wpilibj.Timer.getFPGATimestamp;
-import static frc.robot.Constants.Vision.*;
+//import static frc.robot.Constants.Vision.*;
 
 public class AlignCommand extends Command {
     private final SwerveSubsystem Swerve;

@@ -11,8 +11,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.FeedbackSensor;
-//import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.ClosedLoopConfig;
+/*import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.ClosedLoopConfig;*/
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkClosedLoopController;
 
@@ -88,6 +88,7 @@ public class SwerveModule {
         Shuffleboard.getTab("swervetest").addNumber("angleMotorAbsEncoder Reading " + moduleNumber, angleMotor.getAnalog()::getVoltage);
     }
     
+    @SuppressWarnings("deprecation")
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         // Custom optimize command, since default WPILib optimize assumes continuous controller which
         // REV and CTRE are not
@@ -143,6 +144,7 @@ public class SwerveModule {
         //angleEncoder.getConfigurator().apply(new CANcoderConfiguration());
     }
 
+    @SuppressWarnings("removal")
     private void configAngleMotor() {
        
        //2025 This is Deprecated angleMotor.restoreFactoryDefaults();
@@ -205,6 +207,7 @@ public class SwerveModule {
       resetToAbsolute();
     }
 
+    @SuppressWarnings("removal")
     private void configDriveMotor() {
 
         //driveMotor.restoreFactoryDefaults();
@@ -247,7 +250,7 @@ public class SwerveModule {
             double percentOutput = desiredState.speedMetersPerSecond / MAX_SPEED;
             driveMotor.set(percentOutput);
         } else {
-            driveController.setReference(
+            driveController.setSetpoint(
                     desiredState.speedMetersPerSecond,
                     ControlType.kVelocity,
                      ClosedLoopSlot.kSlot0,
@@ -269,7 +272,7 @@ public class SwerveModule {
         if (moduleNumber == 0){
             //System.out.println("Angle Position Setting Mod" + moduleNumber + ": " + angle.getRotations());
         }
-        angleController.setReference(angle.getRotations(), ControlType.kPosition);
+        angleController.setSetpoint(angle.getRotations(), ControlType.kPosition);
     
       
         lastAngle = angle;

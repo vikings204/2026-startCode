@@ -7,8 +7,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.SwerveSubsystem;
 
-import static frc.robot.Constants.Swerve.CONTROLLER_RAMP_DEGREE;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 

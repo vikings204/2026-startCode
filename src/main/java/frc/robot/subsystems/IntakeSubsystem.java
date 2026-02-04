@@ -120,6 +120,7 @@ public class IntakeSubsystem extends SubsystemBase {
         //leftMotor.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
+    @SuppressWarnings("removal")
     private void configRightMotor() {
         ReduceCANUsage.Spark_Max.setCANSparkMaxBusUsage(rightMotor, Usage.kPositionOnly, rightMotorConfig);
         rightMotorConfig.smartCurrentLimit(CURRENT_LIMIT);
