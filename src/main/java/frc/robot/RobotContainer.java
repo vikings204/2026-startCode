@@ -141,7 +141,7 @@ public class RobotContainer {
                 //.whileTrue(new InstantCommand(() -> Shooter.flywheelSpeaker(true, 1), Shooter))
                 //.onFalse(new InstantCommand(() -> Shooter.flywheelSpeaker(false, 0), Shooter));
         new JoystickButton(DRIVER, 7)
-                .whileTrue(new InstantCommand(() -> Shooter.flywheelAmp(false), Shooter));
+                .whileTrue(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));
                 //.onFalse(new InstantCommand(() -> Shooter.flywheelAmp(false), Shooter));
 
         new JoystickButton(DRIVER, 8).onTrue(new InstantCommand(Swerve::setSpeed));
@@ -181,20 +181,20 @@ public class RobotContainer {
 // a=0, b=1, x=2, y=3, Lt=4, RT=5
         new JoystickButton(DRIVER, 0)
         //.whileTrue(StupidAlignLeft); // A is left
-         .whileTrue(new InstantCommand(() -> Shooter.flywheelSpeaker(true, .25), Shooter))
-        .onFalse(new InstantCommand(() -> Shooter.flywheelSpeaker(false, 0), Shooter));
+         .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, .25), Shooter))
+        .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));
         new JoystickButton(DRIVER, 1)
         //.whileTrue(StupidAlignRight); // B is right
-         .whileTrue(new InstantCommand(() -> Shooter.flywheelSpeaker(true, .5), Shooter))
-        .onFalse(new InstantCommand(() -> Shooter.flywheelSpeaker(false, 0), Shooter));
+         .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, .5), Shooter))
+        .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));
         new JoystickButton(DRIVER, 2)
         //.whileTrue(ColorAlignLeft);
-         .whileTrue(new InstantCommand(() -> Shooter.flywheelSpeaker(true, .75), Shooter))
-        .onFalse(new InstantCommand(() -> Shooter.flywheelSpeaker(false, 0), Shooter));
+         .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, .75), Shooter))
+        .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));
         new JoystickButton(DRIVER, 3)
         //.whileTrue(ColorAlignRight);
-        .whileTrue(new InstantCommand(() -> Shooter.flywheelSpeaker(true, 1), Shooter))
-        .onFalse(new InstantCommand(() -> Shooter.flywheelSpeaker(false, 0), Shooter));
+        .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, 1), Shooter))
+        .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));
     }
 
     public Command getAutonomousCommand() {
