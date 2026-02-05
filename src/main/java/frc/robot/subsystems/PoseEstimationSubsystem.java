@@ -84,7 +84,7 @@ public class PoseEstimationSubsystem extends SubsystemBase {
             double ts = tsSub.get();
             if (ts != previousTimestamp) {
                 previousTimestamp = ts;
-                Pose2d p = new Pose2d(pxSub.get(), pySub.get(), poseEstimator.getEstimatedPosition().getRotation());
+                Pose2d p = new Pose2d(Math.sqrt((pxSub.get() * pxSub.get())), Math.sqrt((pySub.get()*pySub.get())), poseEstimator.getEstimatedPosition().getRotation());
                 p = p.transformBy(new Transform2d()); // cam to robot center
 
                 // adjust std devs by robot speeds

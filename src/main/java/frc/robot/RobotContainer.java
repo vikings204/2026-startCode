@@ -83,7 +83,7 @@ public class RobotContainer {
         CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
         NamedCommands.registerCommand("ZERO", new InstantCommand(() -> Intake.setPosition(Positions.ZERO), Intake));
-        NamedCommands.registerCommand("INTAKE", new InstantCommand(() -> Intake.setPosition(Positions.INTAKE), Intake));
+        NamedCommands.registerCommand("INTAKE", new InstantCommand(() -> Intake.IntakeAUTO(), Intake));
         NamedCommands.registerCommand("Shoot", new InstantCommand(() -> Shooter.shootMotor(true, 1), Shooter));
         NamedCommands.registerCommand("IntakeMotorON", new InstantCommand(() -> Intake.IntakeMotor(true), Intake));
         NamedCommands.registerCommand("IntakeMotorOFF", new InstantCommand(() -> Intake.IntakeMotor(false), Intake));
@@ -104,7 +104,7 @@ public class RobotContainer {
                         Swerve,
                         () -> -1 * DRIVER.getLeftX(),
                         () -> 1 * DRIVER.getLeftY(),
-                        () -> -1 * DRIVER.getRightX(),
+                        () -> 1 * DRIVER.getRightX(),
                         () -> false));
 
         //Elevator.setDefaultCommand(

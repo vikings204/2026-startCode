@@ -87,7 +87,7 @@ public final class Constants {
 
         /* Module Specific Constants */
         /* Front Left Module - Module 0 */
-        public static final class Mod0 {
+        public static final class Mod3 {
             public static final int DRIVE_MOTOR_ID = 11;
             public static final int ANGLE_MOTOR_ID = 21;
             public static final int CAN_CODER_ID = 31;
@@ -95,7 +95,7 @@ public final class Constants {
         }
 
         /* Front Right Module - Module 1 */
-        public static final class Mod1 {
+        public static final class Mod2 {
             public static final int DRIVE_MOTOR_ID = 12;
             public static final int ANGLE_MOTOR_ID = 22;
             public static final int CAN_CODER_ID = 32;
@@ -104,7 +104,7 @@ public final class Constants {
         }
 
         /* Back Left Module - Module 2 */
-        public static final class Mod2 {
+        public static final class Mod1 {
             public static final int DRIVE_MOTOR_ID = 10;
             public static final int ANGLE_MOTOR_ID = 20;
             public static final int CAN_CODER_ID = 30;
@@ -113,7 +113,7 @@ public final class Constants {
         }
 
         /* Back Right Module - Module 3 */
-        public static final class Mod3 {
+        public static final class Mod0 {
             public static final int DRIVE_MOTOR_ID = 13;
             public static final int ANGLE_MOTOR_ID = 23;
             public static final int CAN_CODER_ID = 33;
@@ -141,7 +141,7 @@ public final class Constants {
     }
 
     public static final class Vision {
-        public static final boolean VISION_ENABLED = true;
+        public static final boolean VISION_ENABLED = false;
         public static final Transform3d CAMERA_TO_ROBOT = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0));
         public static final double TRUST_VISION_STANDARD_DEVIATION = 0.2;
         public static final double IGNORE_VISION_STANDARD_DEVIATION = 1.5;
@@ -193,6 +193,3 @@ public final class Constants {
     }
     
 }
-  
-
-

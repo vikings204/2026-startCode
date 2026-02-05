@@ -32,6 +32,7 @@ public class Robot extends TimedRobot {
         Botttom_Auto_Comp("Bottom_Auto_Comp"),
         Mid_Auto_Comp("Mid_Auto_Comp"),
         //Mid_Auto("Mid_Auto"),
+        AutoTest("Auto1"),
         Tanisha("TANISHA"),
         TwoSides("2sided"),
         Oto1("0to1"),
@@ -44,6 +45,8 @@ public class Robot extends TimedRobot {
         TestStuff("TestStuff"),
         TestStuff2("TestStuff2"),
         Mid_Ram("Mid_Ram");
+
+       
 
         public final String pathplannerName;
         AutoMode(String str) {

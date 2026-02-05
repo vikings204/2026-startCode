@@ -69,6 +69,11 @@ public class IntakeSubsystem extends SubsystemBase {
         System.out.println(rightController.getMAXMotionSetpointPosition());
     }
 
+    public void IntakeAUTO(){
+        IntakeMotor(true);
+        setPosition(Positions.INTAKE);
+    }
+
         public void IntakeMotor(boolean pickup) {
         IntakeState = pickup;
         if (pickup) {

@@ -23,18 +23,6 @@
                       "data": {
                         "pathName": "realAuto1"
                       }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "INTAKE"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "IntakeMotorON"
-                      }
                     }
                   ]
                 }
@@ -46,12 +34,6 @@
           "type": "parallel",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeMotorOFF"
-                }
-              },
               {
                 "type": "wait",
                 "data": {
