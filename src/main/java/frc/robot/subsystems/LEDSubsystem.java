@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LEDSubsystem extends SubsystemBase {
+
     private final Spark blinkin;
     private BlinkinPattern currentPattern;
     public presetSettings Presets;
@@ -170,6 +171,10 @@ public class LEDSubsystem extends SubsystemBase {
         }
         public void Shooting() {
             setPattern(BlinkinPattern.SHOT_RED);
+        }
+        public void test() {
+            setPattern(BlinkinPattern.BLUE_GREEN);
+
         }
     }
 }

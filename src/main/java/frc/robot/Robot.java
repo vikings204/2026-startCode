@@ -1,4 +1,3 @@
-
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -12,10 +11,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 import java.util.Optional;
 
-import com.ctre.phoenix6.swerve.SwerveModule;
-
-import frc.robot.util.CTREConfigs;
-
 
 
 /**
@@ -25,34 +20,33 @@ import frc.robot.util.CTREConfigs;
  * project.
  */
 public class Robot extends TimedRobot {
-    public static CTREConfigs ctreConfigs;
-
-    private Command autonomousCommand;
     private RobotContainer robotContainer;
-
-
+    private Command autonomousCommand;
 
     public enum ControlMode {
         SINGLE, COMPETITION
     }
     public enum AutoMode {
-        /*MidToTop("middle to top"),
-        MidToBot("middle to bottom"),
-        TopToTop("top to top"),
-        BotToBot("bottom to bottom"),
-        TopToEsc("top to escape"),
-        BotToEsc("bottom to escape"),
-        TopToEsc_Red("R top to escape"),
-        BotToEsc_Red("R bottom to escape"),
-        TopTwoNote_Red("R top two note"),
-        MidToMid("middle to middle"),*/
-        //Top_Auto("Top_Auto"),
         Top_Auto_Comp("Top_Auto_Comp"),
         //Botttom_Auto("Bottom_Auto"),
         Botttom_Auto_Comp("Bottom_Auto_Comp"),
         Mid_Auto_Comp("Mid_Auto_Comp"),
         //Mid_Auto("Mid_Auto"),
+        AutoTest("Auto1"),
+        Tanisha("TANISHA"),
+        TwoSides("2sided"),
+        Oto1("0to1"),
+        Oto2("0to2"),
+        Oto3("0to3"),
+        up0to1("up0to1"),
+        up0to2("up0to2"),
+        up0to3("up0to3"),
+        over2up2("2up2"),
+        TestStuff("TestStuff"),
+        TestStuff2("TestStuff2"),
         Mid_Ram("Mid_Ram");
+
+       
 
         public final String pathplannerName;
         AutoMode(String str) {
@@ -89,8 +83,6 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
-        ctreConfigs = new CTREConfigs();
-
         robotContainer = new RobotContainer();
         //CameraServer.startAutomaticCapture(); // use for USB camera
         //PortForwarder.add(8888, "10.2.4.69", 80);
@@ -146,7 +138,7 @@ public class Robot extends TimedRobot {
 
         // schedule the autonomous command (example)
         if (autonomousCommand != null) {
-          autonomousCommand.schedule();
+          CommandScheduler.getInstance().schedule(autonomousCommand);
         }
         checkDriverStationUpdate();
     }
@@ -185,9 +177,10 @@ public class Robot extends TimedRobot {
     @Override
     public void testPeriodic() {
         
-        for(frc.robot.subsystems.SwerveModule offset :robotContainer.Swerve.modules){
+        for(frc.robot.subsystems.SwerveModule offset:robotContainer.Swerve.modules){
             System.out.println("Module: " + offset.moduleNumber + " Angle: " + offset.getAngle().getRotations() + " Encoder: " + offset.angleEncoder.getAbsolutePosition().getValueAsDouble());
         }
+        
     }
 
     public static DriverStation.Alliance alliance;
