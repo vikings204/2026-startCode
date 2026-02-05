@@ -28,8 +28,9 @@ public class PoseEstimationSubsystem extends SubsystemBase {
     private final SwerveDrivePoseEstimator poseEstimator;
     private final Field2d field = new Field2d();
     private double[] arrayForDashboard = new double[]{0, 0, 0};
-    private double previousTimestamp = 0.0;
+    private int numTagsVisible = 0;
 
+    private double previousTimestamp = 0.0;
     private final DoubleSubscriber pxSub;
     private final DoubleSubscriber pySub;
     private final DoubleSubscriber tsSub;
@@ -69,6 +70,7 @@ public class PoseEstimationSubsystem extends SubsystemBase {
         Shuffleboard.getTab("main").addNumber("pose X", () -> arrayForDashboard[0]);
         Shuffleboard.getTab("main").addNumber("pose Y", () -> arrayForDashboard[1]);
         Shuffleboard.getTab("main").addNumber("pose theta", () -> arrayForDashboard[2]);
+        Shuffleboard.getTab("main").addNumber("num tags", () -> numTagsVisible);
     }
 
     @Override
@@ -105,6 +107,9 @@ public class PoseEstimationSubsystem extends SubsystemBase {
                 }
 
                 poseEstimator.addVisionMeasurement(p, getFPGATimestamp()-delaySub.get());
+                numTagsVisible = (int) tagsSub.get();
+            } else {
+                numTagsVisible = 0;
             }
         }
 
