@@ -5,11 +5,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
-import com.pathplanner.lib.events.OneShotTriggerEvent;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.DriveFeedforwards;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -18,25 +14,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Controller;
 import frc.robot.Constants.Elevator.Positions;
 import frc.robot.Robot.ControlMode;
-import frc.robot.commands.AlignCommand;
 import frc.robot.commands.ColorAlignCommand;
 import frc.robot.commands.StupidAlignCommand;
 import frc.robot.commands.TeleopSwerveCommand;
 import frc.robot.subsystems.*;
 import frc.robot.util.Gamepad;
 
-import java.awt.*;
 import java.util.Map;
 
-import static frc.robot.Constants.Swerve.SPEED_MULTIPLIER;
 import static frc.robot.Robot.AutoModeChooser;
 import static frc.robot.Robot.ControlModeChooser;
 
@@ -47,7 +38,7 @@ public class RobotContainer {
     public final IntakeSubsystem Elevator = new IntakeSubsystem(Tongue);
     public final ShooterSubsystem Shooter = new ShooterSubsystem();
     public final ClimberSubsystem Climber = new ClimberSubsystem();
-    public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions);
+    public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions, Swerve::getSpeeds);
 
     private final GenericEntry finalSpeedModifierEntry = Shuffleboard.getTab("config").add("final speed modifier", 1.0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0, "max", 1)).getEntry();
 
@@ -77,10 +68,11 @@ public class RobotContainer {
         // Shuffleboard.getTab("main").add("shooter", Shooter);
         Shuffleboard.getTab("main").add("zero swerve", new RunCommand(Swerve::zeroGyro)).withWidget(BuiltInWidgets.kCommand);
         Shuffleboard.getTab("main").add("zero elevator", new RunCommand(Elevator::zeroEncoders, Elevator)).withWidget(BuiltInWidgets.kCommand);
+        Shuffleboard.getTab("main").add("zero pose estimator", new RunCommand(PoseEstimation::resetPose, PoseEstimation)).withWidget(BuiltInWidgets.kCommand);
 
         AutoBuilder.configure(
-                PoseEstimation::getCurrentPose, // Robot pose supplier
-                PoseEstimation::setCurrentPose,
+                PoseEstimation::getPose, // Robot pose supplier
+                PoseEstimation::setPose,
                 Swerve::getSpeeds,
                 (speeds,feedforwards) -> Swerve.driveRobotRelative(speeds),//byass need for PathFeedfowards with lamda, hacky solution idk if its good// Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
                 Constants.Auto.PATH_FOLLOWER_CONFIG, // The path follower configuration 

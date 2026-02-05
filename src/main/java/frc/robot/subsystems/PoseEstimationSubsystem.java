@@ -1,8 +1,11 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -21,6 +24,7 @@ import static edu.wpi.first.wpilibj.Timer.getFPGATimestamp;
 public class PoseEstimationSubsystem extends SubsystemBase {
     private final Supplier<Rotation2d> rotationSupplier;
     private final Supplier<SwerveModulePosition[]> modulePositionSupplier;
+    private final Supplier<ChassisSpeeds> speedsSupplier;
     private final SwerveDrivePoseEstimator poseEstimator;
     private final Field2d field = new Field2d();
     private double[] arrayForDashboard = new double[]{0, 0, 0};
@@ -33,10 +37,13 @@ public class PoseEstimationSubsystem extends SubsystemBase {
     private final DoubleSubscriber tagsSub;
 
     public PoseEstimationSubsystem(
-            Supplier<Rotation2d> rotationSupplier, Supplier<SwerveModulePosition[]> modulePositionSupplier) {
+            Supplier<Rotation2d> rotationSupplier,
+            Supplier<SwerveModulePosition[]> modulePositionSupplier,
+            Supplier<ChassisSpeeds> speedsSupplier) {
 
         this.rotationSupplier = rotationSupplier;
         this.modulePositionSupplier = modulePositionSupplier;
+        this.speedsSupplier = speedsSupplier;
 
         poseEstimator = new SwerveDrivePoseEstimator(
                 Constants.Swerve.SWERVE_KINEMATICS,
@@ -44,7 +51,7 @@ public class PoseEstimationSubsystem extends SubsystemBase {
                 modulePositionSupplier.get(),
                 new Pose2d(),
                 STATE_STANDARD_DEVIATIONS,
-                VISION_STANDARD_DEVIATIONS
+                STATE_STANDARD_DEVIATIONS
         );
 
         var ntInstance = NetworkTableInstance.getDefault();
@@ -55,16 +62,13 @@ public class PoseEstimationSubsystem extends SubsystemBase {
         delaySub = ntTable.getDoubleTopic("delay").subscribe(0.0);
         tagsSub = ntTable.getDoubleTopic("tags").subscribe(0.0);
 
-        Shuffleboard.getTab("field").add("pose est field", field).withWidget(BuiltInWidgets.kField).withSize(8, 5);
+        Shuffleboard.getTab("main").add("pose est field", field).withWidget(BuiltInWidgets.kField).withSize(8, 5);
         //Shuffleboard.getTab("main").addNumber("pose X", poseEstimator.getEstimatedPosition()::getX);
         //Shuffleboard.getTab("main").addNumber("pose Y", poseEstimator.getEstimatedPosition()::getY);
         //Shuffleboard.getTab("main").addNumber("gyro angle", poseEstimator.getEstimatedPosition().getRotation()::getDegrees);
         Shuffleboard.getTab("main").addNumber("pose X", () -> arrayForDashboard[0]);
         Shuffleboard.getTab("main").addNumber("pose Y", () -> arrayForDashboard[1]);
         Shuffleboard.getTab("main").addNumber("pose theta", () -> arrayForDashboard[2]);
-        Shuffleboard.getTab("field").addNumber("pose X", () -> arrayForDashboard[0]);
-        Shuffleboard.getTab("field").addNumber("pose Y", () -> arrayForDashboard[1]);
-        Shuffleboard.getTab("field").addNumber("pose theta", () -> arrayForDashboard[2]);
     }
 
     @Override
@@ -77,7 +81,29 @@ public class PoseEstimationSubsystem extends SubsystemBase {
             if (ts != previousTimestamp) {
                 previousTimestamp = ts;
                 Pose2d p = new Pose2d(pxSub.get(), pySub.get(), poseEstimator.getEstimatedPosition().getRotation());
-                // map to robot
+                p = p.transformBy(new Transform2d()); // cam to robot center
+
+                // adjust std devs
+                ChassisSpeeds speeds = speedsSupplier.get();
+                double avgSpeed = (speeds.vxMetersPerSecond + speeds.vyMetersPerSecond + speeds.omegaRadiansPerSecond) / 3;
+                if (avgSpeed < MIN_SPEED_FOR_STD_DEV) {
+                    if (getFPGATimestamp() < 90) {
+                        // robot probably just started up and is sitting on the field so trust vision
+                        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(TRUST_VISION_STANDARD_DEVIATION, TRUST_VISION_STANDARD_DEVIATION, TRUST_VISION_STANDARD_DEVIATION));
+                    } else {
+                        // robot is still, basically ignore vision
+                        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(IGNORE_VISION_STANDARD_DEVIATION, IGNORE_VISION_STANDARD_DEVIATION, IGNORE_VISION_STANDARD_DEVIATION));
+                    }
+                } else if (avgSpeed > MAX_SPEED_FOR_STD_DEV) {
+                    // robot is moving fast, trust vision (idk if this is reasonable)
+                    poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(TRUST_VISION_STANDARD_DEVIATION, TRUST_VISION_STANDARD_DEVIATION, TRUST_VISION_STANDARD_DEVIATION));
+                } else {
+                    // saihaj function
+                    // https://www.desmos.com/calculator/rvbx3meynf
+                    double stdDev = ((avgSpeed - MIN_SPEED_FOR_STD_DEV) / (MAX_SPEED_FOR_STD_DEV - MIN_SPEED_FOR_STD_DEV)) * (TRUST_VISION_STANDARD_DEVIATION-IGNORE_VISION_STANDARD_DEVIATION) + IGNORE_VISION_STANDARD_DEVIATION;
+                    poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(stdDev, stdDev, stdDev));
+                }
+
                 poseEstimator.addVisionMeasurement(p, getFPGATimestamp()-delaySub.get());
             }
         }
@@ -88,7 +114,7 @@ public class PoseEstimationSubsystem extends SubsystemBase {
         arrayForDashboard = new double[]{dashboardPose.getX(), dashboardPose.getY(), dashboardPose.getRotation().getDegrees()};
     }
 
-    public Pose2d getCurrentPose() {
+    public Pose2d getPose() {
         return poseEstimator.getEstimatedPosition();
     }
 
@@ -99,7 +125,7 @@ public class PoseEstimationSubsystem extends SubsystemBase {
      *
      * @param newPose new pose
      */
-    public void setCurrentPose(Pose2d newPose) {
+    public void setPose(Pose2d newPose) {
         poseEstimator.resetPosition(rotationSupplier.get(), modulePositionSupplier.get(), newPose);
     }
 
@@ -107,8 +133,8 @@ public class PoseEstimationSubsystem extends SubsystemBase {
      * Resets the position on the field to 0,0 0-degrees, with forward being downfield. This resets
      * what "forward" is for field oriented driving.
      */
-    public void resetFieldPosition() {
-        setCurrentPose(new Pose2d());
+    public void resetPose() {
+        setPose(new Pose2d());
     }
 
 }

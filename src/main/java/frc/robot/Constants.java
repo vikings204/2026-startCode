@@ -146,18 +146,17 @@ public final class Constants {
     public static final class Vision {
         public static final boolean VISION_ENABLED = true;
         public static final Transform3d CAMERA_TO_ROBOT = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0));
+        public static final double TRUST_VISION_STANDARD_DEVIATION = 0.2;
+        public static final double IGNORE_VISION_STANDARD_DEVIATION = 1.5;
 
         /**
          * Standard deviations of model states. Increase these numbers to trust your model's state estimates less. This
          * matrix is in the form [x, y, theta]ᵀ, with units in meters and radians, then meters.
          */
-        public static final Vector<N3> STATE_STANDARD_DEVIATIONS = VecBuilder.fill(0.1, 0.1, 0.1);
+        public static final Vector<N3> STATE_STANDARD_DEVIATIONS = VecBuilder.fill(TRUST_VISION_STANDARD_DEVIATION, TRUST_VISION_STANDARD_DEVIATION, TRUST_VISION_STANDARD_DEVIATION);
 
-        /**
-         * Standard deviations of the vision measurements. Increase these numbers to trust global measurements from vision
-         * less. This matrix is in the form [x, y, theta]ᵀ, with units in meters and radians.
-         */
-        public static final Vector<N3> VISION_STANDARD_DEVIATIONS = VecBuilder.fill(0.9, 0.9, 1.5);
+        public static final double MAX_SPEED_FOR_STD_DEV = 1.0;
+        public static final double MIN_SPEED_FOR_STD_DEV = 0.1;
     }
 
     public static final class Elevator {
