@@ -186,7 +186,7 @@ public class RobotContainer {
        //         whileTrue(Swerve.driveToPose());
 //        new JoystickButton(DRIVER, 1).whileTrue(new AlignCommand(false, Swerve));
 
-  new JoystickButton(DRIVER, 0)
+  new JoystickButton(DRIVER, 4)
         //.whileTrue(StupidAlignLeft); // A is left
          .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, .25), Shooter))
         .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));

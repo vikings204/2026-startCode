@@ -57,8 +57,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        System.out.println("left: " + leftEncoder.getPosition() + " right: " + rightEncoder.getPosition());
-        
 
         if (DriverStation.isTeleopEnabled() && (rightMotor.getOutputCurrent() > AUTOMATIC_ZERO_CURRENT || leftMotor.getOutputCurrent() > AUTOMATIC_ZERO_CURRENT)) {
             rightMotor.stopMotor();
