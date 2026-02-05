@@ -32,11 +32,10 @@ public class IntakeSubsystem extends SubsystemBase {
     private final SparkMaxConfig rightMotorConfig;
     private final RelativeEncoder rightEncoder;
     private final SparkClosedLoopController rightController;
-    private final TongueSubsystem Tongue;
     private final SparkMax IntakeSpinMotor;
     private final SparkMaxConfig IntakeSpinMotor_config;
 
-    public IntakeSubsystem(TongueSubsystem tongue) {
+    public IntakeSubsystem() {
         leftMotor = new SparkMax(LEFT_MOTOR_ID, MotorType.kBrushless);
         leftMotorConfig = new SparkMaxConfig();
         leftEncoder = leftMotor.getEncoder();
@@ -52,7 +51,6 @@ public class IntakeSubsystem extends SubsystemBase {
         IntakeSpinMotor_config = new SparkMaxConfig();
 
         zeroEncoders();
-        this.Tongue = tongue;
     }
 
     @Override
