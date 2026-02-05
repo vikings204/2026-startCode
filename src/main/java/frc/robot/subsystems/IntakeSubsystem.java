@@ -1,26 +1,21 @@
 package frc.robot.subsystems;
 
-
-import static frc.robot.Constants.Elevator.*;
-
-
+import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.FeedbackSensor;
-
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.Elevator.Positions;
 import frc.robot.Constants;
 import frc.robot.util.ReduceCANUsage;
 import frc.robot.util.ReduceCANUsage.Spark_Max.Usage;
 
+import static frc.robot.Constants.Elevator.*;
 
 public class IntakeSubsystem extends SubsystemBase {
     private final SparkMax leftMotor;
@@ -32,11 +27,10 @@ public class IntakeSubsystem extends SubsystemBase {
     private final SparkMaxConfig rightMotorConfig;
     private final RelativeEncoder rightEncoder;
     private final SparkClosedLoopController rightController;
-    private final TongueSubsystem Tongue;
     private final SparkMax IntakeSpinMotor;
     private final SparkMaxConfig IntakeSpinMotor_config;
 
-    public IntakeSubsystem(TongueSubsystem tongue) {
+    public IntakeSubsystem() {
         leftMotor = new SparkMax(LEFT_MOTOR_ID, MotorType.kBrushless);
         leftMotorConfig = new SparkMaxConfig();
         leftEncoder = leftMotor.getEncoder();
@@ -52,7 +46,6 @@ public class IntakeSubsystem extends SubsystemBase {
         IntakeSpinMotor_config = new SparkMaxConfig();
 
         zeroEncoders();
-        this.Tongue = tongue;
     }
 
     @Override
@@ -70,8 +63,8 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void setPosition(Positions targetposition) {
-        leftController.setReference(targetposition.position, ControlType.kPosition);
-        rightController.setReference(targetposition.position, ControlType.kPosition);
+        leftController.setSetpoint(targetposition.position, ControlType.kPosition);
+        rightController.setSetpoint(targetposition.position, ControlType.kPosition);
         System.out.println(leftController.getMAXMotionSetpointPosition());
         System.out.println(rightController.getMAXMotionSetpointPosition());
     }

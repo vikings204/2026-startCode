@@ -1,16 +1,9 @@
 package frc.robot;
 
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
-import com.pathplanner.lib.events.OneShotTriggerEvent;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.DriveFeedforwards;
-
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -18,48 +11,29 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Controller;
 import frc.robot.Constants.Elevator.Positions;
 import frc.robot.Robot.ControlMode;
-import frc.robot.commands.AlignCommand;
-import frc.robot.commands.ColorAlignCommand;
-import frc.robot.commands.StupidAlignCommand;
 import frc.robot.commands.TeleopSwerveCommand;
 import frc.robot.subsystems.*;
 import frc.robot.util.Gamepad;
 
-import java.awt.*;
-import java.util.Map;
-
-import static frc.robot.Constants.Swerve.SPEED_MULTIPLIER;
 import static frc.robot.Robot.AutoModeChooser;
 import static frc.robot.Robot.ControlModeChooser;
 
 public class RobotContainer {
     public final SwerveSubsystem Swerve = new SwerveSubsystem();
     public final LEDSubsystem LED = new LEDSubsystem();
-    public final TongueSubsystem Tongue = new TongueSubsystem();
-    public final IntakeSubsystem Elevator = new IntakeSubsystem(Tongue);
+    public final IntakeSubsystem Intake = new IntakeSubsystem();
     public final ShooterSubsystem Shooter = new ShooterSubsystem();
     public final ClimberSubsystem Climber = new ClimberSubsystem();
-    public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions);
-
-    private final GenericEntry finalSpeedModifierEntry = Shuffleboard.getTab("config").add("final speed modifier", 1.0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0, "max", 1)).getEntry();
+    public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions, Swerve::getSpeeds);
 
     Gamepad DRIVER = new Gamepad(Controller.DRIVER_PORT);
     Gamepad OPERATOR = new Gamepad(Controller.OPERATOR_PORT);
-    private final JoystickButton slowSpeed = new JoystickButton(DRIVER, 4);
-    private final JoystickButton highSpeed = new JoystickButton(DRIVER,3);
-
-    private final StupidAlignCommand StupidAlignRight = new StupidAlignCommand(false, Swerve, LED);
-    private final StupidAlignCommand StupidAlignLeft = new StupidAlignCommand(true, Swerve, LED);
-    private final ColorAlignCommand ColorAlignRight = new ColorAlignCommand(false, Swerve, Tongue, LED);
-    private final ColorAlignCommand ColorAlignLeft = new ColorAlignCommand(true, Swerve, Tongue, LED);
 
     private final SendableChooser<Command> autoModeChooser;
     public RobotContainer() {
@@ -76,11 +50,12 @@ public class RobotContainer {
         Shuffleboard.getTab("debug").add("swerve", Swerve);
         // Shuffleboard.getTab("main").add("shooter", Shooter);
         Shuffleboard.getTab("main").add("zero swerve", new RunCommand(Swerve::zeroGyro)).withWidget(BuiltInWidgets.kCommand);
-        Shuffleboard.getTab("main").add("zero elevator", new RunCommand(Elevator::zeroEncoders, Elevator)).withWidget(BuiltInWidgets.kCommand);
+        Shuffleboard.getTab("main").add("zero elevator", new RunCommand(Intake::zeroEncoders, Intake)).withWidget(BuiltInWidgets.kCommand);
+        Shuffleboard.getTab("main").add("zero pose estimator", new RunCommand(PoseEstimation::resetPose, PoseEstimation)).withWidget(BuiltInWidgets.kCommand);
 
         AutoBuilder.configure(
-                PoseEstimation::getCurrentPose, // Robot pose supplier
-                PoseEstimation::setCurrentPose,
+                PoseEstimation::getPose, // Robot pose supplier
+                PoseEstimation::setPose,
                 Swerve::getSpeeds,
                 (speeds,feedforwards) -> Swerve.driveRobotRelative(speeds),//byass need for PathFeedfowards with lamda, hacky solution idk if its good// Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
                 Constants.Auto.PATH_FOLLOWER_CONFIG, // The path follower configuration 
@@ -105,23 +80,16 @@ public class RobotContainer {
         );
         SmartDashboard.putData("Auto Chooser", autoModeChooser);        
 
+        CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
-        PathfindingCommand.warmupCommand().schedule();
-
-
-        NamedCommands.registerCommand("ZERO", new InstantCommand(() -> Elevator.setPosition(Positions.ZERO), Elevator));
-        NamedCommands.registerCommand("INTAKE", new InstantCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
+        NamedCommands.registerCommand("ZERO", new InstantCommand(() -> Intake.setPosition(Positions.ZERO), Intake));
+        NamedCommands.registerCommand("INTAKE", new InstantCommand(() -> Intake.setPosition(Positions.INTAKE), Intake));
         NamedCommands.registerCommand("Shoot", new InstantCommand(() -> Shooter.shootMotor(true, 1), Shooter));
-        NamedCommands.registerCommand("IntakeMotorON", new InstantCommand(() -> Elevator.IntakeMotor(true), Elevator));
-        NamedCommands.registerCommand("IntakeMotorOFF", new InstantCommand(() -> Elevator.IntakeMotor(false), Elevator));
-        
-       // NamedCommands.registerCommand("Tongue_Extend", new InstantCommand(Tongue::extend, Tongue));
-       // NamedCommands.registerCommand("Tongue_Score", new InstantCommand(Tongue::setPosScore, Tongue));
-       // NamedCommands.registerCommand("Tongue_Carry", new InstantCommand(Tongue::setPosCarrying, Tongue));
-      //  NamedCommands.registerCommand("Tongue_Receive", new InstantCommand(Tongue::setPosReceive, Tongue));
-        NamedCommands.registerCommand("Intake_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
+        NamedCommands.registerCommand("IntakeMotorON", new InstantCommand(() -> Intake.IntakeMotor(true), Intake));
+        NamedCommands.registerCommand("IntakeMotorOFF", new InstantCommand(() -> Intake.IntakeMotor(false), Intake));
+
+        NamedCommands.registerCommand("Intake_Elevator", new InstantCommand(() -> Intake.setPosition(Positions.INTAKE), Intake));
         NamedCommands.registerCommand("zeroGyro", new InstantCommand(Swerve::zeroGyro, Swerve));
-        NamedCommands.registerCommand("Tongue_Auto", new InstantCommand(Tongue::setPosAuto, Tongue));
      
         configureDefaultCommands();
         configureButtonBindings();   
@@ -137,10 +105,7 @@ public class RobotContainer {
                         () -> -1 * DRIVER.getLeftX(),
                         () -> 1 * DRIVER.getLeftY(),
                         () -> -1 * DRIVER.getRightX(),
-                        () -> false,
-                        slowSpeed,//slowMode,// DRIVER.getLeftStickButton(), // slow mode
-                        highSpeed,//!slowMode,//DRIVER.getRightStickButton())); // fast mode
-                        () ->finalSpeedModifierEntry.getDouble(1.0)));
+                        () -> false));
 
         //Elevator.setDefaultCommand(
         //        new RunCommand(
@@ -152,23 +117,18 @@ public class RobotContainer {
 
     private void configureButtonBindings() {
 
-       // new JoystickButton(DRIVER, 3)
-        //        .onTrue(new RunCommand(Swerve::zeroGyro));
+        //new JoystickButton(DRIVER, 3).onTrue(new RunCommand(Swerve::zeroGyro));
 
-        new JoystickButton(DRIVER, 5)
-                .onTrue(new RunCommand(Tongue::setPosL4, Tongue));
-        new JoystickButton(DRIVER, 6)
-                .onTrue(new RunCommand(Tongue::setPosL4, Tongue));
-        new JoystickButton(DRIVER, 8).onTrue(new InstantCommand(Swerve::setSpeed));
+        //new JoystickButton(DRIVER, 8).onTrue(new InstantCommand(Swerve::setSpeed)); // slow mode (terrible implementation)
 
 
         new JoystickButton(OPERATOR, 7)
-                .whileTrue(new InstantCommand(() -> Elevator.jogPositive(true), Elevator))
-                .onFalse(new InstantCommand(() -> Elevator.jogPositive(false), Elevator));
+                .whileTrue(new InstantCommand(() -> Intake.jogPositive(true), Intake))
+                .onFalse(new InstantCommand(() -> Intake.jogPositive(false), Intake));
 
         new JoystickButton(OPERATOR, 8)
-                .whileTrue(new InstantCommand(() -> Elevator.jogNegative(true), Elevator))
-                .onFalse(new InstantCommand(() -> Elevator.jogNegative(false), Elevator));
+                .whileTrue(new InstantCommand(() -> Intake.jogNegative(true), Intake))
+                .onFalse(new InstantCommand(() -> Intake.jogNegative(false), Intake));
 
 
    /*      new JoystickButton(OPERATOR, 7)
@@ -178,9 +138,9 @@ public class RobotContainer {
                 .whileTrue(new RunCommand(() -> Elevator.jogNegative(true), Elevator));*/
 
         new JoystickButton(OPERATOR, 3)
-                .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.ZERO), Elevator));
+                .onTrue(new RunCommand(() -> Intake.setPosition(Positions.ZERO), Intake));
         new JoystickButton(OPERATOR, 4)
-                .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
+                .onTrue(new RunCommand(() -> Intake.setPosition(Positions.INTAKE), Intake));
 
       //  new JoystickButton(DRIVER, 1).
        //         whileTrue(Swerve.driveToPose());
@@ -206,12 +166,10 @@ public class RobotContainer {
     
     public void checkAnalogs() {
         if (OPERATOR.getRightTriggerAxis() > .5) {
-            CommandScheduler.getInstance().schedule(new RunCommand(Tongue::setPosReceive, Tongue));
            // CommandScheduler.getInstance().schedule(new InstantCommand(() -> System.out.println("Command scheduled!")));
         }
 
         if (OPERATOR.getLeftTriggerAxis() > .5) {
-            CommandScheduler.getInstance().schedule(new RunCommand(Tongue::setPosCarrying, Tongue));
           //  CommandScheduler.getInstance().schedule(new InstantCommand(() -> System.out.println("Command scheduled!")));
         }
 
