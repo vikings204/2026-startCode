@@ -27,7 +27,7 @@ import static frc.robot.Robot.ControlModeChooser;
 public class RobotContainer {
     public final SwerveSubsystem Swerve = new SwerveSubsystem();
     public final LEDSubsystem LED = new LEDSubsystem();
-    public final IntakeSubsystem Elevator = new IntakeSubsystem();
+    public final IntakeSubsystem Intake = new IntakeSubsystem();
     public final ShooterSubsystem Shooter = new ShooterSubsystem();
     public final ClimberSubsystem Climber = new ClimberSubsystem();
     public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions, Swerve::getSpeeds);
@@ -50,7 +50,7 @@ public class RobotContainer {
         Shuffleboard.getTab("debug").add("swerve", Swerve);
         // Shuffleboard.getTab("main").add("shooter", Shooter);
         Shuffleboard.getTab("main").add("zero swerve", new RunCommand(Swerve::zeroGyro)).withWidget(BuiltInWidgets.kCommand);
-        Shuffleboard.getTab("main").add("zero elevator", new RunCommand(Elevator::zeroEncoders, Elevator)).withWidget(BuiltInWidgets.kCommand);
+        Shuffleboard.getTab("main").add("zero elevator", new RunCommand(Intake::zeroEncoders, Intake)).withWidget(BuiltInWidgets.kCommand);
         Shuffleboard.getTab("main").add("zero pose estimator", new RunCommand(PoseEstimation::resetPose, PoseEstimation)).withWidget(BuiltInWidgets.kCommand);
 
         AutoBuilder.configure(
@@ -82,13 +82,13 @@ public class RobotContainer {
 
         CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
-        NamedCommands.registerCommand("ZERO", new InstantCommand(() -> Elevator.setPosition(Positions.ZERO), Elevator));
-        NamedCommands.registerCommand("INTAKE", new InstantCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
+        NamedCommands.registerCommand("ZERO", new InstantCommand(() -> Intake.setPosition(Positions.ZERO), Intake));
+        NamedCommands.registerCommand("INTAKE", new InstantCommand(() -> Intake.setPosition(Positions.INTAKE), Intake));
         NamedCommands.registerCommand("Shoot", new InstantCommand(() -> Shooter.shootMotor(true, 1), Shooter));
-        NamedCommands.registerCommand("IntakeMotorON", new InstantCommand(() -> Elevator.IntakeMotor(true), Elevator));
-        NamedCommands.registerCommand("IntakeMotorOFF", new InstantCommand(() -> Elevator.IntakeMotor(false), Elevator));
+        NamedCommands.registerCommand("IntakeMotorON", new InstantCommand(() -> Intake.IntakeMotor(true), Intake));
+        NamedCommands.registerCommand("IntakeMotorOFF", new InstantCommand(() -> Intake.IntakeMotor(false), Intake));
 
-        NamedCommands.registerCommand("Intake_Elevator", new InstantCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
+        NamedCommands.registerCommand("Intake_Elevator", new InstantCommand(() -> Intake.setPosition(Positions.INTAKE), Intake));
         NamedCommands.registerCommand("zeroGyro", new InstantCommand(Swerve::zeroGyro, Swerve));
      
         configureDefaultCommands();
@@ -123,12 +123,12 @@ public class RobotContainer {
 
 
         new JoystickButton(OPERATOR, 7)
-                .whileTrue(new InstantCommand(() -> Elevator.jogPositive(true), Elevator))
-                .onFalse(new InstantCommand(() -> Elevator.jogPositive(false), Elevator));
+                .whileTrue(new InstantCommand(() -> Intake.jogPositive(true), Intake))
+                .onFalse(new InstantCommand(() -> Intake.jogPositive(false), Intake));
 
         new JoystickButton(OPERATOR, 8)
-                .whileTrue(new InstantCommand(() -> Elevator.jogNegative(true), Elevator))
-                .onFalse(new InstantCommand(() -> Elevator.jogNegative(false), Elevator));
+                .whileTrue(new InstantCommand(() -> Intake.jogNegative(true), Intake))
+                .onFalse(new InstantCommand(() -> Intake.jogNegative(false), Intake));
 
 
    /*      new JoystickButton(OPERATOR, 7)
@@ -138,9 +138,9 @@ public class RobotContainer {
                 .whileTrue(new RunCommand(() -> Elevator.jogNegative(true), Elevator));*/
 
         new JoystickButton(OPERATOR, 3)
-                .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.ZERO), Elevator));
+                .onTrue(new RunCommand(() -> Intake.setPosition(Positions.ZERO), Intake));
         new JoystickButton(OPERATOR, 4)
-                .onTrue(new RunCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
+                .onTrue(new RunCommand(() -> Intake.setPosition(Positions.INTAKE), Intake));
 
       //  new JoystickButton(DRIVER, 1).
        //         whileTrue(Swerve.driveToPose());
