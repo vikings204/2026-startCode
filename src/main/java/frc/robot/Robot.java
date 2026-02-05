@@ -1,4 +1,3 @@
-
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -12,10 +11,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 import java.util.Optional;
 
-import com.ctre.phoenix6.swerve.SwerveModule;
-
-import frc.robot.util.CTREConfigs;
-
 
 
 /**
@@ -25,12 +20,8 @@ import frc.robot.util.CTREConfigs;
  * project.
  */
 public class Robot extends TimedRobot {
-    public static CTREConfigs ctreConfigs;
-
-    private Command autonomousCommand;
     private RobotContainer robotContainer;
-
-
+    private Command autonomousCommand;
 
     public enum ControlMode {
         SINGLE, COMPETITION
@@ -53,7 +44,6 @@ public class Robot extends TimedRobot {
         TestStuff("TestStuff"),
         TestStuff2("TestStuff2"),
         Mid_Ram("Mid_Ram");
-        
 
         public final String pathplannerName;
         AutoMode(String str) {
@@ -90,8 +80,6 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
-        ctreConfigs = new CTREConfigs();
-
         robotContainer = new RobotContainer();
         //CameraServer.startAutomaticCapture(); // use for USB camera
         //PortForwarder.add(8888, "10.2.4.69", 80);
@@ -147,7 +135,7 @@ public class Robot extends TimedRobot {
 
         // schedule the autonomous command (example)
         if (autonomousCommand != null) {
-          autonomousCommand.schedule();
+          CommandScheduler.getInstance().schedule(autonomousCommand);
         }
         checkDriverStationUpdate();
     }

@@ -40,8 +40,6 @@ public class RobotContainer {
     public final ClimberSubsystem Climber = new ClimberSubsystem();
     public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions, Swerve::getSpeeds);
 
-    private final GenericEntry finalSpeedModifierEntry = Shuffleboard.getTab("config").add("final speed modifier", 1.0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0, "max", 1)).getEntry();
-
     Gamepad DRIVER = new Gamepad(Controller.DRIVER_PORT);
     Gamepad OPERATOR = new Gamepad(Controller.OPERATOR_PORT);
     private final JoystickButton slowSpeed = new JoystickButton(DRIVER, 4);
@@ -97,9 +95,7 @@ public class RobotContainer {
         );
         SmartDashboard.putData("Auto Chooser", autoModeChooser);        
 
-
-        PathfindingCommand.warmupCommand().schedule();
-
+        CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 
         NamedCommands.registerCommand("ZERO", new InstantCommand(() -> Elevator.setPosition(Positions.ZERO), Elevator));
         NamedCommands.registerCommand("INTAKE", new InstantCommand(() -> Elevator.setPosition(Positions.INTAKE), Elevator));
@@ -129,10 +125,7 @@ public class RobotContainer {
                         () -> -1 * DRIVER.getLeftX(),
                         () -> 1 * DRIVER.getLeftY(),
                         () -> -1 * DRIVER.getRightX(),
-                        () -> false,
-                        slowSpeed,//slowMode,// DRIVER.getLeftStickButton(), // slow mode
-                        highSpeed,//!slowMode,//DRIVER.getRightStickButton())); // fast mode
-                        () ->finalSpeedModifierEntry.getDouble(1.0)));
+                        () -> false));
 
         //Elevator.setDefaultCommand(
         //        new RunCommand(
@@ -144,14 +137,13 @@ public class RobotContainer {
 
     private void configureButtonBindings() {
 
-       // new JoystickButton(DRIVER, 3)
-        //        .onTrue(new RunCommand(Swerve::zeroGyro));
+        //new JoystickButton(DRIVER, 3).onTrue(new RunCommand(Swerve::zeroGyro));
 
         new JoystickButton(DRIVER, 5)
                 .onTrue(new RunCommand(Tongue::setPosL4, Tongue));
         new JoystickButton(DRIVER, 6)
                 .onTrue(new RunCommand(Tongue::setPosL4, Tongue));
-        new JoystickButton(DRIVER, 8).onTrue(new InstantCommand(Swerve::setSpeed));
+        //new JoystickButton(DRIVER, 8).onTrue(new InstantCommand(Swerve::setSpeed)); // slow mode (terrible implementation)
 
 
         new JoystickButton(OPERATOR, 7)
