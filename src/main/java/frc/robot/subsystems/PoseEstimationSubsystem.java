@@ -22,7 +22,7 @@ import static edu.wpi.first.wpilibj.Timer.getFPGATimestamp;
 
 
 public class PoseEstimationSubsystem extends SubsystemBase {
-    private final Supplier<Rotation2d> rotationSupplier;
+    private final Supplier<Rotation2d> yawSupplier;
     private final Supplier<SwerveModulePosition[]> modulePositionSupplier;
     private final Supplier<ChassisSpeeds> speedsSupplier;
     private final SwerveDrivePoseEstimator poseEstimator;
@@ -33,22 +33,23 @@ public class PoseEstimationSubsystem extends SubsystemBase {
     private double previousTimestamp = 0.0;
     private final DoubleSubscriber pxSub;
     private final DoubleSubscriber pySub;
+    private final DoubleSubscriber yawSub;
     private final DoubleSubscriber tsSub;
     private final DoubleSubscriber delaySub;
     private final DoubleSubscriber tagsSub;
 
     public PoseEstimationSubsystem(
-            Supplier<Rotation2d> rotationSupplier,
+            Supplier<Rotation2d> yawSupplier,
             Supplier<SwerveModulePosition[]> modulePositionSupplier,
             Supplier<ChassisSpeeds> speedsSupplier) {
 
-        this.rotationSupplier = rotationSupplier;
+        this.yawSupplier = yawSupplier;
         this.modulePositionSupplier = modulePositionSupplier;
         this.speedsSupplier = speedsSupplier;
 
         poseEstimator = new SwerveDrivePoseEstimator(
                 Constants.Swerve.SWERVE_KINEMATICS,
-                rotationSupplier.get(),
+                yawSupplier.get(),
                 modulePositionSupplier.get(),
                 new Pose2d(),
                 STATE_STANDARD_DEVIATIONS,
@@ -59,6 +60,7 @@ public class PoseEstimationSubsystem extends SubsystemBase {
         var ntTable = ntInstance.getTable("datatable");
         pxSub = ntTable.getDoubleTopic("px").subscribe(0.0);
         pySub = ntTable.getDoubleTopic("py").subscribe(0.0);
+        yawSub = ntTable.getDoubleTopic("yaw").subscribe(0.0);
         tsSub = ntTable.getDoubleTopic("timestamp").subscribe(0.0);
         delaySub = ntTable.getDoubleTopic("delay").subscribe(0.0);
         tagsSub = ntTable.getDoubleTopic("tags").subscribe(0.0);
@@ -76,7 +78,7 @@ public class PoseEstimationSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // Update pose estimator with drivetrain sensors
-        poseEstimator.updateWithTime(getFPGATimestamp(), rotationSupplier.get(), modulePositionSupplier.get());
+        poseEstimator.updateWithTime(getFPGATimestamp(), yawSupplier.get(), modulePositionSupplier.get());
 
         if (VISION_ENABLED) {
             double ts = tsSub.get();
@@ -85,7 +87,8 @@ public class PoseEstimationSubsystem extends SubsystemBase {
                 Pose2d p = new Pose2d(pxSub.get(), pySub.get(), poseEstimator.getEstimatedPosition().getRotation());
                 p = p.transformBy(new Transform2d()); // cam to robot center
 
-                // adjust std devs
+                // adjust std devs by robot speeds
+                /*
                 ChassisSpeeds speeds = speedsSupplier.get();
                 double avgSpeed = (speeds.vxMetersPerSecond + speeds.vyMetersPerSecond + speeds.omegaRadiansPerSecond) / 3;
                 if (avgSpeed < MIN_SPEED_FOR_STD_DEV) {
@@ -104,6 +107,16 @@ public class PoseEstimationSubsystem extends SubsystemBase {
                     // https://www.desmos.com/calculator/rvbx3meynf
                     double stdDev = ((avgSpeed - MIN_SPEED_FOR_STD_DEV) / (MAX_SPEED_FOR_STD_DEV - MIN_SPEED_FOR_STD_DEV)) * (TRUST_VISION_STANDARD_DEVIATION-IGNORE_VISION_STANDARD_DEVIATION) + IGNORE_VISION_STANDARD_DEVIATION;
                     poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(stdDev, stdDev, stdDev));
+                }
+                */
+
+                // adjust std devs by yaw difference
+                double yawDiff = Math.abs(yawSupplier.get().getDegrees() - yawSub.get());
+                if (yawDiff < 1) {
+                    // could adjust the above number and interpolate, etc.
+                    poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(TRUST_VISION_STANDARD_DEVIATION, TRUST_VISION_STANDARD_DEVIATION, TRUST_VISION_STANDARD_DEVIATION));
+                } else {
+                    poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(IGNORE_VISION_STANDARD_DEVIATION, IGNORE_VISION_STANDARD_DEVIATION, IGNORE_VISION_STANDARD_DEVIATION));
                 }
 
                 poseEstimator.addVisionMeasurement(p, getFPGATimestamp()-delaySub.get());
@@ -131,7 +144,7 @@ public class PoseEstimationSubsystem extends SubsystemBase {
      * @param newPose new pose
      */
     public void setPose(Pose2d newPose) {
-        poseEstimator.resetPosition(rotationSupplier.get(), modulePositionSupplier.get(), newPose);
+        poseEstimator.resetPosition(yawSupplier.get(), modulePositionSupplier.get(), newPose);
     }
 
     /**
