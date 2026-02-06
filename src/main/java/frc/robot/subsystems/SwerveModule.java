@@ -204,7 +204,7 @@ public class SwerveModule {
         driveConfig.smartCurrentLimit(DRIVE_CURRENT_LIMIT) ;
         // replaced above driveMotor.setSmartCurrentLimit(DRIVE_CURRENT_LIMIT);
         driveConfig
-            .inverted(true)
+            .inverted(false)
             .idleMode(IdleMode.kCoast);
         //driveMotor.setInverted(DRIVE_INVERT);
         // Both replaced above driveMotor.setIdleMode(DRIVE_IDLE_MODE);

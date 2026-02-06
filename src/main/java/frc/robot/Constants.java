@@ -87,38 +87,38 @@ public final class Constants {
 
         /* Module Specific Constants */
         /* Front Left Module - Module 0 */
-        public static final class Mod3 {
+        public static final class Mod2 {
             public static final int DRIVE_MOTOR_ID = 11;
             public static final int ANGLE_MOTOR_ID = 21;
             public static final int CAN_CODER_ID = 31;
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.660);
+            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.919434);
         }
 
         /* Front Right Module - Module 1 */
-        public static final class Mod2 {
+        public static final class Mod0 {
             public static final int DRIVE_MOTOR_ID = 12;
             public static final int ANGLE_MOTOR_ID = 22;
             public static final int CAN_CODER_ID = 32;
 
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.876);
+            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.12793);
         }
 
         /* Back Left Module - Module 2 */
-        public static final class Mod1 {
+        public static final class Mod3 {
             public static final int DRIVE_MOTOR_ID = 10;
             public static final int ANGLE_MOTOR_ID = 20;
             public static final int CAN_CODER_ID = 30;
 
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.853);
+            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.077881);
         }
 
         /* Back Right Module - Module 3 */
-        public static final class Mod0 {
+        public static final class Mod1 {
             public static final int DRIVE_MOTOR_ID = 13;
             public static final int ANGLE_MOTOR_ID = 23;
             public static final int CAN_CODER_ID = 33;
 
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.08);
+            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.33374);
         }
     }
 
