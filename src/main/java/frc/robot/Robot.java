@@ -1,6 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -84,8 +83,6 @@ public class Robot extends TimedRobot {
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
         robotContainer = new RobotContainer();
-        //CameraServer.startAutomaticCapture(); // use for USB camera
-        //PortForwarder.add(8888, "10.2.4.69", 80);
 
         if (Constants.Controller.DEFAULT_CONTROL_MODE == ControlMode.SINGLE) {
             ControlModeChooser.setDefaultOption("Single Controller (Driver:usb1 Operator:usb1)", ControlMode.SINGLE);
@@ -100,9 +97,9 @@ public class Robot extends TimedRobot {
             AutoModeChooser.addOption(i.optionName(), i);
         }
 
-        Shuffleboard.getTab("main").add("Auto Select", AutoModeChooser).withSize(3, 1);
+        Shuffleboard.getTab("main").add("auto mode", AutoModeChooser).withSize(3, 1);
         checkDriverStationUpdate();
-        Shuffleboard.getTab("main").addString("alliance", () -> allianceString);
+        Shuffleboard.getTab("main").addString("alliance", () -> ALLIANCE_STR);
     }
     /**
      * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -127,8 +124,7 @@ public class Robot extends TimedRobot {
         checkDriverStationUpdate();
     }
     @Override
-    public void disabledPeriodic() {
-    }
+    public void disabledPeriodic() {}
 
 
 
@@ -143,8 +139,7 @@ public class Robot extends TimedRobot {
         checkDriverStationUpdate();
     }
     @Override
-    public void autonomousPeriodic() {
-    }
+    public void autonomousPeriodic() {}
 
 
 
@@ -175,16 +170,10 @@ public class Robot extends TimedRobot {
         checkDriverStationUpdate();
     }
     @Override
-    public void testPeriodic() {
-        
-        for(frc.robot.subsystems.SwerveModule offset:robotContainer.Swerve.modules){
-            System.out.println("Module: " + offset.moduleNumber + " Angle: " + offset.getAngle().getRotations() + " Encoder: " + offset.angleEncoder.getAbsolutePosition().getValueAsDouble());
-        }
-        
-    }
+    public void testPeriodic() {}
 
-    public static DriverStation.Alliance alliance;
-    public static String allianceString = "never init";
+    public static DriverStation.Alliance ALLIANCE;
+    public static String ALLIANCE_STR = "never init";
     /**
      * Checks the driverstation alliance. We have have to check repeatedly because we don't know when the
      * driverstation/FMS will connect, and the alliance can change at any time in the shop.
@@ -196,8 +185,8 @@ public class Robot extends TimedRobot {
         if (allianceOpt.isPresent()) {
             DriverStation.Alliance newAlliance = allianceOpt.get();
             //robotContainer.PoseEstimation.setAlliance(DriverStation.Alliance.Blue);//robotContainer.PoseEstimation.setAlliance(newAlliance);
-            alliance = newAlliance;
-            allianceString = newAlliance.toString();
+            ALLIANCE = newAlliance;
+            ALLIANCE_STR = newAlliance.toString();
         }
     }
 }

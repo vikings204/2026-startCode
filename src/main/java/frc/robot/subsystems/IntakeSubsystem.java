@@ -10,12 +10,13 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.ReduceCANUsage;
 import frc.robot.util.ReduceCANUsage.Spark_Max.Usage;
 
-import static frc.robot.Constants.Elevator.*;
+import static frc.robot.Constants.Intake.*;
 
 public class IntakeSubsystem extends SubsystemBase {
     private final SparkMax leftMotor;
@@ -46,6 +47,9 @@ public class IntakeSubsystem extends SubsystemBase {
         IntakeSpinMotor_config = new SparkMaxConfig();
 
         zeroEncoders();
+
+        Shuffleboard.getTab("debug").addDouble("intake left pos", leftEncoder::getPosition);
+        Shuffleboard.getTab("debug").addDouble("intake right pos", leftEncoder::getPosition);
     }
 
     @Override
@@ -112,10 +116,10 @@ public class IntakeSubsystem extends SubsystemBase {
         leftMotorConfig.inverted(LEFT_INVERT);
         leftMotorConfig.idleMode(IDLE_MODE);
         //angleConfig.encoder.positionConversionFactor(1/ANGLE_POSITION_CONVERSION_FACTOR);
-        leftMotorConfig.encoder.positionConversionFactor(1.0 / Constants.Elevator.POSITION_CONVERSION_FACTOR);
+        leftMotorConfig.encoder.positionConversionFactor(1.0 / Constants.Intake.POSITION_CONVERSION_FACTOR);
         leftMotorConfig.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                .pid(Constants.Elevator.PID_P, 0, 0)
+                .pid(Constants.Intake.PID_P, 0, 0)
                 .outputRange(-1, 1)
                 .positionWrappingEnabled(false)
                 .positionWrappingInputRange(0, 1)
@@ -140,7 +144,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         rightMotorConfig.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                .pid(Constants.Elevator.PID_P, 0, 0)
+                .pid(Constants.Intake.PID_P, 0, 0)
                 .outputRange(-1, 1)
                 .positionWrappingEnabled(false)
                 .positionWrappingInputRange(0, 1)

@@ -7,22 +7,19 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.Controller;
-import frc.robot.Constants.Elevator.Positions;
+import frc.robot.Constants.Intake.Positions;
 import frc.robot.Robot.ControlMode;
 import frc.robot.commands.TeleopSwerveCommand;
 import frc.robot.subsystems.*;
 import frc.robot.util.Gamepad;
 
-import static frc.robot.Robot.AutoModeChooser;
-import static frc.robot.Robot.ControlModeChooser;
+import static frc.robot.Robot.*;
 
 public class RobotContainer {
     public final SwerveSubsystem Swerve = new SwerveSubsystem();
@@ -34,8 +31,6 @@ public class RobotContainer {
 
     Gamepad DRIVER = new Gamepad(Controller.DRIVER_PORT);
     Gamepad OPERATOR = new Gamepad(Controller.OPERATOR_PORT);
-
-    private final SendableChooser<Command> autoModeChooser;
 
     public RobotContainer() {
         ControlModeChooser.onChange((ControlMode mode) -> {
@@ -49,37 +44,23 @@ public class RobotContainer {
         });
 
         Shuffleboard.getTab("debug").add("swerve", Swerve);
-        // Shuffleboard.getTab("main").add("shooter", Shooter);
-        Shuffleboard.getTab("main").add("zero swerve", new RunCommand(Swerve::zeroGyro)).withWidget(BuiltInWidgets.kCommand);
+        Shuffleboard.getTab("debug").add("intake", Intake);
+        Shuffleboard.getTab("debug").add("shooter", Shooter);
+        //Shuffleboard.getTab("debug").add("climber", Climber);
+        Shuffleboard.getTab("main").add("zero gyro", new RunCommand(Swerve::zeroGyro)).withWidget(BuiltInWidgets.kCommand);
         Shuffleboard.getTab("main").add("zero elevator", new RunCommand(Intake::zeroEncoders, Intake)).withWidget(BuiltInWidgets.kCommand);
         Shuffleboard.getTab("main").add("zero pose estimator", new RunCommand(PoseEstimation::resetPose, PoseEstimation)).withWidget(BuiltInWidgets.kCommand);
 
         AutoBuilder.configure(
-                PoseEstimation::getPose, // Robot pose supplier
-                PoseEstimation::setPose,
-                Swerve::getSpeeds,
-                (speeds, feedforwards) -> Swerve.driveRobotRelative(speeds),//byass need for PathFeedfowards with lamda, hacky solution idk if its good// Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-                Constants.Auto.PATH_FOLLOWER_CONFIG, // The path follower configuration 
-                Constants.Auto.config, // The robot configuration
-                //() -> Robot.alliance == DriverStation.Alliance.Red,
-                () -> {
-                    var alliance = DriverStation.getAlliance();
-                    if (alliance.isPresent()) {
-                        return alliance.get() == DriverStation.Alliance.Red;
-                    }
-                    return false;
-                },
-                Swerve // Reference to this subsystem to set requirements
+            PoseEstimation::getPose, // Robot pose supplier
+            PoseEstimation::setPose,
+            Swerve::getSpeeds,
+            (speeds, feedforwards) -> Swerve.driveRobotRelative(speeds),//byass need for PathFeedfowards with lamda, hacky solution idk if its good// Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            Constants.Auto.PATH_FOLLOWER_CONFIG, // The path follower configuration
+            Constants.Auto.config, // The robot configuration
+            () -> ALLIANCE == DriverStation.Alliance.Red,
+            Swerve // Reference to this subsystem to set requirements
         );
-
-        boolean isCompetition = false;
-
-        autoModeChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
-                (stream) -> isCompetition
-                        ? stream.filter(auto -> auto.getName().startsWith("comp"))
-                        : stream
-        );
-        SmartDashboard.putData("Auto Chooser", autoModeChooser);
 
         CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
 

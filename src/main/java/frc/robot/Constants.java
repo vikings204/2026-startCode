@@ -156,7 +156,7 @@ public final class Constants {
         public static final double MIN_SPEED_FOR_STD_DEV = 0.1;
     }
 
-    public static final class Elevator {
+    public static final class Intake {
         public static final double PID_P = .25;
         public static final int LEFT_MOTOR_ID = 7;
         public static final int RIGHT_MOTOR_ID = 8;
@@ -179,6 +179,12 @@ public final class Constants {
                 this.position = p;
             }
         }
+    }
+
+    public static final class Shooter {
+        public static final int MAIN_MOTOR_ID = 51;
+        public static final int KICK_MOTOR_ID = 52;
+        public static final int VECTOR_MOTOR_ID = 53;
     }
 
     public static final class Climber {

@@ -4,59 +4,66 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.ReduceCANUsage;
 import frc.robot.util.ReduceCANUsage.Spark_Max.Usage;
 
+import static frc.robot.Constants.Shooter.*;
+
 public class ShooterSubsystem extends SubsystemBase {
-    private final SparkMax shooterMotor_1;
-    private final SparkMaxConfig shooterMotor_1_Config;
-    private final SparkMax shooterMotor_2;
-    private final SparkMaxConfig shooterMotor_2_Config;
-    private final SparkMax shooterMotor_3;
-    private final SparkMaxConfig shooterMotor_3_Config;
+    private final SparkMax mainMotor;
+    private final SparkMaxConfig mainMotorConfig;
+    private final SparkMax kickMotor;
+    private final SparkMaxConfig kickMotorConfig;
+    private final SparkMax vectorMotor;
+    private final SparkMaxConfig vectorMotorConfig;
 
     public ShooterSubsystem() {
         //led = ledSubsystem;
         // SET SHHOOTERMOTOR ID FROM CONSTANTS WHEN SET
-        shooterMotor_1 = new SparkMax(51, MotorType.kBrushless);
-        shooterMotor_1_Config = new SparkMaxConfig();
-        shooterMotor_2 = new SparkMax(52, MotorType.kBrushless);
-        shooterMotor_2_Config = new SparkMaxConfig();
-        shooterMotor_3 = new SparkMax(53, MotorType.kBrushless);
-        shooterMotor_3_Config = new SparkMaxConfig();
+        mainMotor = new SparkMax(MAIN_MOTOR_ID, MotorType.kBrushless);
+        mainMotorConfig = new SparkMaxConfig();
+        kickMotor = new SparkMax(KICK_MOTOR_ID, MotorType.kBrushless);
+        kickMotorConfig = new SparkMaxConfig();
+        vectorMotor = new SparkMax(VECTOR_MOTOR_ID, MotorType.kBrushless);
+        vectorMotorConfig = new SparkMaxConfig();
         configMotors();
+
+        // needed to do closed loop velocity control (optimal for high throughput)
+        Shuffleboard.getTab("debug").addDouble("shooter main velocity", mainMotor.getEncoder()::getVelocity);
+        Shuffleboard.getTab("debug").addDouble("shooter kick velocity", kickMotor.getEncoder()::getVelocity);
+        Shuffleboard.getTab("debug").addDouble("shooter vector velocity", vectorMotor.getEncoder()::getVelocity);
     }
 
     private void configMotors() {
-        //shooterMotor_1.restoreFactoryDefaults();
-        ReduceCANUsage.Spark_Max.setCANSparkMaxBusUsage(shooterMotor_1, Usage.kAll, shooterMotor_1_Config);
-        shooterMotor_1_Config.smartCurrentLimit(40);
-        shooterMotor_1_Config.inverted(false);
-        shooterMotor_1_Config.idleMode(IdleMode.kBrake);
-        shooterMotor_1_Config.voltageCompensation(12.0);
-        ReduceCANUsage.Spark_Max.setCANSparkMaxBusUsage(shooterMotor_2, Usage.kAll, shooterMotor_2_Config);
-        shooterMotor_2_Config.smartCurrentLimit(40);
-        shooterMotor_2_Config.inverted(false);
-        shooterMotor_2_Config.idleMode(IdleMode.kBrake);
-        shooterMotor_2_Config.voltageCompensation(12.0);
-        ReduceCANUsage.Spark_Max.setCANSparkMaxBusUsage(shooterMotor_3, Usage.kAll, shooterMotor_3_Config);
-        shooterMotor_3_Config.smartCurrentLimit(40);
-        shooterMotor_3_Config.inverted(false);
-        shooterMotor_3_Config.idleMode(IdleMode.kBrake);
-        shooterMotor_3_Config.voltageCompensation(12.0);
+        ReduceCANUsage.Spark_Max.setCANSparkMaxBusUsage(mainMotor, Usage.kAll, mainMotorConfig);
+        mainMotorConfig.smartCurrentLimit(40);
+        mainMotorConfig.inverted(false);
+        mainMotorConfig.idleMode(IdleMode.kBrake);
+        mainMotorConfig.voltageCompensation(12.0);
+        ReduceCANUsage.Spark_Max.setCANSparkMaxBusUsage(kickMotor, Usage.kAll, kickMotorConfig);
+        kickMotorConfig.smartCurrentLimit(40);
+        kickMotorConfig.inverted(false);
+        kickMotorConfig.idleMode(IdleMode.kBrake);
+        kickMotorConfig.voltageCompensation(12.0);
+        ReduceCANUsage.Spark_Max.setCANSparkMaxBusUsage(vectorMotor, Usage.kAll, vectorMotorConfig);
+        vectorMotorConfig.smartCurrentLimit(40);
+        vectorMotorConfig.inverted(false);
+        vectorMotorConfig.idleMode(IdleMode.kBrake);
+        vectorMotorConfig.voltageCompensation(12.0);
     }
 
     public void shootMotor(boolean shoot, double speed) {
         if (shoot) {
-            shooterMotor_1.set(speed);
-            shooterMotor_2.set(1);
-            shooterMotor_3.set(1);
+            mainMotor.set(speed);
+            kickMotor.set(1);
+            vectorMotor.set(1);
 
         } else {
-            shooterMotor_1.set(0);
-            shooterMotor_2.set(0);
-            shooterMotor_3.set(0);
+            mainMotor.set(0);
+            kickMotor.set(0);
+            vectorMotor.set(0);
         }
     }
 
