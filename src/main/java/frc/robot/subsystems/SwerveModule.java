@@ -206,7 +206,8 @@ public class SwerveModule {
         driveConfig
             .inverted(false)
             .idleMode(IdleMode.kCoast);
-        //driveMotor.setInverted(DRIVE_INVERT);
+        driveMotor.setInverted(true);
+
         // Both replaced above driveMotor.setIdleMode(DRIVE_IDLE_MODE);
         driveConfig.encoder
             .positionConversionFactor(DRIVE_POSITION_CONVERSION_FACTOR)
@@ -225,6 +226,7 @@ public class SwerveModule {
         driveController.setFF(DRIVE_PID_FF);
         */
         driveConfig.voltageCompensation(VOLTAGE_COMPENSATION);
+        driveConfig.inverted(false);
 
         // replaced above driveMotor.enableVoltageCompensation(VOLTAGE_COMPENSATION);
         driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
