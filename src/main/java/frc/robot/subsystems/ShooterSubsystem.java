@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
-
+import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -14,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.ReduceCANUsage;
 import frc.robot.util.ReduceCANUsage.Spark_Max.Usage;
+import com.revrobotics.spark.SparkClosedLoopController;
 
 public class ShooterSubsystem extends SubsystemBase {
     private final SparkMax shooterMotor_1;
@@ -28,6 +30,10 @@ public class ShooterSubsystem extends SubsystemBase {
    // private final LEDSubsystem led;
     private boolean noteDetected;
     public boolean detecting = true;
+    private final SparkClosedLoopController shooterMotor1_CLoopController;
+    private final SparkClosedLoopController shooterMotor2_CLoopController;
+    private final SparkClosedLoopController shooterMotor3_CLoopController;
+    
    // private final GenericEntry entry;
 
     public ShooterSubsystem() {
@@ -39,6 +45,9 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterMotor_2_Config = new SparkMaxConfig();
         shooterMotor_3 = new SparkMax(53, MotorType.kBrushless);
         shooterMotor_3_Config = new SparkMaxConfig();
+        shooterMotor1_CLoopController = shooterMotor_1.getClosedLoopController();
+        shooterMotor2_CLoopController = shooterMotor_2.getClosedLoopController();
+        shooterMotor3_CLoopController = shooterMotor_3.getClosedLoopController();
         configMotors();
 
 
@@ -67,16 +76,19 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterMotor_1_Config.inverted(false);
         shooterMotor_1_Config.idleMode(IdleMode.kBrake);
         shooterMotor_1_Config.voltageCompensation(12.0);
+        shooterMotor1_CLoopController.setSetpoint(30, ControlType.kVelocity);
         ReduceCANUsage.Spark_Max.setCANSparkMaxBusUsage(shooterMotor_2, Usage.kAll, shooterMotor_2_Config);
         shooterMotor_2_Config.smartCurrentLimit(40);
         shooterMotor_2_Config.inverted(false);
         shooterMotor_2_Config.idleMode(IdleMode.kBrake);
         shooterMotor_2_Config.voltageCompensation(12.0);
+        shooterMotor2_CLoopController.setSetpoint(60, ControlType.kVelocity);
         ReduceCANUsage.Spark_Max.setCANSparkMaxBusUsage(shooterMotor_3, Usage.kAll, shooterMotor_3_Config);
         shooterMotor_3_Config.smartCurrentLimit(40);
         shooterMotor_3_Config.inverted(false);
         shooterMotor_3_Config.idleMode(IdleMode.kBrake);
         shooterMotor_3_Config.voltageCompensation(12.0);
+        shooterMotor3_CLoopController.setSetpoint(120, ControlType.kVelocity);
        
         
     }
