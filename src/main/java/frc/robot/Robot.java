@@ -43,6 +43,7 @@ public class Robot extends TimedRobot {
         over2up2("2up2"),
         TestStuff("TestStuff"),
         TestStuff2("TestStuff2"),
+        CameraTest("CameraTest"),
         Mid_Ram("Mid_Ram");
 
        

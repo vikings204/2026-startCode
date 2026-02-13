@@ -143,7 +143,7 @@ public final class Constants {
     public static final class Vision {
         public static final boolean VISION_ENABLED = true;
         public static final Transform3d CAMERA_TO_ROBOT = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0));
-        public static final double TRUST_VISION_STANDARD_DEVIATION = 0.2;
+        public static final double TRUST_VISION_STANDARD_DEVIATION = 0.3;
         public static final double IGNORE_VISION_STANDARD_DEVIATION = 1.5;
 
         /**
