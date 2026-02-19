@@ -129,7 +129,7 @@ public class PoseEstimationSubsystem extends SubsystemBase {
         // Set the pose on the dashboard
         var dashboardPose = poseEstimator.getEstimatedPosition();
         field.setRobotPose(dashboardPose);
-        arrayForDashboard = new double[]{dashboardPose.getX(), dashboardPose.getY(), dashboardPose.getRotation().getDegrees()};
+        arrayForDashboard = new double[]{Math.round(dashboardPose.getX()*1000.0)/1000.0, Math.round(dashboardPose.getY()*1000.0)/1000.0, Math.round(dashboardPose.getRotation().getDegrees()*1000.0)/1000.0};
        // System.out.println(arrayForDashboard[2]+" "+ poseEstimator.getEstimatedPosition().getRotation());
 
     }
