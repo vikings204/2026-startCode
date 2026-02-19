@@ -86,7 +86,7 @@ public final class Constants {
         public static final int PIGEON2_ID = 9;
 
         /* Module Specific Constants */
-        /* Front Left Module - Module 0 */
+
         public static final class Mod2 {
             public static final int DRIVE_MOTOR_ID = 11;
             public static final int ANGLE_MOTOR_ID = 21;
@@ -135,7 +135,7 @@ public final class Constants {
         }
 
         public static final PPHolonomicDriveController PATH_FOLLOWER_CONFIG =  new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-        new PIDConstants(1.0, 0.0, 0.0), // Translation PID constants
+        new PIDConstants(2.0, 0.0, 0.0), // Translation PID constants
         new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
         );
     }
