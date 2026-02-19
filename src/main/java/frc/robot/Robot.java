@@ -26,25 +26,8 @@ public class Robot extends TimedRobot {
         SINGLE, COMPETITION
     }
     public enum AutoMode {
-        Top_Auto_Comp("Top_Auto_Comp"),
-        //Botttom_Auto("Bottom_Auto"),
-        Botttom_Auto_Comp("Bottom_Auto_Comp"),
-        Mid_Auto_Comp("Mid_Auto_Comp"),
-        //Mid_Auto("Mid_Auto"),
-        AutoTest("Auto1"),
-        Tanisha("TANISHA"),
-        TwoSides("2sided"),
-        Oto1("0to1"),
-        Oto2("0to2"),
-        Oto3("0to3"),
-        up0to1("up0to1"),
-        up0to2("up0to2"),
-        up0to3("up0to3"),
-        over2up2("2up2"),
-        TestStuff("TestStuff"),
-        TestStuff2("TestStuff2"),
-        CameraTest("CameraTest"),
-        Mid_Ram("Mid_Ram");
+
+        OnlyAuto("NewAuto");
 
        
 

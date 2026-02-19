@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "first part"
+            "pathName": "New Path"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Path2"
+            "pathName": "New New Path"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "firstpath3"
+            "pathName": "New New New Path"
           }
         }
       ]
