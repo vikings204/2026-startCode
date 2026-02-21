@@ -1,50 +1,30 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.commands.PathfindingCommand;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.DriveFeedforwards;
-import com.pathplanner.lib.util.swerve.SwerveSetpoint;
-import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.Map;
 
 import static frc.robot.Constants.Swerve.*;
 
-
 public class SwerveSubsystem extends SubsystemBase {
-    public Pigeon2 gyro = new Pigeon2(PIGEON2_ID, "rio");
+    public Pigeon2 gyro = new Pigeon2(PIGEON2_ID, CANBus.roboRIO());
     public final SwerveModule[] modules; // Array of the 4 swerve modules
-//    private final SwerveDrivePoseEstimator TESTPOSER = new SwerveDrivePoseEstimator(
-//            Constants.Swerve.SWERVE_KINEMATICS,
-//            new Rotation2d(),
-//            new SwerveModulePosition[]{
-//                    new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition()
-//            },
-//            new Pose2d()
-//    );
 
     public SwerveSubsystem() {
         var toApply = new Pigeon2Configuration();
@@ -65,20 +45,9 @@ public class SwerveSubsystem extends SubsystemBase {
             Shuffleboard.getTab("swerve").addNumber("Mod " + mod.moduleNumber + " Integrated", mod.getState().angle::getDegrees).withWidget(BuiltInWidgets.kDial).withProperties(Map.of("min", -180, "max", 180));
             Shuffleboard.getTab("swerve").addNumber("Mod " + mod.moduleNumber + " Velocity", () -> mod.getState().speedMetersPerSecond);
         }
-        Shuffleboard.getTab("main").addNumber("gyro angle", () -> {
-            Rotation2d yaw = getYaw();
-            return yaw.getDegrees();
-        });
+        Shuffleboard.getTab("main").addNumber("gyro angle", getYaw()::getDegrees);
     }
 
-    public void setSpeed(){
-        if (Constants.Swerve.SPEED_MULTIPLIER <.5){
-            Constants.Swerve.SPEED_MULTIPLIER = .85;
-        }
-        else{
-            Constants.Swerve.SPEED_MULTIPLIER = .125;
-        }
-    }
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         SwerveModuleState[] swerveModuleStates =
                 SWERVE_KINEMATICS.toSwerveModuleStates(fieldRelative ?
@@ -90,7 +59,6 @@ public class SwerveSubsystem extends SubsystemBase {
         for (SwerveModule mod : modules) {
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
         }
-        //System.out.println("Current Heading: "+getYaw());
     }
 
     /* Used by SwerveControllerCommand in Auto */
@@ -132,11 +100,6 @@ public class SwerveSubsystem extends SubsystemBase {
     public void zeroGyro() {
         gyro.setYaw(0.0);
     }
-    public void setX(){
-        for (SwerveModule mod : modules) {
-            mod.resetToAbsolute();
-        }
-    }
 
     public void setGyro(double yaw) {
         gyro.setYaw(yaw);
@@ -147,7 +110,6 @@ public class SwerveSubsystem extends SubsystemBase {
                 ? Rotation2d.fromDegrees(360 - gyro.getYaw().getValueAsDouble())
                 : Rotation2d.fromDegrees(gyro.getYaw().getValueAsDouble());
     }
-    //Might just want the get rotation 2d
 
     public void resetEncoders(){
         for (int i = 0; i<4; i++){
@@ -162,25 +124,21 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {
-        //TESTPOSER.update(new Rotation2d(), getPositions());
-        //System.out.println("x=" + TESTPOSER.getEstimatedPosition().getX()*(4/2.8) + "  y=" + TESTPOSER.getEstimatedPosition().getY()*(4/2.8));
-    }
+    public void periodic() {}
+
     public Command driveToPose(){//Pose2d pose) {
-    Translation2d t = new Translation2d(1.0,0.0);
-    Pose2d test = new Pose2d(t, new Rotation2d(0.0));
-    // Create the constraints to use while pathfinding
-    PathConstraints constraints = new PathConstraints(
-        1.0, 1.0,
-        Units.degreesToRadians(360), Units.degreesToRadians(360));
+        Translation2d t = new Translation2d(1.0,0.0);
+        Pose2d test = new Pose2d(t, new Rotation2d(0.0));
+        // Create the constraints to use while pathfinding
+        PathConstraints constraints = new PathConstraints(
+            1.0, 1.0,
+            Units.degreesToRadians(360), Units.degreesToRadians(360));
 
-    // Since AutoBuilder is configured, we can use it to build pathfinding commands
-    return AutoBuilder.pathfindToPose(
-        test,
-        constraints,
-        edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
-    );
-  }
-
-
+        // Since AutoBuilder is configured, we can use it to build pathfinding commands
+        return AutoBuilder.pathfindToPose(
+            test,
+            constraints,
+            edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+        );
+    }
 }
