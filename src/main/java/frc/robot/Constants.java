@@ -135,7 +135,7 @@ public final class Constants {
         }
 
         public static final PPHolonomicDriveController PATH_FOLLOWER_CONFIG =  new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-        new PIDConstants(2.0, 0.0, 0.0), // Translation PID constants
+        new PIDConstants(5.0, 0.0, 0.1), // Translation PID constants
         new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
         );
     }

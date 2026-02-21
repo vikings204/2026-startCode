@@ -25,7 +25,7 @@ public class RobotContainer {
     public final SwerveSubsystem Swerve = new SwerveSubsystem();
     public final LEDSubsystem LED = new LEDSubsystem();
     public final IntakeSubsystem Intake = new IntakeSubsystem();
-    public final ShooterSubsystem Shooter = new ShooterSubsystem();
+    //public final ShooterSubsystem Shooter = new ShooterSubsystem();
     //public final ClimberSubsystem Climber = new ClimberSubsystem();
     public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions, Swerve::getSpeeds);
 
@@ -45,7 +45,7 @@ public class RobotContainer {
 
         Shuffleboard.getTab("debug").add("swerve", Swerve);
         Shuffleboard.getTab("debug").add("intake", Intake);
-        Shuffleboard.getTab("debug").add("shooter", Shooter);
+        //Shuffleboard.getTab("debug").add("shooter", Shooter);
         //Shuffleboard.getTab("debug").add("climber", Climber);
         Shuffleboard.getTab("main").add("zero gyro", new RunCommand(Swerve::zeroGyro)).withWidget(BuiltInWidgets.kCommand);
         Shuffleboard.getTab("main").add("zero elevator", new RunCommand(Intake::zeroEncoders, Intake)).withWidget(BuiltInWidgets.kCommand);
@@ -66,7 +66,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("ZERO", new InstantCommand(() -> Intake.setPosition(Positions.ZERO), Intake));
         NamedCommands.registerCommand("INTAKE", new InstantCommand(Intake::IntakeAUTO, Intake));
-        NamedCommands.registerCommand("Shoot", new InstantCommand(() -> Shooter.shootMotor(true, 1), Shooter));
+        //NamedCommands.registerCommand("Shoot", new InstantCommand(() -> Shooter.shootMotor(true, 1), Shooter));
         NamedCommands.registerCommand("IntakeMotorON", new InstantCommand(() -> Intake.IntakeMotor(true), Intake));
         NamedCommands.registerCommand("IntakeMotorOFF", new InstantCommand(() -> Intake.IntakeMotor(false), Intake));
 
@@ -130,7 +130,7 @@ public class RobotContainer {
         //         whileTrue(Swerve.driveToPose());
 //        new JoystickButton(DRIVER, 1).whileTrue(new AlignCommand(false, Swerve));
 
-        new JoystickButton(DRIVER, 4)
+        /*new JoystickButton(DRIVER, 4)
                 //.whileTrue(StupidAlignLeft); // A is left
                 .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, .25), Shooter))
                 .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));
@@ -145,7 +145,7 @@ public class RobotContainer {
         new JoystickButton(DRIVER, 3)
                 //.whileTrue(ColorAlignRight);
                 .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, 1), Shooter))
-                .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));
+                .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));*/
     }
 
     public void checkAnalogs() {
