@@ -1,59 +1,59 @@
 package frc.robot.subsystems;
 
-
-import static frc.robot.Constants.Elevator.*;
-
-
+import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.FeedbackSensor;
-
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.Elevator.Positions;
 import frc.robot.Constants;
 import frc.robot.util.ReduceCANUsage;
 import frc.robot.util.ReduceCANUsage.Spark_Max.Usage;
 
+import static frc.robot.Constants.Intake.*;
 
-public class ElevatorSubsystem extends SubsystemBase {
+public class IntakeSubsystem extends SubsystemBase {
     private final SparkMax leftMotor;
     private final SparkMaxConfig leftMotorConfig;
     private final RelativeEncoder leftEncoder;
     private final SparkClosedLoopController leftController;
-
+    private boolean IntakeState = false;
     private final SparkMax rightMotor;
     private final SparkMaxConfig rightMotorConfig;
     private final RelativeEncoder rightEncoder;
     private final SparkClosedLoopController rightController;
-    private final TongueSubsystem Tongue;
+    private final SparkMax IntakeSpinMotor;
+    private final SparkMaxConfig IntakeSpinMotor_config;
 
-    public ElevatorSubsystem(TongueSubsystem tongue) {
+    public IntakeSubsystem() {
         leftMotor = new SparkMax(LEFT_MOTOR_ID, MotorType.kBrushless);
         leftMotorConfig = new SparkMaxConfig();
         leftEncoder = leftMotor.getEncoder();
         leftController = leftMotor.getClosedLoopController();
         configLeftMotor();
-
         rightMotor = new SparkMax(RIGHT_MOTOR_ID, MotorType.kBrushless);
         rightMotorConfig = new SparkMaxConfig();
         rightEncoder = rightMotor.getEncoder();
         rightController = rightMotor.getClosedLoopController();
         configRightMotor();
 
+        IntakeSpinMotor = new SparkMax(IntakeSpinMotor_ID, MotorType.kBrushless);
+        IntakeSpinMotor_config = new SparkMaxConfig();
+
         zeroEncoders();
-        this.Tongue = tongue;
+
+        Shuffleboard.getTab("debug").addDouble("intake left pos", leftEncoder::getPosition);
+        Shuffleboard.getTab("debug").addDouble("intake right pos", leftEncoder::getPosition);
     }
 
     @Override
     public void periodic() {
-//        System.out.println("left: " + leftMotor.getOutputCurrent() + " right: " + rightMotor.getOutputCurrent());
 
         if (DriverStation.isTeleopEnabled() && (rightMotor.getOutputCurrent() > AUTOMATIC_ZERO_CURRENT || leftMotor.getOutputCurrent() > AUTOMATIC_ZERO_CURRENT)) {
             rightMotor.stopMotor();
@@ -67,15 +67,24 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void setPosition(Positions targetposition) {
-        leftController.setReference(targetposition.position, ControlType.kPosition);
-        rightController.setReference(targetposition.position, ControlType.kPosition);
+        leftController.setSetpoint(targetposition.position, ControlType.kPosition);
+        rightController.setSetpoint(targetposition.position, ControlType.kPosition);
+        System.out.println(leftController.getMAXMotionSetpointPosition());
+        System.out.println(rightController.getMAXMotionSetpointPosition());
+    }
 
-        if (targetposition == Positions.L2 || targetposition == Positions.L3) {
-            Tongue.retract();
-        } else if (targetposition == Positions.L1 || targetposition == Positions.L4 || targetposition==Positions.Auto) {
-            Tongue.extend();
+    public void IntakeAUTO(){
+        IntakeMotor(true);
+        setPosition(Positions.INTAKE);
+    }
+
+        public void IntakeMotor(boolean pickup) {
+        IntakeState = pickup;
+        if (pickup) {
+            IntakeSpinMotor.set(1);
+    
         } else {
-            Tongue.retract();
+            IntakeSpinMotor.set(0);
         }
     }
 
@@ -107,10 +116,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         leftMotorConfig.inverted(LEFT_INVERT);
         leftMotorConfig.idleMode(IDLE_MODE);
         //angleConfig.encoder.positionConversionFactor(1/ANGLE_POSITION_CONVERSION_FACTOR);
-        leftMotorConfig.encoder.positionConversionFactor(1.0 / Constants.Elevator.POSITION_CONVERSION_FACTOR);
+        leftMotorConfig.encoder.positionConversionFactor(1.0 / Constants.Intake.POSITION_CONVERSION_FACTOR);
         leftMotorConfig.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                .pid(Constants.Elevator.PID_P, 0, 0)
+                .pid(Constants.Intake.PID_P, 0, 0)
                 .outputRange(-1, 1)
                 .positionWrappingEnabled(false)
                 .positionWrappingInputRange(0, 1)
@@ -135,7 +144,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         rightMotorConfig.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                .pid(Constants.Elevator.PID_P, 0, 0)
+                .pid(Constants.Intake.PID_P, 0, 0)
                 .outputRange(-1, 1)
                 .positionWrappingEnabled(false)
                 .positionWrappingInputRange(0, 1)

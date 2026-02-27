@@ -4,10 +4,12 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N3;
 import frc.robot.Robot.ControlMode;
-//import org.photonvision.PhotonPoseEstimator;
 
 import static edu.wpi.first.math.util.Units.inchesToMeters;
 
@@ -23,10 +25,7 @@ public final class Constants {
     }
 
     public static final class Swerve {
-        public static final double FAST_SPEED_MULTIPLIER = 1;
-        public static final double NORMAL_SPEED_MULTIPLIER = .85;
-        public static final double SLOW_SPEED_MULTIPLIER = .4;
-        public static double SPEED_MULTIPLIER = NORMAL_SPEED_MULTIPLIER;
+        public static final double SPEED_MULTIPLIER = 1.0;
         public static final double CONTROLLER_RAMP_DEGREE = 1;
 
         public static final double ANGLE_PID_FF = 0.0;
@@ -45,7 +44,7 @@ public final class Constants {
         public static final double TRACK_WIDTH = inchesToMeters(23); // same as wheelbase because it is a square
         public static final double WHEEL_BASE = inchesToMeters(23);
         public static final double WHEEL_DIAMETER_REAL = inchesToMeters(4);
-        public static final double WHEEL_DIAMETER = inchesToMeters(2.8);
+        public static final double WHEEL_DIAMETER = inchesToMeters(3.81);
         public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
 
         public static final double DRIVE_GEAR_RATIO = 8.14;
@@ -87,39 +86,39 @@ public final class Constants {
         public static final int PIGEON2_ID = 9;
 
         /* Module Specific Constants */
-        /* Front Left Module - Module 0 */
-        public static final class Mod0 {
+
+        public static final class Mod2 {
             public static final int DRIVE_MOTOR_ID = 11;
             public static final int ANGLE_MOTOR_ID = 21;
             public static final int CAN_CODER_ID = 31;
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.660);
+            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.919434);
         }
 
         /* Front Right Module - Module 1 */
-        public static final class Mod1 {
+        public static final class Mod0 {
             public static final int DRIVE_MOTOR_ID = 12;
             public static final int ANGLE_MOTOR_ID = 22;
             public static final int CAN_CODER_ID = 32;
 
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.876);
+            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.12793);
         }
 
         /* Back Left Module - Module 2 */
-        public static final class Mod2 {
+        public static final class Mod3 {
             public static final int DRIVE_MOTOR_ID = 10;
             public static final int ANGLE_MOTOR_ID = 20;
             public static final int CAN_CODER_ID = 30;
 
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.853);
+            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.077881);
         }
 
         /* Back Right Module - Module 3 */
-        public static final class Mod3 {
+        public static final class Mod1 {
             public static final int DRIVE_MOTOR_ID = 13;
             public static final int ANGLE_MOTOR_ID = 23;
             public static final int CAN_CODER_ID = 33;
 
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.08);
+            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.33374);
         }
     }
 
@@ -136,35 +135,32 @@ public final class Constants {
         }
 
         public static final PPHolonomicDriveController PATH_FOLLOWER_CONFIG =  new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-        new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+        new PIDConstants(5.0, 0.0, 0.1), // Translation PID constants
         new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
         );
     }
 
     public static final class Vision {
-        public static final boolean VISION_ENABLED = false;
-        public static final String CAMERA_NAME = "webcam";
-
-        //public static final PhotonPoseEstimator.PoseStrategy POSE_STRATEGY = PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
-        public static final double APRILTAG_AMBIGUITY_THRESHOLD = 0.2;
+        public static final boolean VISION_ENABLED = true;
         public static final Transform3d CAMERA_TO_ROBOT = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0));
-        public static final double FIELD_LENGTH_METERS_X = 16.54175;
-        public static final double FIELD_WIDTH_METERS_Y = 8.0137;
-        public static final Pose2d FLIPPING_POSE = new Pose2d(
-                new Translation2d(FIELD_LENGTH_METERS_X, FIELD_WIDTH_METERS_Y),
-                new Rotation2d(Math.PI)
-        );
+        public static final double TRUST_VISION_STANDARD_DEVIATION = 0.3;
+        public static final double IGNORE_VISION_STANDARD_DEVIATION = 1.5;
 
-        public static final double TARGET_OFFSET = inchesToMeters(50);//inchesToMeters(4);
-        public static final Translation2d SPEAKER_RED = new Translation2d(inchesToMeters(652.73) - TARGET_OFFSET, inchesToMeters(218.42));
-        //public static final Translation2d SPEAKER_BLUE = new Translation2d(TARGET_OFFSET, inchesToMeters(218.42));
-        public static final Translation2d SPEAKER_BLUE = new Translation2d(2, 4.6);
+        /**
+         * Standard deviations of model states. Increase these numbers to trust your model's state estimates less. This
+         * matrix is in the form [x, y, theta]ᵀ, with units in meters and radians, then meters.
+         */
+        public static final Vector<N3> STATE_STANDARD_DEVIATIONS = VecBuilder.fill(TRUST_VISION_STANDARD_DEVIATION, TRUST_VISION_STANDARD_DEVIATION, TRUST_VISION_STANDARD_DEVIATION);
+
+        public static final double MAX_SPEED_FOR_STD_DEV = 1.0;
+        public static final double MIN_SPEED_FOR_STD_DEV = 0.1;
     }
 
-    public static final class Elevator {
+    public static final class Intake {
         public static final double PID_P = .25;
         public static final int LEFT_MOTOR_ID = 7;
         public static final int RIGHT_MOTOR_ID = 8;
+        public static final int IntakeSpinMotor_ID = 9;
         public static final double VOLTAGE_COMPENSATION = 12.0;
         public static final int CURRENT_LIMIT = 40;
         public static final IdleMode IDLE_MODE = IdleMode.kBrake;
@@ -174,13 +170,9 @@ public final class Constants {
         public static final int AUTOMATIC_ZERO_CURRENT = 15;
         
         public enum Positions {
-            L4(-3.88),
-            L3(-2.60),
-            L2(-1.017),
-            L1(-1.017),
-            INTAKE(-0.946),
-            Auto(-3.5),
-            ZERO(-0.25);
+            INTAKE(0.96),
+            Auto(0.96),
+            ZERO(0);
 
             public final double position;
             Positions(double p) {
@@ -189,18 +181,21 @@ public final class Constants {
         }
     }
 
+    public static final class Shooter {
+        public static final int MAIN_MOTOR_ID = 51;
+        public static final int KICK_MOTOR_ID = 52;
+        public static final int VECTOR_MOTOR_ID = 53;
+    }
+
     public static final class Climber {
         public static final double VOLTAGE_COMPENSATION = 12.0;
         public static final int CURRENT_LIMIT = 40;
         public static final boolean INVERT = false;
         public static final double PID_P = 10.0;
-        public static final int MOTOR_ID = 43;
+        public static final int MOTOR_ID = 143;
 
         /* Neutral Modes */
         public static final IdleMode IDLE_MODE = IdleMode.kBrake;
     }
     
 }
-  
-
-

@@ -1,7 +1,5 @@
-
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -12,10 +10,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 import java.util.Optional;
 
-import com.ctre.phoenix6.swerve.SwerveModule;
-
-import frc.robot.util.CTREConfigs;
-
 
 
 /**
@@ -25,34 +19,17 @@ import frc.robot.util.CTREConfigs;
  * project.
  */
 public class Robot extends TimedRobot {
-    public static CTREConfigs ctreConfigs;
-
-    private Command autonomousCommand;
     private RobotContainer robotContainer;
-
-
+    private Command autonomousCommand;
 
     public enum ControlMode {
         SINGLE, COMPETITION
     }
     public enum AutoMode {
-        /*MidToTop("middle to top"),
-        MidToBot("middle to bottom"),
-        TopToTop("top to top"),
-        BotToBot("bottom to bottom"),
-        TopToEsc("top to escape"),
-        BotToEsc("bottom to escape"),
-        TopToEsc_Red("R top to escape"),
-        BotToEsc_Red("R bottom to escape"),
-        TopTwoNote_Red("R top two note"),
-        MidToMid("middle to middle"),*/
-        //Top_Auto("Top_Auto"),
-        Top_Auto_Comp("Top_Auto_Comp"),
-        //Botttom_Auto("Bottom_Auto"),
-        Botttom_Auto_Comp("Bottom_Auto_Comp"),
-        Mid_Auto_Comp("Mid_Auto_Comp"),
-        //Mid_Auto("Mid_Auto"),
-        Mid_Ram("Mid_Ram");
+
+        OnlyAuto("NewAuto");
+
+       
 
         public final String pathplannerName;
         AutoMode(String str) {
@@ -89,11 +66,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
-        ctreConfigs = new CTREConfigs();
-
         robotContainer = new RobotContainer();
-        //CameraServer.startAutomaticCapture(); // use for USB camera
-        //PortForwarder.add(8888, "10.2.4.69", 80);
 
         if (Constants.Controller.DEFAULT_CONTROL_MODE == ControlMode.SINGLE) {
             ControlModeChooser.setDefaultOption("Single Controller (Driver:usb1 Operator:usb1)", ControlMode.SINGLE);
@@ -108,9 +81,9 @@ public class Robot extends TimedRobot {
             AutoModeChooser.addOption(i.optionName(), i);
         }
 
-        Shuffleboard.getTab("main").add("Auto Select", AutoModeChooser).withSize(3, 1);
+        Shuffleboard.getTab("main").add("auto mode", AutoModeChooser).withSize(3, 1);
         checkDriverStationUpdate();
-        Shuffleboard.getTab("main").addString("alliance", () -> allianceString);
+        Shuffleboard.getTab("main").addString("alliance", () -> ALLIANCE_STR);
     }
     /**
      * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -135,8 +108,7 @@ public class Robot extends TimedRobot {
         checkDriverStationUpdate();
     }
     @Override
-    public void disabledPeriodic() {
-    }
+    public void disabledPeriodic() {}
 
 
 
@@ -146,13 +118,12 @@ public class Robot extends TimedRobot {
 
         // schedule the autonomous command (example)
         if (autonomousCommand != null) {
-          autonomousCommand.schedule();
+          CommandScheduler.getInstance().schedule(autonomousCommand);
         }
         checkDriverStationUpdate();
     }
     @Override
-    public void autonomousPeriodic() {
-    }
+    public void autonomousPeriodic() {}
 
 
 
@@ -183,15 +154,10 @@ public class Robot extends TimedRobot {
         checkDriverStationUpdate();
     }
     @Override
-    public void testPeriodic() {
-        
-        for(frc.robot.subsystems.SwerveModule offset :robotContainer.Swerve.modules){
-            System.out.println("Module: " + offset.moduleNumber + " Angle: " + offset.getAngle().getRotations() + " Encoder: " + offset.angleEncoder.getAbsolutePosition().getValueAsDouble());
-        }
-    }
+    public void testPeriodic() {}
 
-    public static DriverStation.Alliance alliance;
-    public static String allianceString = "never init";
+    public static DriverStation.Alliance ALLIANCE;
+    public static String ALLIANCE_STR = "never init";
     /**
      * Checks the driverstation alliance. We have have to check repeatedly because we don't know when the
      * driverstation/FMS will connect, and the alliance can change at any time in the shop.
@@ -203,8 +169,8 @@ public class Robot extends TimedRobot {
         if (allianceOpt.isPresent()) {
             DriverStation.Alliance newAlliance = allianceOpt.get();
             //robotContainer.PoseEstimation.setAlliance(DriverStation.Alliance.Blue);//robotContainer.PoseEstimation.setAlliance(newAlliance);
-            alliance = newAlliance;
-            allianceString = newAlliance.toString();
+            ALLIANCE = newAlliance;
+            ALLIANCE_STR = newAlliance.toString();
         }
     }
 }
