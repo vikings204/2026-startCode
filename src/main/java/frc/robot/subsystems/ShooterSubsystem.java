@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -52,13 +54,19 @@ public class ShooterSubsystem extends SubsystemBase {
         vectorMotorConfig.inverted(false);
         vectorMotorConfig.idleMode(IdleMode.kBrake);
         vectorMotorConfig.voltageCompensation(12.0);
+        mainMotor.configure(mainMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+                kickMotor.configure(kickMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+                        vectorMotor.configure(vectorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+
     }
 
     public void shootMotor(boolean shoot, double speed) {
         if (shoot) {
-            mainMotor.set(speed);
-            kickMotor.set(1);
-            vectorMotor.set(1);
+            mainMotor.set(  speed);
+            kickMotor.set(-1);
+            vectorMotor.set(-1);
 
         } else {
             mainMotor.set(0);

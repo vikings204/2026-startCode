@@ -25,7 +25,7 @@ public class RobotContainer {
     public final SwerveSubsystem Swerve = new SwerveSubsystem();
     public final LEDSubsystem LED = new LEDSubsystem();
     public final IntakeSubsystem Intake = new IntakeSubsystem();
-    //public final ShooterSubsystem Shooter = new ShooterSubsystem();
+    public final ShooterSubsystem Shooter = new ShooterSubsystem();
     //public final ClimberSubsystem Climber = new ClimberSubsystem();
     public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions, Swerve::getSpeeds);
 
@@ -42,6 +42,7 @@ public class RobotContainer {
             configureDefaultCommands();
             configureButtonBindings();
         });
+
 
         Shuffleboard.getTab("debug").add("swerve", Swerve);
         Shuffleboard.getTab("debug").add("intake", Intake);
@@ -105,7 +106,9 @@ public class RobotContainer {
 
         //new JoystickButton(DRIVER, 8).onTrue(new InstantCommand(Swerve::setSpeed)); // slow mode (terrible implementation)
 
-
+        new JoystickButton(DRIVER, 1)
+                .onTrue(new InstantCommand(() -> Intake.IntakeMotor(true), Intake))
+                .onFalse(new InstantCommand(() -> Intake.IntakeMotor(false), Intake));
         new JoystickButton(OPERATOR, 7)
                 .whileTrue(new InstantCommand(() -> Intake.jogPositive(true), Intake))
                 .onFalse(new InstantCommand(() -> Intake.jogPositive(false), Intake));
@@ -143,9 +146,12 @@ public class RobotContainer {
                 .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, .75), Shooter))
                 .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));
         new JoystickButton(DRIVER, 3)
-                //.whileTrue(ColorAlignRight);
+                // //.whileTrue(ColorAlignRight);
+                // .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, 1), Shooter))
+                // .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));*/
+                new JoystickButton(DRIVER, 4)
                 .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, 1), Shooter))
-                .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));*/
+                .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));
     }
 
     public void checkAnalogs() {

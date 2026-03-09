@@ -8,11 +8,13 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.Intake.Positions;
 import frc.robot.util.ReduceCANUsage;
 import frc.robot.util.ReduceCANUsage.Spark_Max.Usage;
 
@@ -45,6 +47,12 @@ public class IntakeSubsystem extends SubsystemBase {
 
         IntakeSpinMotor = new SparkMax(IntakeSpinMotor_ID, MotorType.kBrushless);
         IntakeSpinMotor_config = new SparkMaxConfig();
+                IntakeSpinMotor_config.smartCurrentLimit(40);
+        IntakeSpinMotor_config.inverted(false);
+        IntakeSpinMotor_config.idleMode(IdleMode.kBrake);
+        IntakeSpinMotor_config.voltageCompensation(12.0);
+                IntakeSpinMotor.configure(IntakeSpinMotor_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
 
         zeroEncoders();
 
@@ -81,7 +89,7 @@ public class IntakeSubsystem extends SubsystemBase {
         public void IntakeMotor(boolean pickup) {
         IntakeState = pickup;
         if (pickup) {
-            IntakeSpinMotor.set(1);
+            IntakeSpinMotor.set(-1);
     
         } else {
             IntakeSpinMotor.set(0);
