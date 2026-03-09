@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.Constants.Climber;
 import frc.robot.Constants.Controller;
 import frc.robot.Constants.Intake.Positions;
 import frc.robot.Robot.ControlMode;
@@ -26,7 +27,7 @@ public class RobotContainer {
     public final LEDSubsystem LED = new LEDSubsystem();
     public final IntakeSubsystem Intake = new IntakeSubsystem();
     public final ShooterSubsystem Shooter = new ShooterSubsystem();
-    //public final ClimberSubsystem Climber = new ClimberSubsystem();
+    public final ClimberSubsystem Climber = new ClimberSubsystem();
     public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions, Swerve::getSpeeds);
 
     Gamepad DRIVER = new Gamepad(Controller.DRIVER_PORT);
@@ -117,6 +118,14 @@ public class RobotContainer {
                 .whileTrue(new InstantCommand(() -> Intake.jogNegative(true), Intake))
                 .onFalse(new InstantCommand(() -> Intake.jogNegative(false), Intake));
 
+       // new JoystickButton(OPERATOR, 1)
+       //         .whileTrue(new InstantCommand(() -> Climber.jogPositive(true),Climber ))
+       //         .onFalse(new InstantCommand(() -> Climber.jogPositive(false),Climber ));
+
+       // new JoystickButton(OPERATOR, 2)
+       //         .whileTrue(new InstantCommand(() -> Climber.jogNegative(true), Climber))
+       //         .onFalse(new InstantCommand(() -> Climber.jogNegative(false), Climber));
+
 
    /*      new JoystickButton(OPERATOR, 7)
                 .whileTrue(new RunCommand(() -> Elevator.jogPositive(true), Elevator));
@@ -128,6 +137,10 @@ public class RobotContainer {
                 .onTrue(new RunCommand(() -> Intake.setPosition(Positions.ZERO), Intake));
         new JoystickButton(OPERATOR, 4)
                 .onTrue(new RunCommand(() -> Intake.setPosition(Positions.INTAKE), Intake));
+                
+        
+                
+        
 
         //  new JoystickButton(DRIVER, 1).
         //         whileTrue(Swerve.driveToPose());

@@ -193,6 +193,9 @@ public final class Constants {
         public static final boolean INVERT = false;
         public static final double PID_P = 10.0;
         public static final int MOTOR_ID = 143;
+        public static final int LEFT_MOTOR_ID_CLIMB = 48;
+        public static final int RIGHT_MOTOR_ID_CLIMB = 49;
+        
 
         /* Neutral Modes */
         public static final IdleMode IDLE_MODE = IdleMode.kBrake;

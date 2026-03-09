@@ -8,68 +8,141 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Constants.Intake.Positions;
+import frc.robot.util.ReduceCANUsage;
+import frc.robot.util.ReduceCANUsage.Spark_Max.Usage;
 
-import static frc.robot.Constants.Climber.*;
+import static frc.robot.Constants.Climber.LEFT_MOTOR_ID_CLIMB;
+import static frc.robot.Constants.Climber.RIGHT_MOTOR_ID_CLIMB;
 
 public class ClimberSubsystem extends SubsystemBase {
-    private final SparkMax motor;
-    private final SparkMaxConfig motorConfig;
-    private final RelativeEncoder encoder;
-    private final SparkClosedLoopController controller;
+    private final SparkMax leftMotor;
+    private final SparkMaxConfig leftMotorConfig;
+    private final RelativeEncoder leftEncoder;
+    private final SparkClosedLoopController leftController;
+    private boolean IntakeState = false;
+    private final SparkMax rightMotor;
+    private final SparkMaxConfig rightMotorConfig;
+    private final RelativeEncoder rightEncoder;
+    private final SparkClosedLoopController rightController;
 
     public ClimberSubsystem() {
-        motor = new SparkMax(MOTOR_ID, MotorType.kBrushless);
-        motorConfig = new SparkMaxConfig();
-        encoder = motor.getEncoder();
-        configMotor();
-        controller = motor.getClosedLoopController();
+        leftMotor = new SparkMax(LEFT_MOTOR_ID_CLIMB, MotorType.kBrushless);
+        leftMotorConfig = new SparkMaxConfig();
+        leftEncoder = leftMotor.getEncoder();
+        leftController = leftMotor.getClosedLoopController();
+        configLeftMotor();
+        rightMotor = new SparkMax(RIGHT_MOTOR_ID_CLIMB, MotorType.kBrushless);
+        rightMotorConfig = new SparkMaxConfig();
+        rightEncoder = rightMotor.getEncoder();
+        rightController = rightMotor.getClosedLoopController();
+        configRightMotor();
+
+
+        zeroEncoders();
+
+        Shuffleboard.getTab("debug").addDouble("intake left pos", leftEncoder::getPosition);
+        Shuffleboard.getTab("debug").addDouble("intake right pos", leftEncoder::getPosition);
     }
 
-    public void ShootArm(boolean b) {
-        if (b) {
-            controller.setSetpoint(encoder.getPosition() + .1, ControlType.kPosition);
-        } else {
-            controller.setSetpoint(encoder.getPosition(), ControlType.kPosition);
+    @Override
+    public void periodic() {
+
+        if (DriverStation.isTeleopEnabled() && (rightMotor.getOutputCurrent() > AUTOMATIC_ZERO_CURRENT || leftMotor.getOutputCurrent() > AUTOMATIC_ZERO_CURRENT)) {
+            rightMotor.stopMotor();
+            leftMotor.stopMotor();
         }
     }
 
-    public void NegativeShootArm(boolean b) {
+    public void zeroEncoders() {
+        leftEncoder.setPosition(0);
+        rightEncoder.setPosition(0);
+    }
+
+    public void setPosition(Positions targetposition) {
+        leftController.setSetpoint(targetposition.position, ControlType.kPosition);
+        rightController.setSetpoint(targetposition.position, ControlType.kPosition);
+        System.out.println(leftController.getMAXMotionSetpointPosition());
+        System.out.println(rightController.getMAXMotionSetpointPosition());
+    }
+
+
+    public void jogPositive(boolean b) {
         if (b) {
-            controller.setSetpoint(encoder.getPosition() - .1, ControlType.kPosition);
+            leftMotor.set(0.75);
+            rightMotor.set(-0.75);
+            System.out.println("Current Setting:" + leftEncoder.getPosition());
         } else {
-            controller.setSetpoint(encoder.getPosition(), ControlType.kPosition);
+            leftMotor.set(0);
+            rightMotor.set(0);
         }
     }
 
-    private void configMotor() {
-        motorConfig
-                .idleMode(IDLE_MODE)
-                .smartCurrentLimit(CURRENT_LIMIT)
-                .inverted(INVERT);
-        motorConfig.encoder
-                .positionConversionFactor(1.0 / 100.0) // radians
-                .velocityConversionFactor(1); // radians per second
-        motorConfig.closedLoop
+    public void jogNegative(boolean b) {
+        if (b) {
+            leftMotor.set(0.75);
+            rightMotor.set(-0.75);
+            System.out.println("Current Setting:" + leftEncoder.getPosition());
+        } else {
+            leftMotor.set(0);
+            rightMotor.set(0);
+        }
+    }
+
+    private void configLeftMotor() {
+        ReduceCANUsage.Spark_Max.setCANSparkMaxBusUsage(leftMotor, Usage.kPositionOnly, leftMotorConfig);
+        leftMotorConfig.smartCurrentLimit(CURRENT_LIMIT);
+        leftMotorConfig.inverted(LEFT_INVERT);
+        leftMotorConfig.idleMode(IDLE_MODE);
+        //angleConfig.encoder.positionConversionFactor(1/ANGLE_POSITION_CONVERSION_FACTOR);
+        leftMotorConfig.encoder.positionConversionFactor(1.0 / Constants.Intake.POSITION_CONVERSION_FACTOR);
+        leftMotorConfig.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                .pid(PID_P, 0, 0)
+                .pid(Constants.Intake.PID_P, 0, 0)
                 .outputRange(-1, 1)
                 .positionWrappingEnabled(false)
                 .positionWrappingInputRange(0, 1)
                 .minOutput(-1)
                 .maxOutput(1);
-        motorConfig.closedLoop.apply(motorConfig.closedLoop);
-        motorConfig.apply(motorConfig);
-        System.out.println("I CONFIGURED THE CLIMBER MOTOR");
+        leftMotorConfig.closedLoop.apply(leftMotorConfig.closedLoop);
+        leftMotorConfig.apply(leftMotorConfig);
+        leftMotorConfig.voltageCompensation(VOLTAGE_COMPENSATION);
+        leftMotor.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    }
 
-        motorConfig.voltageCompensation(VOLTAGE_COMPENSATION);
-        //REPLACED ABOVE angleMotor.enableVoltageCompensation(VOLTAGE_COMPENSATION);
-        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    private void configRightMotor() {
+        ReduceCANUsage.Spark_Max.setCANSparkMaxBusUsage(rightMotor, Usage.kPositionOnly, rightMotorConfig);
+        rightMotorConfig.smartCurrentLimit(CURRENT_LIMIT);
 
-        //angleMotor.burnFlash();
-        Timer.delay(.5);
-        encoder.setPosition(0);
+        rightMotorConfig.inverted(RIGHT_INVERT);
+
+        rightMotorConfig.idleMode(IDLE_MODE);
+
+        // angleConfig2.encoder.positionConversionFactor(1/ANGLE_POSITION_CONVERSION_FACTOR);
+        rightMotorConfig.encoder.positionConversionFactor(1.0 / POSITION_CONVERSION_FACTOR);
+
+        rightMotorConfig.closedLoop
+                .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                .pid(Constants.Intake.PID_P, 0, 0)
+                .outputRange(-1, 1)
+                .positionWrappingEnabled(false)
+                .positionWrappingInputRange(0, 1)
+                .minOutput(-1)
+                .maxOutput(1);
+        rightMotorConfig.closedLoop.apply(rightMotorConfig.closedLoop);
+        rightMotorConfig.apply(rightMotorConfig);
+        rightMotorConfig.voltageCompensation(VOLTAGE_COMPENSATION);
+
+        rightMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 }
+
+
+
+

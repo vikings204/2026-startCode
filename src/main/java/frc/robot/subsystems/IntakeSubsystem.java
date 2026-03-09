@@ -104,6 +104,8 @@ public class IntakeSubsystem extends SubsystemBase {
         } else {
             leftMotor.set(0);
             rightMotor.set(0);
+            leftController.setSetpoint(leftEncoder.getPosition(), ControlType.kPosition);
+            rightController.setSetpoint(rightEncoder.getPosition(), ControlType.kPosition);
         }
     }
 
@@ -115,6 +117,8 @@ public class IntakeSubsystem extends SubsystemBase {
         } else {
             leftMotor.set(0);
             rightMotor.set(0);
+               leftController.setSetpoint(leftEncoder.getPosition(), ControlType.kPosition);
+               rightController.setSetpoint(rightEncoder.getPosition(), ControlType.kPosition);
         }
     }
 
@@ -122,7 +126,7 @@ public class IntakeSubsystem extends SubsystemBase {
         ReduceCANUsage.Spark_Max.setCANSparkMaxBusUsage(leftMotor, Usage.kPositionOnly, leftMotorConfig);
         leftMotorConfig.smartCurrentLimit(CURRENT_LIMIT);
         leftMotorConfig.inverted(LEFT_INVERT);
-        leftMotorConfig.idleMode(IDLE_MODE);
+        leftMotorConfig.idleMode(IDLE_MODE.kBrake);
         //angleConfig.encoder.positionConversionFactor(1/ANGLE_POSITION_CONVERSION_FACTOR);
         leftMotorConfig.encoder.positionConversionFactor(1.0 / Constants.Intake.POSITION_CONVERSION_FACTOR);
         leftMotorConfig.closedLoop
@@ -145,7 +149,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         rightMotorConfig.inverted(RIGHT_INVERT);
 
-        rightMotorConfig.idleMode(IDLE_MODE);
+        rightMotorConfig.idleMode(IDLE_MODE.kBrake);
 
         // angleConfig2.encoder.positionConversionFactor(1/ANGLE_POSITION_CONVERSION_FACTOR);
         rightMotorConfig.encoder.positionConversionFactor(1.0 / POSITION_CONVERSION_FACTOR);
