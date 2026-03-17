@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+/* package frc.robot.subsystems;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
@@ -141,8 +141,4 @@ public class ClimberSubsystem extends SubsystemBase {
 
         rightMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
-}
-
-
-
-
+} */

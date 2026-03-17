@@ -27,7 +27,7 @@ public class RobotContainer {
     public final LEDSubsystem LED = new LEDSubsystem();
     public final IntakeSubsystem Intake = new IntakeSubsystem();
     public final ShooterSubsystem Shooter = new ShooterSubsystem();
-    public final ClimberSubsystem Climber = new ClimberSubsystem();
+    //public final ClimberSubsystem Climber = new ClimberSubsystem();
     public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions, Swerve::getSpeeds);
 
     Gamepad DRIVER = new Gamepad(Controller.DRIVER_PORT);
