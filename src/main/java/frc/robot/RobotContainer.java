@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Constants.Climber;
 import frc.robot.Constants.Controller;
 import frc.robot.Constants.Intake.Positions;
 import frc.robot.Robot.ControlMode;
@@ -27,7 +26,6 @@ public class RobotContainer {
     public final LEDSubsystem LED = new LEDSubsystem();
     public final IntakeSubsystem Intake = new IntakeSubsystem();
     public final ShooterSubsystem Shooter = new ShooterSubsystem();
-    //public final ClimberSubsystem Climber = new ClimberSubsystem();
     public final PoseEstimationSubsystem PoseEstimation = new PoseEstimationSubsystem(Swerve::getYaw, Swerve::getPositions, Swerve::getSpeeds);
 
     Gamepad DRIVER = new Gamepad(Controller.DRIVER_PORT);
@@ -163,8 +161,10 @@ public class RobotContainer {
                 // .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, 1), Shooter))
                 // .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));*/
                 new JoystickButton(DRIVER, 4)
-                .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, 1), Shooter))
-                .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));
+//                  .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true), Shooter))
+//                  .onFalse(new InstantCommand(() -> Shooter.shootMotor(false), Shooter));
+                    .onTrue(new InstantCommand(() -> Shooter.shootWithPID(true), Shooter))
+                    .onFalse(new InstantCommand(() -> Shooter.shootWithPID(false), Shooter));
     }
 
     public void checkAnalogs() {
