@@ -157,7 +157,7 @@ public final class Constants {
     }
 
     public static final class Intake {
-        public static final double PID_P = .25;
+        public static final double PID_P = 2.0;
         public static final int LEFT_MOTOR_ID = 7;
         public static final int RIGHT_MOTOR_ID = 8;
         public static final int IntakeSpinMotor_ID = 9;
@@ -170,7 +170,7 @@ public final class Constants {
         public static final int AUTOMATIC_ZERO_CURRENT = 15;
         
         public enum Positions {
-            INTAKE(0.96),
+            INTAKE(1.08),
             Auto(0.96),
             ZERO(0);
 
