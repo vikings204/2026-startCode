@@ -89,7 +89,7 @@ public class IntakeSubsystem extends SubsystemBase {
         public void IntakeMotor(boolean pickup) {
         IntakeState = pickup;
         if (pickup) {
-            IntakeSpinMotor.set(-1);
+            IntakeSpinMotor.set(1);
     
         } else {
             IntakeSpinMotor.set(0);

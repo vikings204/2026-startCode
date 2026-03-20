@@ -105,14 +105,14 @@ public class RobotContainer {
 
         //new JoystickButton(DRIVER, 8).onTrue(new InstantCommand(Swerve::setSpeed)); // slow mode (terrible implementation)
 
-        new JoystickButton(DRIVER, 1)
+        new JoystickButton(OPERATOR, 1)
                 .onTrue(new InstantCommand(() -> Intake.IntakeMotor(true), Intake))
                 .onFalse(new InstantCommand(() -> Intake.IntakeMotor(false), Intake));
-        new JoystickButton(OPERATOR, 7)
+        new JoystickButton(OPERATOR, 5)
                 .whileTrue(new InstantCommand(() -> Intake.jogPositive(true), Intake))
                 .onFalse(new InstantCommand(() -> Intake.jogPositive(false), Intake));
 
-        new JoystickButton(OPERATOR, 8)
+        new JoystickButton(OPERATOR, 6)
                 .whileTrue(new InstantCommand(() -> Intake.jogNegative(true), Intake))
                 .onFalse(new InstantCommand(() -> Intake.jogNegative(false), Intake));
 
@@ -131,9 +131,9 @@ public class RobotContainer {
         new JoystickButton(OPERATOR, 8)
                 .whileTrue(new RunCommand(() -> Elevator.jogNegative(true), Elevator));*/
 
-        new JoystickButton(OPERATOR, 3)
-                .onTrue(new RunCommand(() -> Intake.setPosition(Positions.ZERO), Intake));
         new JoystickButton(OPERATOR, 4)
+                .onTrue(new RunCommand(() -> Intake.setPosition(Positions.ZERO), Intake));
+        new JoystickButton(OPERATOR, 3)
                 .onTrue(new RunCommand(() -> Intake.setPosition(Positions.INTAKE), Intake));
                 
         
@@ -160,7 +160,7 @@ public class RobotContainer {
                 // //.whileTrue(ColorAlignRight);
                 // .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, 1), Shooter))
                 // .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));*/
-                new JoystickButton(DRIVER, 4)
+                new JoystickButton(OPERATOR, 2)
 //                  .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true), Shooter))
 //                  .onFalse(new InstantCommand(() -> Shooter.shootMotor(false), Shooter));
                     .onTrue(new InstantCommand(() -> Shooter.shootWithPID(true), Shooter))
