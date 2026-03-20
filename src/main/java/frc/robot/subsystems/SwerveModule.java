@@ -1,24 +1,19 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
-
-///import frc.robot.util.CANCoderUtil.CCU;y
-//import frc.robot.util.CANCoderUtil.CCCUsage
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.FeedbackSensor;
-//import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.ClosedLoopConfig;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkClosedLoopController;
-
-
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.FeedbackSensor;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -27,11 +22,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.util.ReduceCANUsage;
-import frc.robot.util.ReduceCANUsage.Spark_Max.Usage;
 import frc.robot.util.ReduceCANUsage.CANCoderUtil;
 import frc.robot.util.ReduceCANUsage.CANCoderUtil.CCUsage;
-import frc.robot.Robot;
-
+import frc.robot.util.ReduceCANUsage.Spark_Max.Usage;
 
 import java.util.Map;
 
@@ -40,10 +33,11 @@ import static frc.robot.Constants.Swerve.*;
 public class SwerveModule {
     public int moduleNumber;
     private Rotation2d lastAngle;
-    private Rotation2d angleOffset;
+    private final Rotation2d angleOffset;
 
     private final SparkMax driveMotor;
     private final SparkMax angleMotor;
+    private CANcoderConfiguration angleCanCoderConfig;
     private final SparkMaxConfig driveConfig;
     private final SparkMaxConfig angleConfig;
     private final RelativeEncoder driveEncoder;
@@ -83,16 +77,16 @@ public class SwerveModule {
 
         lastAngle = getState().angle;
 
-        Shuffleboard.getTab("swervetest").addNumber("angleEncoderCurrent Reading " + moduleNumber, integratedAngleEncoder::getPosition).withWidget(BuiltInWidgets.kDial).withProperties(Map.of("min", 0, "max", 360));
+        Shuffleboard.getTab("swerve").addNumber("angleEncoderCurrent Reading " + moduleNumber, integratedAngleEncoder::getPosition).withWidget(BuiltInWidgets.kDial).withProperties(Map.of("min", 0, "max", 360));
         //REMOVED MOD.KABS AS I THINK IT WAS DEPRECATED
-        Shuffleboard.getTab("swervetest").addNumber("angleMotorAbsEncoder Reading " + moduleNumber, angleMotor.getAnalog()::getVoltage);
+        Shuffleboard.getTab("swerve").addNumber("angleMotorAbsEncoder Reading " + moduleNumber, angleMotor.getAnalog()::getVoltage);
     }
     
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         // Custom optimize command, since default WPILib optimize assumes continuous controller which
         // REV and CTRE are not
 
-        desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
+        desiredState.optimize(getState().angle);
 
         setAngle(desiredState);
         setSpeed(desiredState, isOpenLoop);
@@ -125,8 +119,6 @@ public class SwerveModule {
         Timer.delay(.3);
 
         System.out.println("Now the Integrated encoder is reading: "+integratedAngleEncoder.getPosition());
-
-
     }
 
         
@@ -134,13 +126,11 @@ public class SwerveModule {
     //JOE EDIT THIS
 
     private void configAngleEncoder() {
-        //angleEncoder.getConfigurator().apply(angleEncoder.getConfigurator().defaultCANCoderConfig);
-         CANCoderUtil.setCANCoderBusUsage(angleEncoder, CCUsage.kMinimal);
-         angleEncoder.getConfigurator().apply(Robot.ctreConfigs.swerveCanCoderConfig);
-         
-         //angleEncoder.configAllSettings(Robot.ctreConfigs.swerveCanCoderConfig);
-
-        //angleEncoder.getConfigurator().apply(new CANcoderConfiguration());
+        CANCoderUtil.setCANCoderBusUsage(angleEncoder, CCUsage.kMinimal);
+        angleCanCoderConfig = new CANcoderConfiguration();
+        angleCanCoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
+        angleCanCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+        angleEncoder.getConfigurator().apply(angleCanCoderConfig);
     }
 
     private void configAngleMotor() {
@@ -214,9 +204,10 @@ public class SwerveModule {
         driveConfig.smartCurrentLimit(DRIVE_CURRENT_LIMIT) ;
         // replaced above driveMotor.setSmartCurrentLimit(DRIVE_CURRENT_LIMIT);
         driveConfig
-            .inverted(true)
-            .idleMode(IdleMode.kBrake);
-        //driveMotor.setInverted(DRIVE_INVERT);
+            .inverted(false)
+            .idleMode(IdleMode.kCoast);
+        driveMotor.setInverted(true);
+
         // Both replaced above driveMotor.setIdleMode(DRIVE_IDLE_MODE);
         driveConfig.encoder
             .positionConversionFactor(DRIVE_POSITION_CONVERSION_FACTOR)
@@ -224,8 +215,9 @@ public class SwerveModule {
         // REPLACED ABOVE driveEncoder.setVelocityConversionFactor(DRIVE_VELOCITY_CONVERSION_FACTOR);
         //driveEncoder.setPositionConversionFactor(DRIVE_POSITION_CONVERSION_FACTOR);
         driveConfig.closedLoop
-            .feedbackSensor(com.revrobotics.spark.FeedbackSensor.kPrimaryEncoder)
-            .pidf(DRIVE_PID_P, DRIVE_PID_I, DRIVE_PID_D, DRIVE_PID_FF);
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .pid(DRIVE_PID_P, DRIVE_PID_I, DRIVE_PID_D)
+            .feedForward.kV(DRIVE_PID_FF);
 
        /* REPLACE ABOVE
          driveController.setP(DRIVE_PID_P);
@@ -234,6 +226,7 @@ public class SwerveModule {
         driveController.setFF(DRIVE_PID_FF);
         */
         driveConfig.voltageCompensation(VOLTAGE_COMPENSATION);
+        driveConfig.inverted(false);
 
         // replaced above driveMotor.enableVoltageCompensation(VOLTAGE_COMPENSATION);
         driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -247,7 +240,7 @@ public class SwerveModule {
             double percentOutput = desiredState.speedMetersPerSecond / MAX_SPEED;
             driveMotor.set(percentOutput);
         } else {
-            driveController.setReference(
+            driveController.setSetpoint(
                     desiredState.speedMetersPerSecond,
                     ControlType.kVelocity,
                      ClosedLoopSlot.kSlot0,
@@ -269,7 +262,7 @@ public class SwerveModule {
         if (moduleNumber == 0){
             //System.out.println("Angle Position Setting Mod" + moduleNumber + ": " + angle.getRotations());
         }
-        angleController.setReference(angle.getRotations(), ControlType.kPosition);
+        angleController.setSetpoint(angle.getRotations(), ControlType.kPosition);
     
       
         lastAngle = angle;
