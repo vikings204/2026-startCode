@@ -66,7 +66,9 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("ZERO", new InstantCommand(() -> Intake.setPosition(Positions.ZERO), Intake));
         NamedCommands.registerCommand("INTAKE", new InstantCommand(Intake::IntakeAUTO, Intake));
-        //NamedCommands.registerCommand("Shoot", new InstantCommand(() -> Shooter.shootMotor(true, 1), Shooter));
+        NamedCommands.registerCommand("INTAKEUP", new InstantCommand(()->Intake.setPosition(Positions.ZERO), Intake));
+        NamedCommands.registerCommand("Shoot", new InstantCommand(() -> Shooter.shootWithPID(true), Shooter));
+        NamedCommands.registerCommand("ShootOff", new InstantCommand(() -> Shooter.shootWithPID(false), Shooter));
         NamedCommands.registerCommand("IntakeMotorON", new InstantCommand(() -> Intake.IntakeMotor(true), Intake));
         NamedCommands.registerCommand("IntakeMotorOFF", new InstantCommand(() -> Intake.IntakeMotor(false), Intake));
 
