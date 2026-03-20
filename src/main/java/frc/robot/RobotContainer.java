@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.Controller;
 import frc.robot.Constants.Intake.Positions;
 import frc.robot.Robot.ControlMode;
+import frc.robot.commands.ShootCommand;
+import frc.robot.commands.ShootWithAngleCommand;
 import frc.robot.commands.TeleopSwerveCommand;
 import frc.robot.subsystems.*;
 import frc.robot.util.Gamepad;
@@ -67,8 +69,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("ZERO", new InstantCommand(() -> Intake.setPosition(Positions.ZERO), Intake));
         NamedCommands.registerCommand("INTAKE", new InstantCommand(Intake::IntakeAUTO, Intake));
         NamedCommands.registerCommand("INTAKEUP", new InstantCommand(()->Intake.setPosition(Positions.ZERO), Intake));
-        NamedCommands.registerCommand("Shoot", new InstantCommand(() -> Shooter.shootWithPID(true), Shooter));
-        NamedCommands.registerCommand("ShootOff", new InstantCommand(() -> Shooter.shootWithPID(false), Shooter));
+        NamedCommands.registerCommand("Shoot", new InstantCommand(() -> Shooter.shootWithPID(true, 5600), Shooter));
+        NamedCommands.registerCommand("ShootOff", new InstantCommand(() -> Shooter.shootWithPID(false, 5600), Shooter));
         NamedCommands.registerCommand("IntakeMotorON", new InstantCommand(() -> Intake.IntakeMotor(true), Intake));
         NamedCommands.registerCommand("IntakeMotorOFF", new InstantCommand(() -> Intake.IntakeMotor(false), Intake));
 
@@ -165,8 +167,11 @@ public class RobotContainer {
                 new JoystickButton(OPERATOR, 2)
 //                  .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true), Shooter))
 //                  .onFalse(new InstantCommand(() -> Shooter.shootMotor(false), Shooter));
-                    .onTrue(new InstantCommand(() -> Shooter.shootWithPID(true), Shooter))
-                    .onFalse(new InstantCommand(() -> Shooter.shootWithPID(false), Shooter));
+//                  .onTrue(new InstantCommand(() -> Shooter.shootWithPID(true, 5600), Shooter))
+//                  .onFalse(new InstantCommand(() -> Shooter.shootWithPID(false, 5600), Shooter));
+                    .whileTrue(new ShootCommand(Shooter));
+                new JoystickButton(OPERATOR, 7)
+                        .whileTrue(new ShootWithAngleCommand(Swerve, Shooter, PoseEstimation));
     }
 
     public void checkAnalogs() {

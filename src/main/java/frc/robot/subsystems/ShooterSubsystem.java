@@ -1,5 +1,9 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.configs.CANrangeConfiguration;
+import com.ctre.phoenix6.hardware.CANrange;
+import com.ctre.phoenix6.signals.UpdateModeValue;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.FeedbackSensor;
@@ -14,6 +18,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.ReduceCANUsage;
 import frc.robot.util.ReduceCANUsage.Spark_Max.Usage;
 
+import java.util.function.Supplier;
+
+import static edu.wpi.first.wpilibj.Timer.getFPGATimestamp;
 import static frc.robot.Constants.Shooter.*;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -25,6 +32,11 @@ public class ShooterSubsystem extends SubsystemBase {
     private final SparkMaxConfig kickMotorConfig;
     private final SparkMax vectorMotor;
     private final SparkMaxConfig vectorMotorConfig;
+    private final CANrange sensor;
+    private final Supplier<Boolean> detected;
+    private boolean indexingBackwards = false;
+    private double timeStartedIndexingBackwards = 0;
+    private double lastTimeSeenBall = 0;
 
     public ShooterSubsystem() {
         //led = ledSubsystem;
@@ -38,6 +50,13 @@ public class ShooterSubsystem extends SubsystemBase {
         vectorMotor = new SparkMax(VECTOR_MOTOR_ID, MotorType.kBrushless);
         vectorMotorConfig = new SparkMaxConfig();
         configMotors();
+
+        sensor = new CANrange(0, CANBus.roboRIO());
+        var sensorConfig = new CANrangeConfiguration();
+        sensorConfig.ToFParams.UpdateMode = UpdateModeValue.ShortRange100Hz;
+        sensorConfig.ProximityParams.ProximityThreshold = 0.04;
+        sensor.getConfigurator().apply(sensorConfig);
+        detected = sensor.getIsDetected().asSupplier();
 
         // needed to do closed loop velocity control (optimal for high throughput)
         Shuffleboard.getTab("debug").addDouble("shooter main velocity", mainMotor.getEncoder()::getVelocity);
@@ -104,16 +123,47 @@ public class ShooterSubsystem extends SubsystemBase {
         }
     }
 
-    public void shootWithPID(boolean shoot) {
+    public void shootWithPID(boolean shoot, double rpm) {
         if (shoot) {
-            mainController.setSetpoint(5600, SparkBase.ControlType.kVelocity);
-            kickController.setSetpoint(5600, SparkBase.ControlType.kVelocity);
-            //vectorController.setSetpoint(1, SparkBase.ControlType.kVelocity);
+            mainController.setSetpoint(rpm, SparkBase.ControlType.kVelocity);
+            kickController.setSetpoint(rpm, SparkBase.ControlType.kVelocity);
+            //vectorController.setSetpoint(rpm, SparkBase.ControlType.kVelocity);
             vectorMotor.set(1);
         } else {
             mainMotor.set(0);
             kickMotor.set(0);
             vectorMotor.set(0);
+        }
+    }
+
+    public void prefireContinuous(double rpm) {
+        // run once
+        mainController.setSetpoint(rpm, SparkBase.ControlType.kVelocity);
+        kickController.setSetpoint(rpm, SparkBase.ControlType.kVelocity);
+        lastTimeSeenBall = getFPGATimestamp();
+        indexingBackwards = false;
+    }
+    public void shootContinuous(double rpm) {
+        // run this function every cycle
+        // make sure to do this first
+        // lastTimeSeenBall = getFPGATimestamp();
+        var t = getFPGATimestamp();
+
+        if (!indexingBackwards) {
+            shootWithPID(true, rpm);
+            if (detected.get()) {
+                lastTimeSeenBall = t;
+            } else if (t-lastTimeSeenBall > 2) {
+                indexingBackwards = true;
+                timeStartedIndexingBackwards = t;
+                vectorMotor.set(-1);
+            }
+        } else {
+            if (t-timeStartedIndexingBackwards > 0.67) {
+                indexingBackwards = false;
+                lastTimeSeenBall = t;
+                shootWithPID(true, rpm);
+            }
         }
     }
 

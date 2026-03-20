@@ -9,12 +9,15 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 
+import java.util.ArrayDeque;
 import java.util.function.Supplier;
 
 import static frc.robot.Constants.Vision.*;
@@ -30,13 +33,9 @@ public class PoseEstimationSubsystem extends SubsystemBase {
     private double[] arrayForDashboard = new double[]{0, 0, 0};
     private int numTagsVisible = 0;
 
-    private double previousTimestamp = 0.0;
-    private final DoubleSubscriber pxSub;
-    private final DoubleSubscriber pySub;
-    private final DoubleSubscriber yawSub;
-    private final DoubleSubscriber tsSub;
-    private final DoubleSubscriber delaySub;
-    private final DoubleSubscriber tagsSub;
+    private final LimelightSucks camera1;
+    private final LimelightSucks camera2;
+    private final YawHistory yawHistory;
 
     public PoseEstimationSubsystem(
             Supplier<Rotation2d> yawSupplier,
@@ -56,14 +55,10 @@ public class PoseEstimationSubsystem extends SubsystemBase {
                 STATE_STANDARD_DEVIATIONS
         );
 
-        var ntInstance = NetworkTableInstance.getDefault();
-        var ntTable = ntInstance.getTable("datatable");
-        pxSub = ntTable.getDoubleTopic("px").subscribe(0.0);
-        pySub = ntTable.getDoubleTopic("py").subscribe(0.0);
-        yawSub = ntTable.getDoubleTopic("yaw").subscribe(0.0);
-        tsSub = ntTable.getDoubleTopic("timestamp").subscribe(0.0);
-        delaySub = ntTable.getDoubleTopic("delay").subscribe(0.0);
-        tagsSub = ntTable.getDoubleTopic("tags").subscribe(0.0);
+        camera1 = new LimelightSucks("camera1");
+        camera2 = new LimelightSucks("camera2");
+
+        yawHistory = new YawHistory();
 
         Shuffleboard.getTab("main").add("pose est field", field).withWidget(BuiltInWidgets.kField).withSize(8, 5);
         //Shuffleboard.getTab("main").addNumber("pose X", poseEstimator.getEstimatedPosition()::getX);
@@ -78,14 +73,21 @@ public class PoseEstimationSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // Update pose estimator with drivetrain sensors
-        poseEstimator.updateWithTime(getFPGATimestamp(), yawSupplier.get(), modulePositionSupplier.get());
+        double now = getFPGATimestamp();
+        poseEstimator.updateWithTime(now, yawSupplier.get(), modulePositionSupplier.get());
+        yawHistory.update(yawSupplier.get().getDegrees(), now);
 
         if (VISION_ENABLED) {
-            double ts = tsSub.get();
-            if (ts != previousTimestamp) {
-                previousTimestamp = ts;
-                Pose2d p = new Pose2d(Math.sqrt((pxSub.get() * pxSub.get())), Math.sqrt((pySub.get()*pySub.get())), poseEstimator.getEstimatedPosition().getRotation());
-                p = p.transformBy(new Transform2d()); // cam to robot center
+            camera1.periodic();
+            camera2.periodic();
+            var cam1 = camera1.getMeasurement();
+            var cam2 = camera2.getMeasurement();
+            if (cam1 != null || cam2 != null) {
+                var measurement = cam1 != null ? cam1 : cam2;
+                var p = (Pose2d) measurement[0];
+                var yaw = (double) measurement[1];
+                var delay = (double) measurement[2];
+                var numTags = (double) measurement[3];
 
                 // adjust std devs by robot speeds
                 /*
@@ -111,20 +113,29 @@ public class PoseEstimationSubsystem extends SubsystemBase {
                 */
 
                 // adjust std devs by yaw difference
-                double yawDiff = Math.abs(yawSupplier.get().getDegrees() - yawSub.get());
-                if (yawDiff < 1) {
+                double yawDiff = Math.abs(yawHistory.getYawAtTime(now-delay) - yaw);
+                if (yawDiff < 1.5) {
                     // could adjust the above number and interpolate, etc.
                     poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(TRUST_VISION_STANDARD_DEVIATION, TRUST_VISION_STANDARD_DEVIATION, TRUST_VISION_STANDARD_DEVIATION));
                 } else {
                     poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(IGNORE_VISION_STANDARD_DEVIATION, IGNORE_VISION_STANDARD_DEVIATION, IGNORE_VISION_STANDARD_DEVIATION));
                 }
 
-                poseEstimator.addVisionMeasurement(p, getFPGATimestamp()-delaySub.get());
-                numTagsVisible = (int) tagsSub.get();
+                poseEstimator.addVisionMeasurement(p, now-delay);
+                numTagsVisible = (int) numTags;
             } else {
                 numTagsVisible = 0;
             }
         }
+
+//        double hubX = 4.625467;
+//        double hubY = 3.431286;
+//        if (Robot.ALLIANCE == DriverStation.Alliance.Red) {
+//            hubX = 11.915521;
+//        }
+//        double dx = hubX - getPose().getX();
+//        double dy = hubY - getPose().getY();
+//        System.out.println(Math.toDegrees(Math.atan2(dy, dx)));
 
         // Set the pose on the dashboard
         var dashboardPose = poseEstimator.getEstimatedPosition();
@@ -157,4 +168,86 @@ public class PoseEstimationSubsystem extends SubsystemBase {
         setPose(new Pose2d());
     }
 
+    private class LimelightSucks {
+        private double previousTimestamp = 0.0;
+        private final DoubleSubscriber pxSub;
+        private final DoubleSubscriber pySub;
+        private final DoubleSubscriber yawSub;
+        private final DoubleSubscriber tsSub;
+        private final DoubleSubscriber delaySub;
+        private final DoubleSubscriber tagsSub;
+        private Pose2d p;
+        private double yaw;
+        private double delay;
+        private double numTags;
+
+        public LimelightSucks(String network_name) {
+            var ntInstance = NetworkTableInstance.getDefault();
+            var ntTable = ntInstance.getTable(network_name);
+            pxSub = ntTable.getDoubleTopic("px").subscribe(0.0);
+            pySub = ntTable.getDoubleTopic("py").subscribe(0.0);
+            yawSub = ntTable.getDoubleTopic("yaw").subscribe(0.0);
+            tsSub = ntTable.getDoubleTopic("timestamp").subscribe(0.0);
+            delaySub = ntTable.getDoubleTopic("delay").subscribe(0.0);
+            tagsSub = ntTable.getDoubleTopic("tags").subscribe(0.0);
+        }
+
+        public void periodic() {
+            double ts = tsSub.get();
+            if (ts != previousTimestamp) {
+                previousTimestamp = ts;
+                p = new Pose2d(Math.sqrt((pxSub.get() * pxSub.get())), Math.sqrt((pySub.get() * pySub.get())), poseEstimator.getEstimatedPosition().getRotation());
+                p = p.transformBy(new Transform2d()); // cam to robot center (already done with multicam)
+                yaw = yawSub.get();
+                delay = delaySub.get();
+                numTags = tagsSub.get();
+            }
+        }
+
+        public Object[] getMeasurement() {
+            if (p != null) {
+                Object[] arr = {p, yaw, delay, numTags};
+                p = null;
+                yaw = 0.0;
+                delay = 0.0;
+                numTags = 0.0;
+                return arr;
+            } else {
+                return null;
+            }
+        }
+    }
+
+    private class YawHistory {
+
+        private static final double MAX_AGE_SECONDS = 3.0;
+
+        private record Sample(double time, double yaw) {}
+
+        private final ArrayDeque<Sample> history = new ArrayDeque<>(200);
+
+        public void update(double yawDegrees, double time) {
+            history.addLast(new Sample(time, yawDegrees));
+
+            double cutoff = time - MAX_AGE_SECONDS;
+            while (!history.isEmpty() && history.peekFirst().time() < cutoff)
+                history.pollFirst();
+        }
+
+        public double getYawAtTime(double timestamp) {
+            if (history.isEmpty()) return 0.0;
+            if (timestamp <= history.peekFirst().time()) return history.peekFirst().yaw();
+            if (timestamp >= history.peekLast().time())  return history.peekLast().yaw();
+
+            Sample prev = null;
+            for (Sample s : history) {
+                if (s.time() > timestamp) {
+                    double alpha = (timestamp - prev.time()) / (s.time() - prev.time());
+                    return prev.yaw() + alpha * (s.yaw() - prev.yaw());
+                }
+                prev = s;
+            }
+            return history.peekLast().yaw();
+        }
+    }
 }
