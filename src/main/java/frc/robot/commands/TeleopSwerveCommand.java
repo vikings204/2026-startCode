@@ -27,7 +27,7 @@ public class TeleopSwerveCommand extends Command {
     private final SlewRateLimiter strafeLimiter = new SlewRateLimiter(3.0);     // See above
     private final SlewRateLimiter rotationLimiter = new SlewRateLimiter(3.0);   //Not really used with the brushed motors going to a position but could be.  We don't use the trapazoid pid profile suggested only because it hasn't been implemented yet
 
-    private final GenericEntry finalSpeedModifierEntry;
+    //private final GenericEntry finalSpeedModifierEntry;
 
     public TeleopSwerveCommand(
             SwerveSubsystem s_Swerve,
@@ -44,12 +44,12 @@ public class TeleopSwerveCommand extends Command {
         this.rotationSup = rotationSup;
         this.robotCentricSup = robotCentricSup;
 
-        finalSpeedModifierEntry = Shuffleboard.getTab("config").add("final speed modifier", 1.0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0, "max", 1)).getEntry();
+        //finalSpeedModifierEntry = Shuffleboard.getTab("config").add("final speed modifier", 1.0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0, "max", 1)).getEntry();
     }
 
     @Override
     public void execute() {
-        double speedMultiplier = Constants.Swerve.SPEED_MULTIPLIER * finalSpeedModifierEntry.getDouble(1.0);
+        double speedMultiplier = Constants.Swerve.SPEED_MULTIPLIER * 1;//finalSpeedModifierEntry.getDouble(1.0);
 
         //double translationVal = translationLimiter.calculate(speedMultiplier * MathUtil.applyDeadband(translationSup.getAsDouble(), CONTROLLER_RAMP_DEGREE));
         //double strafeVal = strafeLimiter.calculate(speedMultiplier * MathUtil.applyDeadband(strafeSup.getAsDouble(),  CONTROLLER_RAMP_DEGREE));

@@ -101,8 +101,11 @@ public class SwerveSubsystem extends SubsystemBase {
         gyro.setYaw(0.0);
     }
 
-    public void setGyro(double yaw) {
-        gyro.setYaw(yaw);
+    public void setGyro() {
+        System.out.println("old value: "+ gyro.getYaw());
+        gyro.setYaw(gyro.getYaw().getValueAsDouble()+180.0);
+        System.out.println("get value: "+ gyro.getYaw());
+
     }
 
     public Rotation2d getYaw() {

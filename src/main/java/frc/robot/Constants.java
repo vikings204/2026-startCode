@@ -109,7 +109,7 @@ public final class Constants {
             public static final int ANGLE_MOTOR_ID = 20;
             public static final int CAN_CODER_ID = 30;
 
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.6548);
+            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromRotations(.40918);
         }
 
         /* Back Right Module - Module 3 */
@@ -157,7 +157,7 @@ public final class Constants {
     }
 
     public static final class Intake {
-        public static final double PID_P = 2.0;
+        public static final double PID_P = 1.5;
         public static final int LEFT_MOTOR_ID = 7;
         public static final int RIGHT_MOTOR_ID = 8;
         public static final int IntakeSpinMotor_ID = 9;

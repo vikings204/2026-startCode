@@ -4,6 +4,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.Controller;
 import frc.robot.Constants.Intake.Positions;
 import frc.robot.Robot.ControlMode;
+import frc.robot.commands.PPAlignCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.commands.ShootWithAngleCommand;
 import frc.robot.commands.TeleopSwerveCommand;
@@ -33,6 +35,13 @@ public class RobotContainer {
     Gamepad DRIVER = new Gamepad(Controller.DRIVER_PORT);
     Gamepad OPERATOR = new Gamepad(Controller.OPERATOR_PORT);
 
+    public void addPPAlign() {
+        new JoystickButton(DRIVER, 2)
+                .whileTrue(new PPAlignCommand(Swerve, PoseEstimation, false));
+        new JoystickButton(DRIVER, 3)
+                .whileTrue(new PPAlignCommand(Swerve, PoseEstimation, true));
+    }
+
     public RobotContainer() {
         ControlModeChooser.onChange((ControlMode mode) -> {
             if (mode == ControlMode.SINGLE) {
@@ -50,6 +59,7 @@ public class RobotContainer {
         //Shuffleboard.getTab("debug").add("shooter", Shooter);
         //Shuffleboard.getTab("debug").add("climber", Climber);
         Shuffleboard.getTab("main").add("zero gyro", new RunCommand(Swerve::zeroGyro)).withWidget(BuiltInWidgets.kCommand);
+        Shuffleboard.getTab("main").add("flip gyro", new InstantCommand(Swerve::setGyro));
         Shuffleboard.getTab("main").add("zero elevator", new RunCommand(Intake::zeroEncoders, Intake)).withWidget(BuiltInWidgets.kCommand);
         Shuffleboard.getTab("main").add("zero pose estimator", new RunCommand(PoseEstimation::resetPose, PoseEstimation)).withWidget(BuiltInWidgets.kCommand);
 
@@ -68,6 +78,8 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("ZERO", new InstantCommand(() -> Intake.setPosition(Positions.ZERO), Intake));
         NamedCommands.registerCommand("INTAKE", new InstantCommand(Intake::IntakeAUTO, Intake));
+        NamedCommands.registerCommand("INTAKEDOWN", new InstantCommand(()->Intake.setPosition(Positions.INTAKE), Intake));
+
         NamedCommands.registerCommand("INTAKEUP", new InstantCommand(()->Intake.setPosition(Positions.ZERO), Intake));
         NamedCommands.registerCommand("Shoot", new InstantCommand(() -> Shooter.shootWithPID(true, 5600), Shooter));
         NamedCommands.registerCommand("ShootOff", new InstantCommand(() -> Shooter.shootWithPID(false, 5600), Shooter));
@@ -135,9 +147,9 @@ public class RobotContainer {
         new JoystickButton(OPERATOR, 8)
                 .whileTrue(new RunCommand(() -> Elevator.jogNegative(true), Elevator));*/
 
-        new JoystickButton(OPERATOR, 4)
+        new JoystickButton(OPERATOR, 9)
                 .onTrue(new RunCommand(() -> Intake.setPosition(Positions.ZERO), Intake));
-        new JoystickButton(OPERATOR, 3)
+        new JoystickButton(OPERATOR, 10)
                 .onTrue(new RunCommand(() -> Intake.setPosition(Positions.INTAKE), Intake));
                 
         
@@ -170,8 +182,10 @@ public class RobotContainer {
 //                  .onTrue(new InstantCommand(() -> Shooter.shootWithPID(true, 5600), Shooter))
 //                  .onFalse(new InstantCommand(() -> Shooter.shootWithPID(false, 5600), Shooter));
                     .whileTrue(new ShootCommand(Shooter));
-                new JoystickButton(OPERATOR, 7)
+                new JoystickButton(OPERATOR, 4)
                         .whileTrue(new ShootWithAngleCommand(Swerve, Shooter, PoseEstimation));
+
+
     }
 
     public void checkAnalogs() {

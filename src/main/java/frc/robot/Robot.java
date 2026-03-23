@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -10,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 import java.util.Optional;
 
+import static edu.wpi.first.wpilibj.Timer.getFPGATimestamp;
 
 
 /**
@@ -27,7 +30,12 @@ public class Robot extends TimedRobot {
     }
     public enum AutoMode {
 
-        OnlyAuto("NewAuto");
+        OnlyAuto("NewAuto"),
+        PitAuto("PitAuto"),
+        RightSideAuto("Bottom Side Auto"),
+        CenterAuto("Center Auto"),
+        LeftSideAuto("Top Side Auto");
+
 
        
 
@@ -112,18 +120,20 @@ public class Robot extends TimedRobot {
 
 
 
+    private double lastTimeAutonCalledPeriodic = 0.0;
     @Override
     public void autonomousInit() {
+        checkDriverStationUpdate();
+
         autonomousCommand = robotContainer.getAutonomousCommand();
 
         // schedule the autonomous command (example)
         if (autonomousCommand != null) {
           CommandScheduler.getInstance().schedule(autonomousCommand);
         }
-        checkDriverStationUpdate();
     }
     @Override
-    public void autonomousPeriodic() {}
+    public void autonomousPeriodic() { lastTimeAutonCalledPeriodic = getFPGATimestamp(); }
 
 
 
@@ -138,6 +148,13 @@ public class Robot extends TimedRobot {
         }
         checkDriverStationUpdate();
 
+        // flip heading if auton ran recently
+        if (getFPGATimestamp()-lastTimeAutonCalledPeriodic < 10.0 && ALLIANCE == DriverStation.Alliance.Red) {
+            System.out.println("FLIPPED GYRO");
+            //robotContainer.Swerve.setGyro(robotContainer.PoseEstimation.getPose().getRotation()/*.plus(new Rotation2d(3.14159))*/.getDegrees());
+        }
+
+        robotContainer.addPPAlign();
     }
     @Override
     public void teleopPeriodic() {

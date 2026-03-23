@@ -104,21 +104,21 @@ public class SwerveModule {
 
         
         
-        System.out.println("Encoder "+moduleNumber+ " is set to Absolute Position");
-        System.out.println("The offset is "+ angleOffset.getRotations());
-        System.out.println("The Absolute Position is "+ angleEncoder.getAbsolutePosition().getValueAsDouble());
+        //System.out.println("Encoder "+moduleNumber+ " is set to Absolute Position");
+        //System.out.println("The offset is "+ angleOffset.getRotations());
+        //System.out.println("The Absolute Position is "+ angleEncoder.getAbsolutePosition().getValueAsDouble());
         double absolutePosition = angleEncoder.getAbsolutePosition().getValueAsDouble()-angleOffset.getRotations();
         if(absolutePosition<0){
             absolutePosition = 1+absolutePosition;
         }
-        System.out.println("The Integrated encoder is reading: "+integratedAngleEncoder.getPosition());
+        //System.out.println("The Integrated encoder is reading: "+integratedAngleEncoder.getPosition());
         
         Timer.delay(.3);
 
         integratedAngleEncoder.setPosition(Math.abs(absolutePosition));
         Timer.delay(.3);
 
-        System.out.println("Now the Integrated encoder is reading: "+integratedAngleEncoder.getPosition());
+        //System.out.println("Now the Integrated encoder is reading: "+integratedAngleEncoder.getPosition());
     }
 
         

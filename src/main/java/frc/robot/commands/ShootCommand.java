@@ -23,7 +23,7 @@ import static edu.wpi.first.wpilibj.Timer.getFPGATimestamp;
 
 public class ShootCommand extends Command {
     private final ShooterSubsystem Shooter;
-    private final GenericEntry rpm = Shuffleboard.getTab("main").add("dumb rpm", 5600).getEntry();
+    //private final GenericEntry rpm = Shuffleboard.getTab("main").add("dumb rpm", 5600).getEntry();
 
     public ShootCommand(
             ShooterSubsystem Shooter
@@ -35,15 +35,15 @@ public class ShootCommand extends Command {
 
     @Override
     public void initialize() {
-        Shooter.prefireContinuous(rpm.getDouble(5600));
+        Shooter.prefireContinuous(5600/*rpm.getDouble(5600)*/);
     }
     @Override
     public void execute() {
-        Shooter.shootContinuous(rpm.getDouble(5600));
+        Shooter.shootContinuous(5600/*rpm.getDouble(5600)*/);
    }
 
     @Override
     public void end(boolean interrupted) {
-        Shooter.shootWithPID(false, rpm.getDouble(5600));
+        Shooter.shootWithPID(false, 5600/*rpm.getDouble(5600)*/);
     }
 }
