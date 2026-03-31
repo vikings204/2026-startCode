@@ -43,6 +43,7 @@ public class RobotContainer {
     }
 
     public RobotContainer() {
+        Swerve.setPoseEstimationSubsystem(PoseEstimation);
         ControlModeChooser.onChange((ControlMode mode) -> {
             if (mode == ControlMode.SINGLE) {
                 OPERATOR = new Gamepad(Controller.DRIVER_PORT);
@@ -81,8 +82,10 @@ public class RobotContainer {
         NamedCommands.registerCommand("INTAKEDOWN", new InstantCommand(()->Intake.setPosition(Positions.INTAKE), Intake));
 
         NamedCommands.registerCommand("INTAKEUP", new InstantCommand(()->Intake.setPosition(Positions.ZERO), Intake));
-        NamedCommands.registerCommand("Shoot", new InstantCommand(() -> Shooter.shootWithPID(true, 5600), Shooter));
-        NamedCommands.registerCommand("ShootOff", new InstantCommand(() -> Shooter.shootWithPID(false, 5600), Shooter));
+        NamedCommands.registerCommand("Prefire",new InstantCommand(() -> Shooter.prefireContinuous( 3800), Shooter));
+
+        NamedCommands.registerCommand("Shoot", new InstantCommand(() -> Shooter.shootWithPID(true,3800), Shooter));
+        NamedCommands.registerCommand("ShootOff", new InstantCommand(() -> Shooter.shootWithPID(false, 3800), Shooter));
         NamedCommands.registerCommand("IntakeMotorON", new InstantCommand(() -> Intake.IntakeMotor(true), Intake));
         NamedCommands.registerCommand("IntakeMotorOFF", new InstantCommand(() -> Intake.IntakeMotor(false), Intake));
 
@@ -101,8 +104,8 @@ public class RobotContainer {
         Swerve.setDefaultCommand(
                 new TeleopSwerveCommand(
                         Swerve,
-                        () -> -1 * DRIVER.getLeftY(),
-                        () -> -1 * DRIVER.getLeftX(),
+                        () -> 1 * DRIVER.getLeftY(),
+                        () -> 1 * DRIVER.getLeftX(),
                         () -> -1 * DRIVER.getRightX(),
                         () -> false));
 
@@ -181,7 +184,7 @@ public class RobotContainer {
 //                  .onFalse(new InstantCommand(() -> Shooter.shootMotor(false), Shooter));
 //                  .onTrue(new InstantCommand(() -> Shooter.shootWithPID(true, 5600), Shooter))
 //                  .onFalse(new InstantCommand(() -> Shooter.shootWithPID(false, 5600), Shooter));
-                    .whileTrue(new ShootCommand(Shooter));
+                    .whileTrue(new ShootCommand(Shooter,3800));
                 new JoystickButton(OPERATOR, 4)
                         .whileTrue(new ShootWithAngleCommand(Swerve, Shooter, PoseEstimation));
 

@@ -87,7 +87,7 @@ public class ShooterSubsystem extends SubsystemBase {
         ReduceCANUsage.Spark_Max.setCANSparkMaxBusUsage(kickMotor, Usage.kVelocityOnly, kickMotorConfig);
         kickMotorConfig.smartCurrentLimit(40);
         kickMotorConfig.inverted(true);
-        kickMotorConfig.idleMode(IdleMode.kBrake);
+        kickMotorConfig.idleMode(IdleMode.kCoast);
         kickMotorConfig.voltageCompensation(12.0);
         kickMotorConfig.encoder
                 .quadratureAverageDepth(2)
@@ -106,7 +106,7 @@ public class ShooterSubsystem extends SubsystemBase {
         ReduceCANUsage.Spark_Max.setCANSparkMaxBusUsage(vectorMotor, Usage.kVelocityOnly, vectorMotorConfig);
         vectorMotorConfig.smartCurrentLimit(40);
         vectorMotorConfig.inverted(true);
-        vectorMotorConfig.idleMode(IdleMode.kBrake);
+        vectorMotorConfig.idleMode(IdleMode.kCoast);
         vectorMotorConfig.voltageCompensation(12.0);
         vectorMotor.configure(vectorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -126,7 +126,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public void shootWithPID(boolean shoot, double rpm) {
         if (shoot) {
             mainController.setSetpoint(rpm, SparkBase.ControlType.kVelocity);
-            kickController.setSetpoint(rpm, SparkBase.ControlType.kVelocity);
+            kickController.setSetpoint(5600.0, SparkBase.ControlType.kVelocity);
             //vectorController.setSetpoint(rpm, SparkBase.ControlType.kVelocity);
             vectorMotor.set(1);
         } else {
@@ -139,7 +139,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public void prefireContinuous(double rpm) {
         // run once
         mainController.setSetpoint(rpm, SparkBase.ControlType.kVelocity);
-        kickController.setSetpoint(rpm, SparkBase.ControlType.kVelocity);
+        kickController.setSetpoint(5600, SparkBase.ControlType.kVelocity);
         lastTimeSeenBall = getFPGATimestamp();
         indexingBackwards = false;
     }
@@ -153,13 +153,13 @@ public class ShooterSubsystem extends SubsystemBase {
             shootWithPID(true, rpm);
             if (detected.get()) {
                 lastTimeSeenBall = t;
-            } else if (t-lastTimeSeenBall > 2) {
+            } else if (t-lastTimeSeenBall > 1) {
                 indexingBackwards = true;
                 timeStartedIndexingBackwards = t;
                 vectorMotor.set(-1);
             }
         } else {
-            if (t-timeStartedIndexingBackwards > 0.67) {
+            if (t-timeStartedIndexingBackwards > 0.25) {
                 indexingBackwards = false;
                 lastTimeSeenBall = t;
                 shootWithPID(true, rpm);

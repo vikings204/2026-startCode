@@ -25,12 +25,13 @@ import static frc.robot.Constants.Swerve.*;
 public class SwerveSubsystem extends SubsystemBase {
     public Pigeon2 gyro = new Pigeon2(PIGEON2_ID, CANBus.roboRIO());
     public final SwerveModule[] modules; // Array of the 4 swerve modules
-
+    public PoseEstimationSubsystem poseEstimationSubsystem;
     public SwerveSubsystem() {
         var toApply = new Pigeon2Configuration();
         gyro.getConfigurator().apply(toApply);
 
         zeroGyro();
+        poseEstimationSubsystem = null;
         modules = new SwerveModule[]{
                         new SwerveModule(0, Mod0.DRIVE_MOTOR_ID, Mod0.ANGLE_MOTOR_ID, Mod0.ANGLE_OFFSET, Mod0.CAN_CODER_ID), //Each Constant set is specific to a motor pair
                         new SwerveModule(1, Mod1.DRIVE_MOTOR_ID, Mod1.ANGLE_MOTOR_ID, Mod1.ANGLE_OFFSET, Mod1.CAN_CODER_ID),
@@ -59,6 +60,9 @@ public class SwerveSubsystem extends SubsystemBase {
         for (SwerveModule mod : modules) {
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
         }
+    }
+    public void setPoseEstimationSubsystem(PoseEstimationSubsystem poseEstimationSubsystem){
+        this.poseEstimationSubsystem = poseEstimationSubsystem;
     }
 
     /* Used by SwerveControllerCommand in Auto */
@@ -107,12 +111,20 @@ public class SwerveSubsystem extends SubsystemBase {
         System.out.println("get value: "+ gyro.getYaw());
 
     }
+    public Rotation2d getPEyaw(){
+        if (poseEstimationSubsystem!=null) {
+            return (!GYRO_INVERT)
+                    ? Rotation2d.fromDegrees(360 - poseEstimationSubsystem.getPose().getRotation().getDegrees())//gyro.getYaw().getValueAsDouble())
+                    : Rotation2d.fromDegrees(poseEstimationSubsystem.getPose().getRotation().getDegrees());//gyro.getYaw().getValueAsDouble());
+        }
+        else return new Rotation2d(0.0);
+    }
 
     public Rotation2d getYaw() {
-        return (!GYRO_INVERT)
-                ? Rotation2d.fromDegrees(360 - gyro.getYaw().getValueAsDouble())
-                : Rotation2d.fromDegrees(gyro.getYaw().getValueAsDouble());
-    }
+            return (!GYRO_INVERT)
+                    ? Rotation2d.fromDegrees(360 - gyro.getYaw().getValueAsDouble())
+                    : Rotation2d.fromDegrees(gyro.getYaw().getValueAsDouble());
+        }
 
     public void resetEncoders(){
         for (int i = 0; i<4; i++){
