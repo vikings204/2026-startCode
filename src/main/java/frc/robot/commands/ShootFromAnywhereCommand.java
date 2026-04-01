@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -15,7 +14,7 @@ import frc.robot.subsystems.PoseEstimationSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
-public class ShootWithAngleCommand extends Command {
+public class ShootFromAnywhereCommand extends Command {
     private final SwerveSubsystem Swerve;
     private final ShooterSubsystem Shooter;
     private final PoseEstimationSubsystem Poser;
@@ -26,7 +25,7 @@ public class ShootWithAngleCommand extends Command {
     private double thetaGoal = 0.0;
     private double rpm = 0;
 
-    public ShootWithAngleCommand(
+    public ShootFromAnywhereCommand(
             SwerveSubsystem Swerve,
             ShooterSubsystem Shooter,
             PoseEstimationSubsystem Poser

@@ -1,97 +1,48 @@
- 
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Robot;
-//import frc.robot.subsystems.PoseEstimationSubsystem;
+import frc.robot.subsystems.PoseEstimationSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import edu.wpi.first.networktables.NetworkTableInstance;
 
-import java.util.Map;
-
-import static edu.wpi.first.wpilibj.Timer.getFPGATimestamp;
-import static frc.robot.Constants.Vision.*;
-
-public class AlignCommand extends Command {
-    private final SwerveSubsystem Swerve;
-    private double initialTimestamp;
-
-    private final ProfiledPIDController xPID = new ProfiledPIDController(0.3, 0, 0, new Constraints(Constants.Swerve.MAX_SPEED/8, 0.5));
-    private final ProfiledPIDController yPID = new ProfiledPIDController(0.3, 0, 0, new Constraints(Constants.Swerve.MAX_SPEED/8, 0.5));
-    private final ProfiledPIDController thetaPID = new ProfiledPIDController(0.3, 0, 0, new Constraints(Constants.Swerve.MAX_ANGULAR_VELOCITY/8, 0.5));
-    private final GenericEntry secondsToShootEntry = Shuffleboard.getTab("config").add("seconds to shoot", (double) 2).withWidget(BuiltInWidgets.kDial).withProperties(Map.of("min", 0, "max", 5)).getEntry();
-
-
-    private final GenericEntry xGoal = Shuffleboard.getTab("main").add("x goal", (double) 0).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
-    private final GenericEntry yGoal = Shuffleboard.getTab("main").add("y goal", (double) 0).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
-    private final GenericEntry thetaGoal = Shuffleboard.getTab("main").add("theta goal", (double) 0).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
-    private final GenericEntry tolerance = Shuffleboard.getTab("main").add("tolerance", 0.2).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
-
-    private DoubleSubscriber txSub;
-    private DoubleSubscriber tySub;
-    private DoubleSubscriber tzSub;
-    private DoubleSubscriber idSub;
-    private DoubleSubscriber yawSub;
-    private DoubleSubscriber pitchSub;
-    private DoubleSubscriber rollSub;
-
-
-    public AlignCommand(
-            boolean isLeft,
-            SwerveSubsystem Swerve
-    ) {
-        this.Swerve = Swerve;
-
+public class AlignCommand extends SequentialCommandGroup {
+    public AlignCommand(SwerveSubsystem Swerve, PoseEstimationSubsystem Poser, boolean isLeft) {
         addRequirements(Swerve);
+
+        var target = findTargetPose(Poser, isLeft);
+        var constraints = new PathConstraints(1.5, 3.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+        var cmd = AutoBuilder.pathfindToPose(target, constraints, 0.0);
+
+        addCommands(cmd);
     }
 
-    @Override
-    public void initialize() {
-        initialTimestamp = getFPGATimestamp();
-
-        var ntInstance = NetworkTableInstance.getDefault();
-        var ntTable = ntInstance.getTable("datatable");
-        txSub = ntTable.getDoubleTopic("tx").subscribe(0);
-        tySub = ntTable.getDoubleTopic("ty").subscribe(0);
-        tzSub = ntTable.getDoubleTopic("tz").subscribe(0);
-        idSub = ntTable.getDoubleTopic("id").subscribe(0);
-        yawSub = ntTable.getDoubleTopic("yaw").subscribe(0);
-        pitchSub = ntTable.getDoubleTopic("pitch").subscribe(0);
-        rollSub = ntTable.getDoubleTopic("roll").subscribe(0);
-    }
-    @Override
-    public void execute() {
-        xPID.setGoal(xGoal.getDouble(0));
-        yPID.setGoal(yGoal.getDouble(0));
-        thetaPID.setGoal(thetaGoal.getDouble(0));
-
-        System.out.println("id: " + idSub.get());
-        double diffX = txSub.get() - xGoal.getDouble(0);
-        double diffY = tySub.get() - yGoal.getDouble(0);
-        double diffTheta = yawSub.get() - thetaGoal.getDouble(0);
-        System.out.println("diffX=" + diffX + " diffY=" + diffY + " diffTheta=" + diffTheta);
-
-        if (/*getFPGATimestamp() > initialTimestamp+secondsToShootEntry.getDouble(2) && */diffX < 0.1 && diffY < 0.1 && diffTheta < 5) { // need to also check if close enough
-            // shoot?
-            System.out.println("close enough OR no data");
-        } else {
-            Swerve.drive(new Translation2d(xPID.calculate(txSub.get()), yPID.calculate(tySub.get())), thetaPID.calculate(yawSub.get()), false, true); // isOpenLoop differs from teleop
+    private Pose2d findTargetPose(PoseEstimationSubsystem Poser, boolean isLeft) {
+        //double y = Poser.getPose().getY();
+        //double halfway = 4.035;
+        if (Robot.ALLIANCE == DriverStation.Alliance.Blue) {
+            if (/*y <= halfway*/!isLeft) {
+                // right side
+                return new Pose2d(2.185, 1.477, new Rotation2d(Units.degreesToRadians(40.0)));
+            } else {
+                // left side
+                return new Pose2d(1.771, 6.49, new Rotation2d(Units.degreesToRadians(-40.0)));
+            }
+        } else if (Robot.ALLIANCE == DriverStation.Alliance.Red) {
+            if (/*y <= halfway*/isLeft) {
+                // left side
+                return new Pose2d(14.77, 1.579, new Rotation2d(Units.degreesToRadians(140.0)));
+            } else {
+                // right side
+                return new Pose2d(14.356, 6.592, new Rotation2d(-140.0));
+            }
         }
 
-        //Swerve.drive(new Translation2d(-1*xPID.calculate(robotPose.getX()), yPID.calculate(robotPose.getY())), -1*thetaPID.calculate(Swerve.getYaw().getRadians()), false, true); // isOpenLoop differs from teleop
-   }
-    @Override
-    public void end(boolean interrupted) {
+        return null;
     }
 }

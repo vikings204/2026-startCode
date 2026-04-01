@@ -21,7 +21,6 @@ public class TeleopSwerveCommand extends Command {
     private final DoubleSupplier translationSup;    //+/- y direction
     private final DoubleSupplier strafeSup;         // +/- x direction
     private final DoubleSupplier rotationSup;       // spin CCW or CW
-    private final BooleanSupplier robotCentricSup;  // always false
 
     private final SlewRateLimiter translationLimiter = new SlewRateLimiter(3.0);  //Limits the rate of change of the voltage output to the motor to some maximum value.  Would change if you wanted the robot to "ramp" faster
     private final SlewRateLimiter strafeLimiter = new SlewRateLimiter(3.0);     // See above
@@ -33,8 +32,7 @@ public class TeleopSwerveCommand extends Command {
             SwerveSubsystem s_Swerve,
             DoubleSupplier translationSup,
             DoubleSupplier strafeSup,
-            DoubleSupplier rotationSup,
-            BooleanSupplier robotCentricSup) {
+            DoubleSupplier rotationSup) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);  //Adds the swerve subsystem as a req of the command and will not schedule any other commands that require the swerve sub
 
@@ -42,7 +40,6 @@ public class TeleopSwerveCommand extends Command {
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
         this.rotationSup = rotationSup;
-        this.robotCentricSup = robotCentricSup;
 
         //finalSpeedModifierEntry = Shuffleboard.getTab("config").add("final speed modifier", 1.0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0, "max", 1)).getEntry();
     }
@@ -68,7 +65,7 @@ public class TeleopSwerveCommand extends Command {
         s_Swerve.drive(
                 new Translation2d(translationVal, strafeVal).times(Constants.Swerve.MAX_SPEED),
                 rotationVal * Constants.Swerve.MAX_ANGULAR_VELOCITY,
-                !robotCentricSup.getAsBoolean(),
+                true,
                 true);
     }
 }
