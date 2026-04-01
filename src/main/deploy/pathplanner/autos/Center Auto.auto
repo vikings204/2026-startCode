@@ -5,21 +5,34 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "PrefireContinuous"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "CenterAuto"
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 8.0
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootContinuous"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 10.0
+                }
+              }
+            ]
           }
         },
         {

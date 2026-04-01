@@ -7,13 +7,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Prefire"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "INTAKEDOWN"
+            "name": "PrefireContinuous"
           }
         },
         {
@@ -23,15 +17,28 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "Shoot"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootContinuous"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.5
+                }
+              }
+            ]
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 3.5
+            "name": "INTAKEDOWN"
           }
         },
         {
@@ -81,7 +88,13 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "PrefireContinuous"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootContinuous"
           }
         }
       ]

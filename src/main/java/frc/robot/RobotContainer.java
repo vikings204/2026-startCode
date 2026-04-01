@@ -79,8 +79,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("INTAKEDOWN", new InstantCommand(()->Intake.setPosition(Positions.INTAKE), Intake));
         NamedCommands.registerCommand("INTAKEUP", new InstantCommand(()->Intake.setPosition(Positions.ZERO), Intake));
 
-        NamedCommands.registerCommand("PrefireContinuous", new InstantCommand(() -> Shooter.prefireContinuous( 3800), Shooter));
-        NamedCommands.registerCommand("ShootContinuous", new RepeatCommand(new InstantCommand(() -> Shooter.shootContinuous( 3800), Shooter)));
+        NamedCommands.registerCommand("PrefireContinuous", new InstantCommand(() -> Shooter.prefireContinuous( 3850), Shooter));
+        NamedCommands.registerCommand("ShootContinuous", new RepeatCommand(new InstantCommand(() -> Shooter.shootContinuous( 3850), Shooter)));
 
         NamedCommands.registerCommand("Shoot", new InstantCommand(() -> Shooter.shootWithPID(true,3800), Shooter));
         NamedCommands.registerCommand("ShootOff", new InstantCommand(() -> Shooter.shootWithPID(false, 3800), Shooter));
@@ -127,57 +127,24 @@ public class RobotContainer {
 
         new JoystickButton(DRIVER, 9).onTrue(new InstantCommand(() -> driverLeftJoyCoeff *= -1.0));
 
-       // new JoystickButton(OPERATOR, 1)
-       //         .whileTrue(new InstantCommand(() -> Climber.jogPositive(true),Climber ))
-       //         .onFalse(new InstantCommand(() -> Climber.jogPositive(false),Climber ));
 
-       // new JoystickButton(OPERATOR, 2)
-       //         .whileTrue(new InstantCommand(() -> Climber.jogNegative(true), Climber))
-       //         .onFalse(new InstantCommand(() -> Climber.jogNegative(false), Climber));
-
-
-   /*      new JoystickButton(OPERATOR, 7)
-                .whileTrue(new RunCommand(() -> Elevator.jogPositive(true), Elevator));
-
-        new JoystickButton(OPERATOR, 8)
-                .whileTrue(new RunCommand(() -> Elevator.jogNegative(true), Elevator));*/
-
-        new JoystickButton(OPERATOR, 9)
+        new JoystickButton(OPERATOR, 3)
                 .onTrue(new RunCommand(() -> Intake.setPosition(Positions.ZERO), Intake));
-        new JoystickButton(OPERATOR, 10)
+        new JoystickButton(OPERATOR, 4)
                 .onTrue(new RunCommand(() -> Intake.setPosition(Positions.INTAKE), Intake));
                 
         
                 
         
 
-        //  new JoystickButton(DRIVER, 1).
-        //         whileTrue(Swerve.driveToPose());
-//        new JoystickButton(DRIVER, 1).whileTrue(new AlignCommand(false, Swerve));
 
-        /*new JoystickButton(DRIVER, 4)
-                //.whileTrue(StupidAlignLeft); // A is left
-                .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, .25), Shooter))
-                .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));
-        new JoystickButton(DRIVER, 1)
-                //.whileTrue(StupidAlignRight); // B is right
-                .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, .5), Shooter))
-                .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));
-        new JoystickButton(DRIVER, 2)
-                //.whileTrue(ColorAlignLeft);
-                .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, .75), Shooter))
-                .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));
-        new JoystickButton(DRIVER, 3)
-                // //.whileTrue(ColorAlignRight);
-                // .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true, 1), Shooter))
-                // .onFalse(new InstantCommand(() -> Shooter.shootMotor(false, 0), Shooter));*/
                 new JoystickButton(OPERATOR, 2)
 //                  .whileTrue(new InstantCommand(() -> Shooter.shootMotor(true), Shooter))
 //                  .onFalse(new InstantCommand(() -> Shooter.shootMotor(false), Shooter));
 //                  .onTrue(new InstantCommand(() -> Shooter.shootWithPID(true, 5600), Shooter))
 //                  .onFalse(new InstantCommand(() -> Shooter.shootWithPID(false, 5600), Shooter));
                     .whileTrue(new ShootCommand(Shooter,3800));
-                new JoystickButton(OPERATOR, 4)
+                new JoystickButton(OPERATOR, 9)
                         .whileTrue(new ShootFromAnywhereCommand(Swerve, Shooter, PoseEstimation));
 
 

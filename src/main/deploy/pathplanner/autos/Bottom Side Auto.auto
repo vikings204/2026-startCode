@@ -7,7 +7,7 @@
         {
           "type": "named",
           "data": {
-            "name": "INTAKEDOWN"
+            "name": "PrefireContinuous"
           }
         },
         {
@@ -17,13 +17,13 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Shoot"
+                  "name": "ShootContinuous"
                 }
               },
               {
@@ -33,6 +33,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "INTAKEDOWN"
           }
         },
         {
@@ -82,7 +88,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "ShootContinuous"
           }
         }
       ]
