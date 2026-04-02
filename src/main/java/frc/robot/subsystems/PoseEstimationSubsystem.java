@@ -113,13 +113,14 @@ public class PoseEstimationSubsystem extends SubsystemBase {
                 */
 
                 // adjust std devs by yaw difference
-                double yawDiff = Math.abs(yawHistory.getYawAtTime(now-delay) - yaw);
+                /*double yawDiff = Math.abs(yawHistory.getYawAtTime(now-delay) - yaw);
                 if (yawDiff < 1.5) {
                     // could adjust the above number and interpolate, etc.
                     poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(TRUST_VISION_STANDARD_DEVIATION, TRUST_VISION_STANDARD_DEVIATION, TRUST_VISION_STANDARD_DEVIATION));
                 } else {
                     poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(IGNORE_VISION_STANDARD_DEVIATION, IGNORE_VISION_STANDARD_DEVIATION, IGNORE_VISION_STANDARD_DEVIATION));
-                }
+                }*/
+                poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(1.7, 1.7, 1.7));
 
                 poseEstimator.addVisionMeasurement(p, now-delay);
                 numTagsVisible = (int) numTags;

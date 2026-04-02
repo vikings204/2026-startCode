@@ -12,10 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.Controller;
 import frc.robot.Constants.Intake.Positions;
 import frc.robot.Robot.ControlMode;
-import frc.robot.commands.AlignCommand;
-import frc.robot.commands.ShootCommand;
-import frc.robot.commands.ShootFromAnywhereCommand;
-import frc.robot.commands.TeleopSwerveCommand;
+import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.util.Gamepad;
 
@@ -33,10 +30,15 @@ public class RobotContainer {
     private double driverLeftJoyCoeff = 1.0;
 
     public void addPPAlign() {
+//        new JoystickButton(DRIVER, 2)
+//                .whileTrue(new AlignCommand(Swerve, PoseEstimation, false));
+//        new JoystickButton(DRIVER, 3)
+//                .whileTrue(new AlignCommand(Swerve, PoseEstimation, true));
+
+        new JoystickButton(DRIVER, 1)
+                .whileTrue(new ShootFromAnywhereCommand(Shooter, PoseEstimation));
         new JoystickButton(DRIVER, 2)
-                .whileTrue(new AlignCommand(Swerve, PoseEstimation, false));
-        new JoystickButton(DRIVER, 3)
-                .whileTrue(new AlignCommand(Swerve, PoseEstimation, true));
+                .whileTrue(new ShootFromAnywherePPCommand(Swerve, Shooter, PoseEstimation));
     }
 
     public RobotContainer() {
@@ -144,8 +146,8 @@ public class RobotContainer {
 //                  .onTrue(new InstantCommand(() -> Shooter.shootWithPID(true, 5600), Shooter))
 //                  .onFalse(new InstantCommand(() -> Shooter.shootWithPID(false, 5600), Shooter));
                     .whileTrue(new ShootCommand(Shooter,3800));
-                new JoystickButton(OPERATOR, 9)
-                        .whileTrue(new ShootFromAnywhereCommand(Swerve, Shooter, PoseEstimation));
+//                new JoystickButton(OPERATOR, 9)
+//                        .whileTrue(new ShootFromAnywherePPCommand(Swerve, Shooter, PoseEstimation));
 
 
     }

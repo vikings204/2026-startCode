@@ -17,7 +17,7 @@ public class LEDSubsystem extends SubsystemBase {
     private final PowerDistribution pd;
 
     public LEDSubsystem() {
-        blinkin = new Spark(0);
+        blinkin = new Spark(9);
         pd = new PowerDistribution(1, ModuleType.kRev);
 
         Presets = new presetSettings();

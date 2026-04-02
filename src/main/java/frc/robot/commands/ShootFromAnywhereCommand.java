@@ -15,26 +15,23 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class ShootFromAnywhereCommand extends Command {
-    private final SwerveSubsystem Swerve;
     private final ShooterSubsystem Shooter;
     private final PoseEstimationSubsystem Poser;
     private final ProfiledPIDController thetaPID = new ProfiledPIDController(0.4, 0, 0, new Constraints(Constants.Swerve.MAX_ANGULAR_VELOCITY, 0.5));
-    private final GenericEntry maxRpm = Shuffleboard.getTab("main").add("WA max rpm", 5600.0).getEntry();
-    private final GenericEntry maxRpmDistance = Shuffleboard.getTab("main").add("WA max rpm distance", 4.6).getEntry();
-    private final GenericEntry rpmOffset = Shuffleboard.getTab("main").add("WA rpm offset", 0).getEntry();
+    private final GenericEntry maxRpm = Shuffleboard.getTab("main").add("SFA max rpm", 5600.0).getEntry();
+    private final GenericEntry maxRpmDistance = Shuffleboard.getTab("main").add("SF max rpm distance", 4.6).getEntry();
+    private final GenericEntry rpmOffset = Shuffleboard.getTab("main").add("SFA rpm offset", 0).getEntry();
     private double thetaGoal = 0.0;
     private double rpm = 0;
 
     public ShootFromAnywhereCommand(
-            SwerveSubsystem Swerve,
             ShooterSubsystem Shooter,
             PoseEstimationSubsystem Poser
     ) {
-        this.Swerve = Swerve;
         this.Shooter = Shooter;
         this.Poser = Poser;
 
-        addRequirements(Swerve, Shooter);
+        addRequirements(Shooter);
     }
 
     @Override
@@ -49,7 +46,7 @@ public class ShootFromAnywhereCommand extends Command {
         thetaGoal = Math.toDegrees(Math.atan2(dy, dx));
 
         double distance = Math.sqrt((dx*dx) + (dy*dy));
-        rpm = (maxRpm.getDouble(5600) * distance) / maxRpmDistance.getDouble(4.6);
+        rpm = (maxRpm.getDouble(3850) * distance) / maxRpmDistance.getDouble(4.6);
         rpm += rpmOffset.getDouble(0.0);
 
         Shooter.prefireContinuous(rpm);
@@ -61,11 +58,6 @@ public class ShootFromAnywhereCommand extends Command {
         System.out.println("deltaTheta=" + deltaTheta);
 
         Shooter.shootContinuous(rpm);
-        if (deltaTheta < 5) {
-            Shooter.shootContinuous(rpm);
-        } else {
-            Swerve.drive(new Translation2d(0, 0), thetaPID.calculate(Poser.getPose().getRotation().getDegrees()), false, true);
-        }
    }
 
     @Override
